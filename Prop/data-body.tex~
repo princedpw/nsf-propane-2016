@@ -1,0 +1,10 @@
+\section*{Data Management Plan}
+
+The data produced by this research effort will primarily involve 
+test suites, sets of examples, programs synthesized, and
+performance measurements for our algorithms.  We will also produce
+software to implement our systems, notes, technical reports, research 
+reports and presentations.  We have already set up a joint git repository
+to hold and preserve all of this information.  We will make our software, data,
+measuremens and reports open to other researchers and the public.
+

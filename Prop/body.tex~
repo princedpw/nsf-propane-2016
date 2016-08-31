@@ -1,0 +1,389 @@
+\section{Introduction}
+
+Networks are highly complex, distributed systems that often involve both 
+hardware and software, hundreds, thousands or more different devices, and
+many different interacting protocols and services.
+For years, we have known that managing and configuring
+such systems reliably is extremely difficult and yet crucial to our modern
+economy, government, national defense, and everyday life.  Unfortunately,
+errors in these systems routinely leads to costly downtime, and
+can render any number of crucial services unavailable~\cite{mahajan+:bgp-misconfiguration,feamster+:rcc,batfish,dc-failure-study}.
+
+While there are many different causes of network downtime, ranging
+from hardware errors to power failures to bugs in embedded software,
+Figure~\ref{fig:network-downtime}, which reports the results of two
+previous studies on network outages, shows that human errors, which
+often occur in configuration, update or planned maintenance of network
+management systems, are the most single important factor in causing
+outages.  Moreover, anecdotally, the evidence
+is equally compelling.  For instance, a recent misconfiguration at
+Time Warner, led to an hour-long, nation-wide outage of their backbone
+network~\cite{time-warner}.  A few years ago, YouTube was taken
+offline for two hours when Pakistan Telecom erroneously claimed to be
+a legitimate destination for YouTube traffic, and Hong Kong-based
+PCCW, which services Pakistan Telecom failed to drop the erroneous
+messages~\cite{pakistan-youtube}.  Before that, a Turkish telecom
+pretended to be the entire internet~\cite{pakistan-youtube}.  More generally,
+network outages serious enough to make international news continue to
+happen with great regularity~\cite{bgpmon}.
+
+%% The solution to these problems is easy to state:
+%% Simply have human operators do less of the work.  The challenge is how?  
+
+%% \begin{quote}
+%% Our central idea is to fundamentally change the level of abstraction at which
+%% complex networks are configured, lifting it substantially, and having a compiler
+%% fill in all of the low-level details, and finally verifying the correctness of our results.
+%% \end{quote}
+
+%% At the moment, configuring
+
+%% Rather than have network administrators configure
+%% the details of low-level protocols independently on device after device, allow administrators to
+%% state the high-level properties
+
+One fundamental reason for these misconfigurations is the
+semantic mismatch between the intended high-level
+policies and the low-level configurations.
+Many policies involve network-wide properties---prefer a certain neighbor,
+never announce a particular destination externally,
+use a particular path only if another fails---but configurations describe the behavior of
+individual devices.
+%
+Operators must manually decompose network-wide policy into a set of configurations, with one configuration
+for each device in the network.  Moreover, these individual device configurations often involve more than
+one protocol, such as BGP (the Border Gateway Protocol for communicating routes between different
+autonomous systems) and OSPF (an
+intra-domain protocol for routing along shortest paths in one's own network) the protocols interact with one another.  
+In order to determine whether or not the high-level goals of a user's network-wide policy have been satisfied,
+one must reason about the interaction of protocols on individual devices and the interaction of different devices.
+In essence, the problem is akin to programming a complex, heterogenous distributed system in several
+different, low-level assembly languages, and then checking that one's high-level semantic goals have been met.
+
+To make matters worse, networks must operate efficiently in normal circumstances and must 
+also continue to function properly when failures occur.  In many contexts, such as in a data center,
+there are so many devices, that failures are inevitable and frequent.  Unfortunately, network operators
+can, at their very best, reason about their policy in the face of a very small number of possible failure 
+scenarios.  As a result, configurations that work
+correctly in failure-free environments have nonetheless been found to violate key
+network-wide properties when failures occur~\cite{batfish}.
+
+
+
+\begin{figure}[t]
+%\begin{wrapfigure}{R}{0.5\textwidth}
+  \centering
+  \includegraphics[width=.45\textwidth]{figures/errors1}
+  \hspace{1cm}
+  \includegraphics[width=.45\textwidth]{figures/errors2} \\
+  (a)  \hspace{3in} (b)
+  \caption{Two studies on network downtime:  (a) From the Yankee group (2002),
+roughly 60\% of network downtime is caused by human error; (b) From a Juniper
+study (2008), 50-80\% of outages are the result of human error.}
+  \label{fig:network-downtime}
+%\end{wrapfigure}
+\end{figure}
+
+Hence, in the proposed project, we plan to design, study, build and evaluate a new platform 
+capable of (1) synthesizing multi-protocol, distributed control planes from high-level end-to-end specifications,
+and (2) helping users reliably transition from their legacy configurations to our new system.  More specifically,
+our platform will contain the following components:
+\begin{enumerate}
+\item {\bf A high-level language} with a natural and \emph{uniform} set of abstractions
+for jointly specifying \emph{intra-domain} routing constraints, \emph{inter-domain}
+routing constraints and possible \emph{back-up paths} in case of failures.
+\item {\bf Tools for automatic synthesis} of low-level, device-by-device configurations of standard
+distributed control plane algorithms from the high-level language specifications.
+\item {\bf Tools for translation of legacy configurations} into the intermediate language of our compiler.
+\item {\bf Algorithms for verification} that low-level configurations correctly implement high-level specifications.
+The low-level configurations may have been synthesized from high-level specifications, in which case
+verification helps to double-check the correctness of our synthesis toolchain, giving network operators more
+confidence in our system.  Alternatively, the low-level configurations may have been
+translated from legacy configurations, in which case verification can help find bugs in the legacy configuration,
+or help port the legacy configuration to our new system by validating the equivalence of the legacy configuration with 
+a new high-level specification.
+\end{enumerate}
+
+In order to demonstrate the feasibility of our core ideas, in preparation for this proposal, 
+we have already begun to build a prototype system called
+\Propane~\cite{beckett+:propane16}. Borrowing linguistic ideas from several recent SDN languages~\cite{fattire,foster:merlin,netkat},
+\Propane users specify policy using high-level path constraints, defined using regular expressions and predicates.
+\emph{Unlike} previous SDN-oriented languages, \Propane supports the ability to specify \emph{back-up paths}, which allow users 
+to express preferences
+between routes and to indicate desired behavior in the presence of faults, and more importantly, \Propane{} does not use a 
+centralized controller.  Instead, the \Propane{}
+compiler synthesizes a collection of BGP configurations, which are used to configure conventional routers.  As such, the 
+implementation is:  (1) fully distributed, 
+(2) operates using completely standard, widely-deployed, legacy protocols, (3) can manage both intra-domain and inter-domain routing,
+(4) is highly scalable, having been used at data center and internet-scale, and (5) is fault tolerant, offering local fault 
+detection and recovery.  However, our initial prototype supports limited user abstractions, only synthesizes configurations for a 
+single protocol (BGP), does not support verification and does not help users transition from legacy configurations to new \Propane-managed
+configurations or update their existing \Propane-managed configurations.
+
+\paragraph*{Intellectual Merits.}
+In order to fulfill our
+vision of an effective and comprehensive platform for specification, synthesis,
+transformation and verification of distributed control planes, we
+propose to develop the following components:
+
+\begin{itemize}
+\item {\bf New Abstractions For Network Programming:}  Network operators, especially for large, structured networks such 
+as data centers, do not think in terms of individual devices.  Instead, they craft policy in terms of \emph{sets} of devices that
+play similar roles such as top-of-rack switch, tier-one switch, \etc and the more general \emph{topological invariants} that connect
+these sets (\eg, the number of edges or paths that connect elements of each set).  Any effective and concise specification language 
+must
+match the cognitive models used by network operators and hence must support such abstractions.  We plan to develop new kinds of
+topological abstractions for network programming.  In addition, we will provide users with control over network performance 
+by allowing them to specify quality-of-service characteristics at \Propane's level of abstraction. 
+
+\item {\bf New Algorithms for Multi-Protocol Network Synthesis:}  There is no ``one size fits all'' networking protocol.  Moreover,
+different network devices support a wide range of capabilities.  In order 
+to meet user demands on heterogenous hardware platforms, we will develop algorithms that synthesize networks using
+a combination of \emph{inter-domain routing} protocols such as BGP, \emph{intra-domain routing protocols} such as OSPF and RIP, and 
+\emph{SDN-oriented
+protocols} such as OpenFlow+\cite{openflow}, P4~\cite{P4} and PIFO~\cite{PIFO}.  In the latter case, we will look to use advanced features
+of modern programmable hardware to synthesize high-performance
+solutions that balance load and react quickly to failures~\cite{conga,hula}.
+
+\item {\bf New Tools for Technology Transition:}  The \Propane platform will be designed so that governmental, academic or industrial institutions that
+have made substantial investments in networking infrastructure do not have to throw out their hardware or software and start fresh --- an implausible 
+demand.  Still, they will need support to help them transition from their current set of legacy configurations to the more reliable distributed
+control plane management system supported by \Propane.  To aid in doing so, we will develop new algorithms to translate legacy configurations into 
+the intermediate
+language supported by \Propane.  Once the semantics of legacy configurations are faithfully represented in a common intermediate language, they may be 
+analyzed using \Propane algorithms, checked for compiliance with desired specifications, visualized for operator inspection, and translated into
+higher-level abstractions.
+
+\item {\bf New Tools for General Distributed Control-Plane Verification:}  In addition to supporting
+\emph{synthesis} of new, distributed, low-level configurations from high-level specifications, \Propane will support \emph{verification} of existing 
+low-level configurations against existing high-level specification.  The \Propane toolsuite will support such verification tasks by translating
+both high-level specifications and low-level configurations into a common intermediate representation, and then developing new algorithms for
+comparing programs at this common level of abstraction.  Using new representation techniques, we will support \emph{both} a wide
+range of protocols (both intra-domain and inter-domain) and a wide range of queries (both fault tolerance and reachability-oriented queries).
+
+\item {\bf New Algorithms for Configuration Update:}  Inevitably, configurations must change to accommodate new user requirements, to add new devices
+or fix faulty ones, or to react to security vulnerabilities.  We will develop new algorithms that allow the \Propane platform to synthesize
+updates to low-level network configurations given a pair of old and new \Propane specifications, as well as a \emph{plan} to update network devices to
+safely transition the system from old configuration to new configuration while the system is in operation.
+\end{itemize}
+
+\paragraph{Broader Impacts.}  
+Our economy, businesses, governmental and military infrastructure all depend upon having networks that function
+reliably.  Unfortunately, current network configuration languages are
+terribly complex and difficult to reason about.  Consequently,
+operators all-too-often make mistakes when programming this critical
+infrastructure.  The primary goal of this proposal is to develop
+a platform for network configuration, synthesis, verification and update that
+improves the reliability of existing legacy networks, and help
+transition those networks to new management systems, and avoids
+the cost of having to rebuild from scratch.
+
+We also plan on having broad impact more through our educational
+plan. At the undergraduate level, we plan to exploit Princeton's
+Independent Work (IW) system to engage undergraduates in interdisciplinary
+research projects that apply programming language techniques such as
+verification using SAT and SMT solvers, as well as systematic,
+automatic test generation, to problems in the networking domain, such
+as verification or testing of control-plane data.  At the graduate
+level, we will introduce a unit on network programming to our core
+graduate courses on programming languages and semantics.  Those core
+courses are taken by both programming languages students and students
+in other disciplines to cover PhD breadth requirements.  By
+demonstrating how PL techniques can be used to facilitate software
+development in other domains, we hope to increase engagement of
+students from other disciplines.
+
+The PIs have a history of engaging under-represented minorities in
+their research projects and will continue to seek out opportunities to
+do so.  In particular, PI Walker has mentored two winners of the CRA
+outstanding undergraduate award, and both happened to be
+under-represented minorities in computer science: one an African
+American student and one a woman.  The former, Lester Mackey, went
+gone on to get his PhD in computer science, and the latter, Katherine
+Ye, will be entering graduate school in Fall 2016.  PI Walker has also mentored
+many undergraduate and graduate students with diverse backgrounds.
+
+
+\section{Propane Architecture}
+\label{sec:prior}
+
+\begin{figure}[h]
+\begin{wrapfigure}{R}{0.5\textwidth}
+  \centering
+  \includegraphics[width=.45\textwidth]{figures/pipeline}
+  \caption{Compilation pipeline stages for \Propane.
+FE = Front End;
+RIR = Regular expression Intermediate Representation;
+PGIR = Product Graph Intermediate Representation;
+ABGP = Abstract BGP; Quagga/Cisco: Vendor-specific Router Config.
+Languages.}
+  \label{fig:pipeline}
+  \vspace{-1em}
+\end{wrapfigure}
+\end{figure}
+
+\section{Related Work}
+
+To reduce configuration errors, operators are increasingly adopting an
+approach in which common tasks are captured as parameterized templates~\cite{hatch,thwack}.
+%
+%More powerful still are systems like
+%ConfigAssure~\cite{narain:lisa05,narain+:configassure}, which use SAT solving
+%and model finding tools to fill in parameters in configurations while
+%ensuring key correctness constraints are satisfied.
+%One step further, systems like
+%ConfigAssure~\cite{narain:lisa05,narain+:configassure} use SAT solving
+%and model finding tools to correctly and consistently fill in some parameters.
+%
+While templates help ensure certain kinds of consistency across devices,
+they do not provide fundamentally different abstractions from existing configuration languages
+or bridge the semantic divide between network-wide policies and device-level configuration.
+%They do not provide fundamentally different abstractions
+%from existing configuration languages and
+Thus, they still require operators to
+manually decompose policies into device behaviors and to reason manually about the interaction of different
+protocols.
+
+As a complementary approach, configuration analysis tools can help
+reduce misconfigurations by checking if low-level configurations match
+high-level policy~\cite{batfish,feamster+:rcc}. However, such tools, while
+an important component of any network management system,
+cannot, on their own, help operators with the challenging task of generating
+configurations in the first place.
+
+%Further, today's tools cannot verify correctness under concrete failure scenarios, rather than under all possible failures.
+
+Software-defined networking (SDN) and its abstractions
+are, in part, the research
+community's response to the difficulty of maintaining policy
+compliance through distributed device interactions~\cite{ethane}.
+Instead of organizing networks around a distributed
+collection of devices that compute forwarding tables through
+mutual interactions, the devices are told how to
+forward packets by a centralized controller. The controller is responsible for ensuring that the
+paths taken are compliant with operator specifications.
+%Researchers
+%have developed increasingly sophisticated languages that let operators
+%specify desirable network paths~\cite{x,y,z} which are then translated
+%to forwarding tables at runtime.
+
+The centralized control planes of SDN, however, are not a panacea.
+First, while many SDN programming systems~\cite{sdn-languages} provide effective \emph{intra}-domain routing
+abstractions, allowing users to specify paths within their network,
+they fail to provide a coherent means to specify \emph{inter}-domain routes.
+Second, centralized control planes
+require careful design and engineering to be robust to failures---one must ensure that all devices can communicate with the controller at all times, even under arbitrary failure combinations. Even ignoring failures, it is necessary for the control system to
+scale to meet the demands of large or geographically-distributed networks,
+and to react quickly
+to environmental changes. For this challenge, researchers are exploring
+multi-controller systems with interacting controllers, thus bringing back distributed
+control planes~\cite{mccauley2013extending,onos} and their current programming difficulties.
+In addition, academic
+language design and implementation efforts have not kept pace.  For instance, work on many
+experimental SDN languages~\cite{frenetic,flowlog,vericon,merlin,netkat,kinetic,pga} has not yet shown how to implement fault tolerant
+multi-controller systems that support their high-level abstractions efficiently.
+
+
+
+\section{Broader Impacts of the Proposed Work}
+\label{sec:impact}
+
+\subsection{Curriculum Development Activities}
+
+We plan to develop new course materials and educational opportunities
+at the undergraduate and graduate levels.  At Princeton, the focus
+will be on undergraduate education, and at UPenn the focus will be on
+graduate education, though we plan on sharing materials and ideas.
+
+\paragraph*{Undergraduate Education.}
+At Princeton, Walker's relatively new undergraduate
+course on functional programming, COS 326, has been remarkably popular,
+with enrollments increasing from 28 to 71 to 112 in its first three
+years of existence.  After completing the course, it is common for students
+to ask about additional opportunities for experience
+with functional programming. Our plan is to funnel 2-3 top
+students each year in to research projects
+oriented around type theory, theorem proving, synthesis and education.  
+
+One attractive possibility in this space is to suggest
+these students help us design and implement tools and infrastructure
+that can be used in later versions of the course.   We often find students
+are highly motivated to help future students by giving back to a course
+they enjoyed.  As an example,
+one of the COS 326 modules involves teaching students about equational
+reasoning.  A wonderful student project would involve developing a proof 
+checker for these simple equational proofs.  Such a tool could help students
+validate their work and might be used for grading purposes.
+Another possibility might involve developing tools for synthesizing
+new problems in particular functional programming subdomain.  For example,
+a common test problem challenges students to generate a variant of a
+recursive function over lists (or trees) using map and fold but no recursion.
+A student may be able to build a tool that generates such problems 
+automatically.  Other possibilities include following the work of 
+Singh \emph{et al.} \cite{singh-pldi-2013} and attempting to build a system
+that provides automated feedback on introductory programming assignments.
+
+Of course, many of these projects are quite ambitious.  The PIs do not
+expect them all to succeed to the fullest possible extend, nor do they
+expect a single undergraduate to be able to complete all components of
+such projects.  However, both PIs have a strong track record of mentoring
+undergraduate research projects and have experience breaking down 
+such projects in to interesting and manageable components.  
+Hence, even if a project does not initially (or ever) result in a
+useable tool, students always come away having experienced a little 
+bit of what research is like, having learned some new technical ideas, and 
+having improved their functional programming skills. When undergraduate 
+projects are successful and have additional potential, the PIs will
+investiage the use REUs to provide additional undergraduate opportunities
+and more time to develop the ideas.
+When appropriate, 
+the PIs also plan to pair interested graduate students with undergraduate 
+students.  This provides the undergraduate with
+an additional helping hand and teacher, and the graduate student with
+some experience mentoring a younger student.  
+
+
+\paragraph*{Graduate Education.}
+From a pedagogical point of view, our type-directed approach
+to program synthesis offers a compelling framework in which to study
+traditional topics in programming-languages theory.  Our techniques
+touch on type systems, proof theory, program equivalences, normal
+forms, \textit{etc.}, all of which are standard topics in graduate-level
+PL courses.  The application of these ideas to program synthesis will make
+for excellent course projects.  We also expect to incorporate ideas from
+this research project into our grad-level PL courses, and, as
+appropriate, make the resulting course components and projects
+available to other educators in the field via the web.
+
+\paragraph*{Under-represented minorities.} The PIs are dedicated
+to, and have a track-record of, providing opportunities to under-represented 
+minorities.  For instance, one of Walker's past undergraduate advisees
+(African American) won the CRA undergraduate outstanding undergraduate
+research award.  Both PIs have mentored numerous graduate students from 
+under-represented groups.
+
+\section{Results from Prior NSF Support}
+\label{sec:prior-support}
+
+\paragraph{David Walker, PI.}
+Walker has had many NSF-funded research projects on programming language
+design and type systems.  His most relevant grants are
+
+{\bf Intellectual Merits:}
+
+{\bf Broader Impacts:} 
+
+
+
+
+
+ 
+
+
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "proposal.tex"
+%%% TeX-PDF-mode: t
+%%% End:
