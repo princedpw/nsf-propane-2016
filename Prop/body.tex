@@ -133,8 +133,9 @@ play similar roles such as top-of-rack switch, tier-one switch, \etc and the mor
 these sets (\eg, the number of edges or paths that connect elements of each set).  Any effective and concise specification language 
 must
 match the cognitive models used by network operators and hence must support such abstractions.  We plan to develop new kinds of
-topological abstractions for network programming.  In addition, we will provide users with control over network performance 
-by allowing them to specify quality-of-service characteristics at \Propane's level of abstraction. 
+topological abstractions for network programming.  In addition, we will provide users with 
+new abstractions that will allow users to specify combined objectives that
+involve both traffic engineering and inter-domain routing.
 
 \item {\bf New Algorithms for Multi-Protocol Network Synthesis:}  There is no ``one size fits all'' networking protocol.  Moreover,
 different network devices support a wide range of capabilities.  In order 
@@ -554,6 +555,34 @@ them correct.  It will take significant practical and theoretical
 research to develop, implement, test and prove correct the necessary 
 algorithms for fault tolerance, reachability and security analysis.
 
+\paragraph*{Traffic Engineering and Inter-domain Routing.}
+Many networks have complex business relationships with their peers, providers and 
+customers.  Such networks must satisfy agreements to carry traffic while minimizing
+cost, thereby maximizing their own profits.  
+Currently, Propane users may specify preferences between routes; these
+less-preferred routes are utilized only if failures occur.  However,
+many users have more sophisticated requirements than this ---
+requirements that require cost and network capacity as well as
+failures be taken into account.  In particular, to deal with higher
+load, bursts, or partial failures, networks may need to open more
+costly routes, at least temporarily.
+
+We propose to extend Propane with facilities that allow users to specify the
+costs associated with using different interdomain routes, the capacities of these
+routes and the obligations they have to customers and peers.  In doing so, there
+are a number of design choices to be made.  In particular, should capacity and cost
+be associated with the network topology or with the user policy?  How does such
+quantitative information interact with the non-quantitative information concerning
+routes and failures?  Once the language design choices have been made, we will 
+study compilation techniques.  Our current platform compiles to BGP, but BGP 
+does not contain mechanisms for processing quantitative information or managing
+traffic engineering mechanisms.  Consequently, we propose using a hetergeneous
+back-end composed in part of BGP running at the edge, to handle interdomain
+routing, and our own custom switch agents, implemented using P4~\cite{P4}, 
+to manage the traffic monitoring, shaping, policing and routing needed to implement
+cost-aware routing.  
+
+
 \paragraph*{Related research.}
 In terms of related research, the closest overlap is with the 
 Condor project~\cite{condor}.  However, Condor focused on description
@@ -589,6 +618,16 @@ While the authors consider verification, they do not consider using
 abstract topologies to support compilation or synthesis
 of new configurations from high-level specifications.
 
+When it comes to implementing traffic engineering constraints generated from
+our proposal, we will exploit
+the vast literature in traffic engineering technology~\cite{?,?}.  From a programming language
+design perspective, the closest related work is the Merlin language~\cite{merlin}.  Merlin
+combines regular routing specifications with formulae that describe minimum and maximum
+bandwidth guarantees.  Merlin does not consider the interaction of traffic engineering
+specifications with faults, with business costs, or with inter-domain routing objectives.  
+Such interactions will lead to different language designs and different implementation
+strategies (which mix BGP with traffic engineering mechanisms, for instance).
+
 \paragraph*{Summary of key research questions:}
 
 \begin{itemize}
@@ -601,6 +640,9 @@ Do we need hierarchical abstractions?  Probabilistic abstractions?
 \item How do we analyze properties of network policies, such as
 reachability and fault tolerance, over abstract
 topologies?  How do these algorithms perform?
+\item How do we define a specification language that combines inter-domain
+routing objectives, fault tolerance and traffic engineering?  How
+should we implement such combined specifications?
 \item What theory underpins this research?  What is the formal 
 semantics of these abstract topologies?  How do we prove our
 compilation algorithms and analyses are correct?
