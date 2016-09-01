@@ -1,0 +1,6 @@
+# Compiled source #
+###################
+Prop/*.aux
+Prop/*.blg
+Prop/*.log
+Prop/*.pdf
