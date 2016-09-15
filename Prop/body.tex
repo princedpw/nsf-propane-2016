@@ -1,31 +1,31 @@
 \section{Introduction}
 
-Networks are highly complex, distributed systems that often involve both 
-hardware and software, hundreds, thousands or more different devices, and
-many different interacting protocols and services.
-For years, we have known that managing and configuring
-such systems reliably is extremely difficult and yet crucial to our modern
-economy, government, national defense, and everyday life.  Unfortunately,
-errors in these systems routinely leads to costly downtime, and
-can render any number of crucial services unavailable~\cite{mahajan+:bgp-misconfiguration,feamster+:rcc,batfish,dc-failure-study}.
-
-While there are many different causes of network downtime, ranging
-from hardware errors to power failures to bugs in embedded software,
+A vast majority of users and companies access their data and services over clouds via a network.  Unfortunately, network errors routinely lead to costly downtime, and can render any number of crucial services unavailable~\cite{mahajan+:bgp-misconfiguration,feamster+:rcc,batfish,dc-failure-study}.
 Figure~\ref{fig:network-downtime}, which reports the results of two
-previous studies on network outages, shows that human errors, which
-often occur in configuration, update or planned maintenance of network
-management systems, are the most single important factor in causing
-outages.  Moreover, anecdotally, the evidence
-is equally compelling.  For instance, a recent misconfiguration at
-Time Warner, led to an hour-long, nation-wide outage of their backbone
-network~\cite{time-warner}.  A few years ago, YouTube was taken
-offline for two hours when Pakistan Telecom erroneously claimed to be
-a legitimate destination for YouTube traffic, and Hong Kong-based
-PCCW, which services Pakistan Telecom failed to drop the erroneous
-messages~\cite{pakistan-youtube}.  Before that, a Turkish telecom
-pretended to be the entire internet~\cite{pakistan-youtube}.  More generally,
-network outages serious enough to make international news continue to
-happen with great regularity~\cite{bgpmon}.
+previous studies on network outages, shows that human errors, which often occur in configuration, update or planned maintenance of networks, are the most single important factor in causing outages.  Anecdotally, the evidence is equally compelling.  For instance, a recent misconfiguration at
+Time Warner, led to an hour-long, nation-wide outage of their backbone network~\cite{time-warner}, while United grounded over 100 flights for over 1 hour`\cite{united}.
+
+It is well known that the fundamental problem is caused by programming individual router configs to implement a network-wide policy: this process, like assembly language coding, is fraught with peril.  Many policies involve network-wide properties---never announce a particular destination externally, use a particular path only if another fails---but configurations describe the behavior of individual devices.  Operators must manually decompose network-wide policy into a set of configurations, with one configuration for each device in the network. Common errors in manual BGP configuration setting range from simple consistency (community values do not match) to more complex scenarios (failure in backup router only triggered after failure). 
+
+
+% It is well known that the fundamental problem is caused by programming individual router configs device by device to implement a network-wide policy, and % this process, like assembly language coding, is fraught with peril.  Common errors in manual BGP configuration setting range from simple consistenc
+ % % (community values do not match) to complex reasoning (failure In backup only triggered after failure). 
+%Networks are highly complex, distributed systems that often involve both 
+%hardware and software, hundreds, thousands or more different devices, and
+%many different interacting protocols and services.
+%For years, we have known that managing and configuring
+%such systems reliably is extremely difficult and yet crucial to our modern
+%economy, government, national defense, and everyday life.  
+%While there are many different causes of network downtime, ranging
+%from hardware errors to power failures to bugs in embedded software,
+ %A few years ago, YouTube was taken
+%offline for two hours when Pakistan Telecom erroneously claimed to be
+%a legitimate destination for YouTube traffic, and Hong Kong-based
+%PCCW, which services Pakistan Telecom failed to drop the erroneous
+%messages~\cite{pakistan-youtube}.  Before that, a Turkish telecom
+%pretended to be the entire internet~\cite{pakistan-youtube}.  More generally,
+%network outages serious enough to make international news continue to
+%happen with great regularity~\cite{bgpmon}.
 
 %% The solution to these problems is easy to state:
 %% Simply have human operators do less of the work.  The challenge is how?  
@@ -42,33 +42,26 @@ happen with great regularity~\cite{bgpmon}.
 %% the details of low-level protocols independently on device after device, allow administrators to
 %% state the high-level properties
 
-One fundamental reason for these misconfigurations is the
-semantic mismatch between the intended high-level
-policies and the low-level configurations.
-Many policies involve network-wide properties---prefer a certain neighbor,
-never announce a particular destination externally,
-use a particular path only if another fails---but configurations describe the behavior of
-individual devices.
-%
-Operators must manually decompose network-wide policy into a set of configurations, with one configuration
-for each device in the network.  Moreover, these individual device configurations often involve more than
-one protocol, such as BGP (the Border Gateway Protocol for communicating routes between different
-autonomous systems) and OSPF (an
-intra-domain protocol for routing along shortest paths in one's own network) the protocols interact with one another.  
-In order to determine whether or not the high-level goals of a user's network-wide policy have been satisfied,
-one must reason about the interaction of protocols on individual devices and the interaction of different devices.
-In essence, the problem is akin to programming a complex, heterogenous distributed system in several
-different, low-level assembly languages, and then checking that one's high-level semantic goals have been met.
+%One fundamental reason for these misconfigurations is the
+%semantic mismatch between the intended high-level
+%policies and the low-level configurations.
+ %Moreover, these individual device configurations often involve more than
+%one protocol, such as BGP (the Border Gateway Protocol for communicating routes between different
+%autonomous systems) and OSPF (an
+%intra-domain protocol for routing along shortest paths in one's own network) the protocols interact with one another.  
+%In order to determine whether or not the high-level goals of a user's network-wide policy have been satisfied,
+%one must reason about the interaction of protocols on individual devices and the interaction of different devices.
+%In essence, the problem is akin to programming a complex, heterogenous distributed system in several
+%different, low-level assembly languages, and then checking that one's high-level semantic goals have been met.
 
-To make matters worse, networks must operate efficiently in normal circumstances and must 
-also continue to function properly when failures occur.  In many contexts, such as in a data center,
-there are so many devices, that failures are inevitable and frequent.  Unfortunately, network operators
-can, at their very best, reason about their policy in the face of a very small number of possible failure 
+To make matters worse, networks must continue to function properly when failures occur.  
+%In many contexts, such as in a data center,
+%there are so many devices, that failures are inevitable and frequent.  
+Unfortunately, network operators
+can, at their very best, reason about their policy in the face of a very small number of failure 
 scenarios.  As a result, configurations that work
 correctly in failure-free environments have nonetheless been found to violate key
 network-wide properties when failures occur~\cite{batfish}.
-
-
 
 \begin{figure}[t]
 %\begin{wrapfigure}{R}{0.5\textwidth}
@@ -84,89 +77,92 @@ study (2008), 50-80\% of outages are the result of human error.}
 %\end{wrapfigure}
 \end{figure}
 
-Hence, in the proposed project, we plan to design, study, build and evaluate a new platform 
-capable of (1) synthesizing multi-protocol, distributed control planes from high-level end-to-end specifications,
-and (2) helping users reliably transition from their legacy configurations to our new system.  More specifically,
-our platform will contain the following components:
-\begin{enumerate}
-\item {\bf A high-level language} with a natural and \emph{uniform} set of abstractions
-for jointly specifying \emph{intra-domain} routing constraints, \emph{inter-domain}
-routing constraints and possible \emph{back-up paths} in case of failures.
-\item {\bf Tools for automatic synthesis} of low-level, device-by-device configurations of standard
-distributed control plane algorithms from the high-level language specifications.
-\item {\bf Tools for translation of legacy configurations} into the intermediate language of our compiler.
-\item {\bf Algorithms for verification} that low-level configurations correctly implement high-level specifications.
-The low-level configurations may have been synthesized from high-level specifications, in which case
-verification helps to double-check the correctness of our synthesis toolchain, giving network operators more
-confidence in our system.  Alternatively, the low-level configurations may have been
-translated from legacy configurations, in which case verification can help find bugs in the legacy configuration,
-or help port the legacy configuration to our new system by validating the equivalence of the legacy configuration with 
-a new high-level specification.
-\end{enumerate}
+The classical computer science solution is to define a higher level language for specifying policy and to compile to individual (e.g., BGP) router configurations.  So why have synthesis solutions failed for twenty years? 
 
-In order to demonstrate the feasibility of our core ideas, in preparation for this proposal, 
-we have already begun to build a prototype system called
-\Propane~\cite{beckett+:propane16}. Borrowing linguistic ideas from several recent SDN languages~\cite{fattire,foster:merlin,netkat},
-\Propane users specify policy using high-level path constraints, defined using regular expressions and predicates.
-\emph{Unlike} previous SDN-oriented languages, \Propane supports the ability to specify \emph{back-up paths}, which allow users 
-to express preferences
-between routes and to indicate desired behavior in the presence of faults, and more importantly, \Propane{} does not use a 
-centralized controller.  Instead, the \Propane{}
-compiler synthesizes a collection of BGP configurations, which are used to configure conventional routers.  As such, the 
-implementation is:  (1) fully distributed, 
-(2) operates using completely standard, widely-deployed, legacy protocols, (3) can manage both intra-domain and inter-domain routing,
-(4) is highly scalable, having been used at data center and internet-scale, and (5) is fault tolerant, offering local fault 
-detection and recovery.  However, our initial prototype supports limited user abstractions, only synthesizes configurations for a 
-single protocol (BGP), does not support verification and does not help users transition from legacy configurations to new \Propane-managed
-configurations or update their existing \Propane-managed configurations.
+Early solutions such as RPSL\cite{rpsl} perhaps failed because they were not sufficiently higher level in terms of being able to avoid network operator effort, for instance in reasoning about failures.    Later, SDN advocates suggested languages for centralized control planes~\cite{netkat,frenetic,srikant} but that ignores the reality of commercial clouds that continue to use distributed control planes and routers from Cisco and Arista.  Further, existing SDN-oriented languages, do not support the ability to specify \emph{back-up paths}, which allow users 
+to express preferences between routes and to indicate desired behavior in the presence of faults,
+
+Very recently, some of us have proposed a language and a system called Propane~\cite{propane} that takes an interesting first step in terms of higher level abstractions (for example, many BGP local mechanisms ultimately serve to rank network paths), reduced user effort (Propane can produce configurations provably resilient to failures), and some validation (Propane was evaluated on Microsoft networks comparing English language specifications and compiled configurations to manual configurations).   And yet Propane is far from being deployed for the following reasons:
+
+{\em 1. (In)completeness}:  While earlier synthesis proposals for the data plane such as NetKat~\cite{netkat} defined completeness in terms of {\em semantic completeness} with respect to a denotational semantics) operators care more about {\em operational completeness} with respect to what is achievable today with manual configuration.   Operators will not forgo the power to even do unnatural acts if they have business reasons to do so, even if, like GoTos they are considered harmful.  Propane is operationally incomplete in several ways ({\bf Dave, add}
+
+{\em 2. Deployability:}   No large network is likely to switch from manual configuration to Propane or RPSL in one “flag day”.   Incremental deployments is much more realistic, with parts of the network gradually moving to this new discipline.
+
+{\em 4.  Intellegibility}:  At least in the transition period, operators will be more comfortable with compiled configurations that match their intuitions.  For instance, Network operators, especially for large, structured networks such as data centers, do not think in terms of individual devices.  Instead, they craft policy in terms of \emph{sets} of devices that
+play similar roles such as top-of-rack switch, tier-one switch, \etc and the more general \emph{topological invariants} that connect these sets (\eg, the number of edges or paths that connect elements of each set).  The output of deployable synthesis must match the cognitive models used by network operators..
+
+
+%Hence, in the proposed project, we plan to design, study, build and evaluate a new platform 
+%capable of (1) synthesizing multi-protocol, distributed control planes from high-level end-to-end specifications,
+%and (2) helping users reliably transition from their legacy configurations to our new system.  More specifically,
+%our platform will contain the following components:
+%\begin{enumerate}
+%\item {\bf A high-level language} with a natural and \emph{uniform} set of abstractions
+%for jointly specifying \emph{intra-domain} routing constraints, \emph{inter-domain}
+%routing constraints and possible \emph{back-up paths} in case of failures.
+%\item {\bf Tools for automatic synthesis} of low-level, device-by-device configurations of standard
+%distributed control plane algorithms from the high-level language specifications.
+%\item {\bf Tools for translation of legacy configurations} into the intermediate language of our compiler.
+%\item {\bf Algorithms for verification} that low-level configurations correctly implement high-level %specifications.
+%The low-level configurations may have been synthesized from high-level specifications, in which case
+%verification helps to double-check the correctness of our synthesis toolchain, giving network operators more
+%confidence in our system.  Alternatively, the low-level configurations may have been
+%translated from legacy configurations, in which case verification can help find bugs in the legacy configuration,
+%or help port the legacy configuration to our new system by validating the equivalence of the legacy %configuration with 
+%a new high-level specification.
+%\end{enumerate}
+
+%In order to demonstrate the feasibility of our core ideas, in preparation for this proposal, 
+%we have already begun to build a prototype system called
+%\Propane~\cite{beckett+:propane16}. Borrowing linguistic ideas from several recent SDN languages~\cite{fattire,foster:merlin,netkat},
+%\Propane users specify policy using high-level path constraints, defined using regular expressions and predicates.
+
+%\emph{Unlike} previous SDN-oriented languages, \Propane supports the ability to specify \emph{back-up paths}, which allow users 
+%to express preferences
+%between routes and to indicate desired behavior in the presence of faults, and more importantly, \Propane{} does not use a 
+%centralized controller.  Instead, the \Propane{}
+%compiler synthesizes a collection of BGP configurations, which are used to configure conventional routers.  As such, the 
+%implementation is:  (1) fully distributed, 
+%(2) operates using completely standard, widely-deployed, legacy protocols, (3) can manage both intra-domain and inter-domain routing,
+%(4) is highly scalable, having been used at data center and internet-scale, and (5) is fault tolerant, %offering local fault 
+%detection and recovery.  However, our initial prototype supports limited user abstractions, only synthesizes configurations for a 
+%single protocol (BGP), does not support verification and does not help users transition from legacy configurations to new \Propane-managed
+%configurations or update their existing \Propane-managed configurations.
 
 \paragraph*{Intellectual Merits.}
+
 In order to fulfill our
 vision of an effective and comprehensive platform for specification, synthesis,
 transformation and verification of distributed control planes, we
 propose to develop the following components:
 
-\begin{itemize}
-\item {\bf New Abstractions For Network Programming:}  Network operators, especially for large, structured networks such 
-as data centers, do not think in terms of individual devices.  Instead, they craft policy in terms of \emph{sets} of devices that
-play similar roles such as top-of-rack switch, tier-one switch, \etc and the more general \emph{topological invariants} that connect
-these sets (\eg, the number of edges or paths that connect elements of each set).  Any effective and concise specification language 
-must
-match the cognitive models used by network operators and hence must support such abstractions.  We plan to develop new kinds of
-topological abstractions for network programming.  In addition, we will provide users with 
+To create what we call deployable synthesis, we plan to create a new system Octane that goes beyond Propane and RPSL to create a higher level language and synthesis system that is deployable  by performing the following proposed pieces of research.
+
+{\bf 1.   Add Operational abstractions:}  We plan to add new abstractions to cover more parts of the routing playbook in data centers and ISPs~\cite{routingplaybook}.  For instance, consider the common mechanism of triggering a backup path only when traffic reaches a cap.   Propane models failure as the only trigger.   A possible abstraction is a general trigger mechanism whether failure, reaching a traffic cap, or getting a route announcement.
+
+{\bf 2. Invent Intellegibility abstractions:} Besides abstractions aimed at operational completeness, we will add abstractions to improve intellegibility.  For instance, abstractions for similar sets of  such as border, edge routers etc that can be formalized in terms of roles.  Further, a number of mechanisms are used to allow fault-tolerance of a simpler topology.  While these are exploited in some bottom up verification systems as symmetries to scale verification!\cite{plotkinpopl}, we feel that starting with simpler abstract topologies can help bridge the semantic gap between managers and the policies we synthesize.  In addition, we will provide users with 
 new abstractions that will allow users to specify combined objectives that
 involve both traffic engineering and inter-domain routing.
 
-\item {\bf New Algorithms for Multi-Protocol Network Synthesis:}  There is no ``one size fits all'' networking protocol.  Moreover,
-different network devices support a wide range of capabilities.  In order 
-to meet user demands on heterogenous hardware platforms, we will develop algorithms that synthesize networks using
-a combination of \emph{inter-domain routing} protocols such as BGP, \emph{intra-domain routing protocols} such as OSPF and RIP, and 
-\emph{SDN-oriented
-protocols} such as OpenFlow+\cite{openflow}, P4~\cite{P4} and PIFO~\cite{PIFO}.  In the latter case, we will look to use advanced features
+{\bf 3. Support Multi-Protocol Network Synthesis:}  There is no ``one size fits all'' networking protocol. Unlike Propane which only supports BGP, we will develop algorithms that synthesize networks using a combination of \emph{inter-domain routing} protocols such as BGP, \emph{intra-domain routing protocols} such as OSPF and RIP, and 
+\emph{SDN-oriented protocols} such as OpenFlow+\cite{openflow}, P4~\cite{P4} and PIFO~\cite{PIFO}.  In the latter case, we will look to use advanced features
 of modern programmable hardware to synthesize high-performance
 solutions that balance load and react quickly to failures~\cite{conga,hula}.
 
-\item {\bf New Tools for Technology Transition:}  The \Propane platform will be designed so that governmental, academic or industrial institutions that
-have made substantial investments in networking infrastructure do not have to throw out their hardware or software and start fresh --- an implausible 
-demand.  Still, they will need support to help them transition from their current set of legacy configurations to the more reliable distributed
-control plane management system supported by \Propane.  To aid in doing so, we will develop new algorithms to translate legacy configurations into 
-the intermediate
-language supported by \Propane.  Once the semantics of legacy configurations are faithfully represented in a common intermediate language, they may be 
-analyzed using \Propane algorithms, checked for compiliance with desired specifications, visualized for operator inspection, and translated into
-higher-level abstractions.
+{\bf 4. Support Mixed synthesis:} \Propane will support mixed synthesis as a first-class feature where parts of the network are specified manually and parts are synthesized.  Manual configurations are essential to allow incremental deployment but also to allow an escape mechanism to specify features outside the capability of \Propane (just as higher level languages allow calls to assembler).  We envisage using Assume-Rely techniques~\cite{assume} to allow mixed mode synthesis and this will be an important part of our research.
 
-\item {\bf New Tools for General Distributed Control-Plane Verification:}  In addition to supporting
-\emph{synthesis} of new, distributed, low-level configurations from high-level specifications, \Propane will support \emph{verification} of existing 
-low-level configurations against existing high-level specification.  The \Propane toolsuite will support such verification tasks by translating
-both high-level specifications and low-level configurations into a common intermediate representation, and then developing new algorithms for
-comparing programs at this common level of abstraction.  Using new representation techniques, we will support \emph{both} a wide
-range of protocols (both intra-domain and inter-domain) and a wide range of queries (both fault tolerance and reachability-oriented queries).
+{\bf 5. Perform Integrated Control Plane Verification:}  If some parts are manual, it is essential that Octane also integrates in verification to check that the assumptions of the manual pieces are correct.   Of course, verification also allows confirmation that synthesized configurations are correct.  In some ways, our grant will bridge together two separate worlds today: bottom-up verification and top-down synthesis.  We will translate both high-level specifications and low-level configurations into a common intermediate representation, and then develop new algorithms for
+comparing programs at this common level of abstraction.  Using new representation techniques, we will support \emph{both} a wide range of protocols (both intra-domain and inter-domain) and a wide range of queries (both fault tolerance and reachability-oriented queries).
 
-\item {\bf New Algorithms for Configuration Update:}  Inevitably, configurations must change to accommodate new user requirements, to add new devices
-or fix faulty ones, or to react to security vulnerabilities.  We will develop new algorithms that allow the \Propane platform to synthesize
+{\bf 6  Provide Tools for Technology Transition:}  First, we will develop new algorithms to translate legacy configurations into  the intermediate language supported by \Propane so they can be verified.
+Second, we will develop new algorithms that allow the \Propane platform to synthesize
 updates to low-level network configurations given a pair of old and new \Propane specifications, as well as a \emph{plan} to update network devices to
 safely transition the system from old configuration to new configuration while the system is in operation.
-\end{itemize}
+
+{\em 7. Evaluate with real operators:} Our experience with Propane showed us that adding a feedback loop with real operators could help us make changes to make the compiled configurations more understandable, a methodology we hope to formalize.
+
+
+
 
 \paragraph{Broader Impacts.}  
 Our economy, businesses, governmental and military infrastructure all depend upon having networks that function
@@ -174,7 +170,7 @@ reliably.  Unfortunately, current network configuration languages are
 terribly complex and difficult to reason about.  Consequently,
 operators all-too-often make mistakes when programming this critical
 infrastructure.  The primary goal of this proposal is to develop
-a platform for network configuration, synthesis, verification and update that
+a platform for deployable synthesis, verification and update that
 improves the reliability of existing legacy networks, and help
 transition those networks to new management systems, and avoids
 the cost of having to rebuild from scratch.
