@@ -843,50 +843,70 @@ paths taken are compliant with operator specifications.
 \section{Broader Impacts of the Proposed Work}
 \label{sec:impact}
 
-\subsection{Curriculum Development Activities}
+The proposed work, if successful, has the potential to transform the way
+that thousands of networks in the US and all over the world are managed.
+By developing higher-level, correct-by-construction abstractions for
+network operators, and creating a path to deploy those abstractions
+in real networks, the \Propane platform will decrease
+errors in network policy design and implementation, and subsequently
+to decrease network downtime and vulnerability to attack.  However,
+for maximum impact, we need to engage in both industrial outreach and
+educational activities.
 
-We plan to develop new course materials and educational opportunities
-at the undergraduate and graduate levels.  
+\paragraph*{Industrial Outreach.}
+In 2016, the networking and programming languages
+researchers at Cornell and Princeton universities came together
+to form the Cornell-Princeton Center for Network 
+Programming (CNP)~\cite{center-for-network-programming}.
+While there is a large an vibrant networking community on the US
+West Coast, centered in the Bay Area, there was no such community on
+the US East Coast.  The CNP was formed to create such a community.
 
-\paragraph*{Undergraduate Education.}
-At Princeton, Walker's relatively new undergraduate
-course on functional programming, COS 326, has been remarkably popular,
-with enrollments increasing from 28 to 71 to 112 in its first three
-years of existence.  After completing the course, it is common for students
-to ask about additional opportunities for experience
-with functional programming. Our plan is to funnel 2-3 top
-students each year in to research projects
-oriented around type theory, theorem proving, synthesis and education.  
+Our first major event was a 1-day workshop held in June 2016 at
+Cornell Tech in New York.  It included roughly 50 participants from
+academia and a wide array of businesses in the New York area including
+Cisco, Juniper, Huawei, Intel, Goldman Sachs, Verizon, Google, Amazon,
+Yahoo and many more.  The workshop included technical presentations by
+academics, panel discussions with industry experts, and many breaks to
+facilitate small group conversation.  The workshop fulfilled its aim
+of allowing academics and industry to exchange problems and solutions,
+vision for the future, and contact information for follow-up
+discussions. We propose to organize a future meeting of this form
+under the CNP umbrella and the auspices of this grant.  PI Walker will
+organize the logistics and PIs Varghese and Millstein will attend and
+give talks on their research, bringing their West Coast ideas out
+East.
 
-One attractive possibility in this space is to suggest
-these students help us design and implement tools and infrastructure
-that can be used in later versions of the course.   We often find students
-are highly motivated to help future students by giving back to a course
-they enjoyed.  As an example,
-one of the COS 326 modules involves teaching students about equational
-reasoning.  A wonderful student project would involve developing a proof 
-checker for these simple equational proofs.  Such a tool could help students
-validate their work and might be used for grading purposes.
-Another possibility might involve developing tools for synthesizing
-new problems in particular functional programming subdomain.  For example,
-a common test problem challenges students to generate a variant of a
-recursive function over lists (or trees) using map and fold but no recursion.
-A student may be able to build a tool that generates such problems 
-automatically.  Other possibilities include following the work of 
-Singh \emph{et al.} \cite{singh-pldi-2013} and attempting to build a system
-that provides automated feedback on introductory programming assignments.
+\paragraph*{Educational Initiatives.}
+In addition to disseminating our ideas to industry today,
+we need to begin educating the network operators and engineers 
+of tomorrow.  Such engineers will need a mix of skills that include
+both knowledge of networking protocols and knowledge of formal methods.
+With that in mind, we plan to develop new modules for networking courses
+at both the graduate and undergraduate level.  Such modules will have
+several goals:
 
-Of course, many of these projects are quite ambitious.  The PIs do not
-expect them all to succeed to the fullest possible extend, nor do they
-expect a single undergraduate to be able to complete all components of
-such projects.  However, both PIs have a strong track record of mentoring
-undergraduate research projects and have experience breaking down 
-such projects in to interesting and manageable components.  
-Hence, even if a project does not initially (or ever) result in a
-useable tool, students always come away having experienced a little 
-bit of what research is like, having learned some new technical ideas, and 
-having improved their functional programming skills. When undergraduate 
-projects are successful and have additional potential, the PIs will
+\begin{itemize}
+\item To teach both low-level mechanisms and high-level abstractions.
+\item To emphasize the principles that make the high-level abstractions.
+\item To introduce a range of \emph{rigorous}, \emph{formal} properties of
+ interest.
+\item To expose to students to basic algorithms for verification of such
+properties.
+\end{itemize}
+
+In addition to teaching concepts, we will give students hands-on
+experience writing policy using our language and verification tools.  
+More specifically, we plan to develop online tutorials for our tools
+that we can use in our classes.  To do so effectively, we will
+integrate our work with the CORE simulator~\cite{core}.  CORE
+will allow students to visualize, experiment with, and test their
+use of our specification language and verification tools.
+
+In addition to traditional in-classroom teaching, the PIs have a strong 
+track record of mentoring
+undergraduate research projects.
+The PIs will also
 investiage the use REUs to provide additional undergraduate opportunities
 and more time to develop the ideas.
 When appropriate, 
@@ -895,36 +915,43 @@ students.  This provides the undergraduate with
 an additional helping hand and teacher, and the graduate student with
 some experience mentoring a younger student.  
 
-
-\paragraph*{Graduate Education.}
-From a pedagogical point of view, our type-directed approach
-to program synthesis offers a compelling framework in which to study
-traditional topics in programming-languages theory.  Our techniques
-touch on type systems, proof theory, program equivalences, normal
-forms, \textit{etc.}, all of which are standard topics in graduate-level
-PL courses.  The application of these ideas to program synthesis will make
-for excellent course projects.  We also expect to incorporate ideas from
-this research project into our grad-level PL courses, and, as
-appropriate, make the resulting course components and projects
-available to other educators in the field via the web.
-
 \paragraph*{Under-represented minorities.} The PIs are dedicated
 to, and have a track-record of, providing opportunities to under-represented 
-minorities.  For instance, one of Walker's past undergraduate advisees
-(African American) won the CRA undergraduate outstanding undergraduate
-research award.  Both PIs have mentored numerous graduate students from 
+minorities.  For instance, two of Walker's past undergraduate advisees,
+Lester Mackey (African American) and Katherine Ye, won the CRA undergraduate 
+outstanding undergraduate
+research award.  Both PIs have also mentored numerous graduate students from 
 under-represented groups.
 
 \section{Results from Prior NSF Support}
 \label{sec:prior-support}
 
-\paragraph{David Walker, PI.}
-Walker has had many NSF-funded research projects on programming language
-design and type systems.  His most relevant grants are
+\noindent
+{\bf David Walker, PI. NSF CNS-1111520, Intellectual Merits:}
+In NSF CNS-1111520 \emph{High-Level Language Support for Trustworthy Networks},
+PI Walker and his collaborators developed new languages, interfaces
+and systems for managing software-defined networks (SDNs).  
+This project produced the Frenetic family
+of network programming languages, the first high-level languages for
+programming software-defined networks.  These languages, which include
+Frenetic~\cite{frenetic}, 
+Pyretic~\cite{pyretic},
+NetKAT~\cite{netkat} and others, all adhere to the
+\emph{principle of compositionality}, a key design element missing
+from earlier network programming languages.  They also invented the
+notion of consistent network update~\cite{reitblatt+:consistent-updates},
+which ensures key safety invariants are preserved across network update.
+Open source code for compilers produced by this project is available
+at \url{frenetic-lang.org}.
 
-{\bf Intellectual Merits:}
-
-{\bf Broader Impacts:} 
+\noindent
+{\bf NSF CNS-1111520, Broader Impacts:} 
+The Pyretic programming language was used in Nick Feamster's popular
+SDN MOOC and was used to teach tens of thousands of students and
+network operators all over the US.  Thanks to its inclusion in this
+MOOC, thousands of students have downloaded and used Pyretic.  The PIs
+also helped create the P4 switch configuration language, which is
+becoming an industry standard.
 
 
 
