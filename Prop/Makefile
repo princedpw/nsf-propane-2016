@@ -34,5 +34,14 @@ proof: proposal.tex ${TEXFILES}
 dpw:
 	pdflatex dpw-bio
 
+millstein:
+	pdflatex millstein-bio
+
+data:
+	pdflatex data-management
+
+collaboration:
+	pdflatex collaboration
+
 clean:
 	rm -f *.aux *.bbl *.blg *.log *.dvi *.bak *~ proposal.ps proposal.pdf 
