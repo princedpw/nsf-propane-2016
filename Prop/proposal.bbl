@@ -16,17 +16,6 @@ C.~J. Anderson, N.~Foster, A.~Guha, J.-B. Jeannin, D.~Kozen, C.~Schlesinger,
 M.~Anderson.
 \newblock Time warner cable says outages largely resolved, August 2014.
 
-\bibitem{beckett+:propane16}
-R.~Beckett, R.~Mahajan, T.~Millstein, J.~Padhye, and D.~Walker.
-\newblock Don't mind the gap: Bridging network-wide policies and device-level
-  configurations.
-\newblock In {\em {SIGCOMM}}, 2016.
-
-\bibitem{bgpmon}
-News and press | {BGP}mon.
-\newblock \url{http://www.bgpmon.net/news-and-events/}.
-\newblock Retrieved 2016-01-26.
-
 \bibitem{P4}
 P.~Bosshart, D.~Daly, M.~Izzard, N.~McKeown, J.~Rexford, D.~Talayco, A.~Vahdat,
   G.~Varghese, and D.~Walker.
@@ -154,11 +143,6 @@ C.~Prakash, J.~Lee, Y.~Turner, J.-M. Kang, A.~Akella, S.~Banerjee, C.~Clark,
 \newblock In {\em Proceedings of the 2015 ACM Conference on Special Interest
   Group on Data Communication}, pages 29--42. ACM, 2015.
 
-\bibitem{fattire}
-M.~Reitblatt, M.~Canini, N.~Foster, and A.~Guha.
-\newblock {FatTire}: Declarative fault tolerance for software defined networks.
-\newblock In {\em HotSDN}, 2013.
-
 \bibitem{sagiv+:shape-analysis}
 M.~Sagiv, T.~Reps, and R.~Wilhelm.
 \newblock Parametric shape analysis via 3-valued logic.
@@ -181,17 +165,6 @@ A.~Singla, C.-Y. Hong, L.~Popa, and P.~B. Godfrey.
 S.~Smolka, S.~Eliopoulos, N.~Foster, and A.~Guha.
 \newblock A fast compiler for netkat.
 \newblock In {\em {ICFP}}, ICFP 2015, 2015.
-
-\bibitem{foster:merlin}
-R.~Soul{\'{e}}, S.~Basu, P.~J. Marandi, F.~Pedone, R.~Kleinberg, E.~G. Sirer,
-  and N.~Foster.
-\newblock Merlin: {A} language for provisioning network resources.
-\newblock {\em CoRR}, abs/1407.1199, 2014.
-
-\bibitem{pakistan-youtube}
-P.~Svensson.
-\newblock Pakistan causes {YouTube} outage for two-thirds of world.
-\newblock \url{http://abcnews.go.com/Technology/story?id=4344105}, 2008.
 
 \bibitem{thwack}
 configuration templates | thwack.
