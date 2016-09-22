@@ -1,18 +1,33 @@
 \section{Introduction}
 
 All sectors of society depend on properly functioning networks.  Further, both the complexity and requirements of these networks are increasing as more devices come online and richer data and services move to the cloud.  Unfortunately, network errors routinely lead to costly downtime~\cite{mahajan+:bgp-misconfiguration,feamster+:rcc,batfish,dc-failure-study}.
-Figure~\ref{fig:network-downtime}, which reports the results of two
-previous studies on network outages, shows that human error, which often occurs in configuration, update, or planned maintenance of networks, is the single largest cause of outages, and, anecdotally, the evidence is equally compelling.  For instance, recent misconfigurations at
+Figure~\ref{fig:network-downtime} reports the results of a Juniper
+study on network outages.  It shows that human error, which often occurs in configuration, update, or planned maintenance of networks, is the single largest cause of outages. 
+Anecdotally, the evidence is equally compelling.  For instance, recent misconfigurations at
 Time Warner led to an hour-long, nation-wide outage of their backbone network~\cite{time-warner} and at United led to temporary suspension of all US flights in July 2015~\cite{united}.
 
 One fundamental reason for these misconfigurations is the
 mismatch between the intended high-level
 policies and the low-level configurations.  On the one hand, most routing policies involve
 network-wide properties:  never announce a particular destination externally, isolate two subnetworks from one another, prefer traffic through a transit customer over a transit provider, etc.
-In the other hand, these policies must be implemented via hundreds of low-level configuration directives at each individual router in the network.  Typically, operators do their job by manually
+On the other hand, these policies must be implemented via hundreds of low-level configuration directives at each individual router in the network.  Typically, operators do their job by manually
 decomposing their network-wide policy into a set of low-level configurations,
 one per device.  As a result, errors range from simple consistency issues (community values do not match) to more subtle scenarios (misconfigured ACLs causing intermittent disconnectivity)~\cite{feamster+:rcc,batfish}.
 
+%\begin{figure}[t]
+\begin{wrapfigure}{R}{0.4\textwidth}
+  \centering
+%  \includegraphics[width=.45\textwidth]{figures/errors1}
+%  \hspace{1cm}
+  \includegraphics[width=.35\textwidth]{figures/errors2} \\
+%  (a)  \hspace{3in} (b)
+  \caption{
+%Two studies on network downtime:  (a) From the Yankee group (2002),
+%roughly 60\% of network downtime is caused by human error; (b) 
+A Juniper study (2008): 50-80\% of outages are the result of human error.}
+  \label{fig:network-downtime}
+\end{wrapfigure}
+%\end{figure}
 
 % It is well known that the fundamental problem is caused by programming individual router configs device by device to implement a network-wide policy, and % this process, like assembly language coding, is fraught with peril.  Common errors in manual BGP configuration setting range from simple consistenc
  % % (community values do not match) to complex reasoning (failure In backup only triggered after failure). 
@@ -75,7 +90,8 @@ A natural solution to these problems, analogous to the trend in languages for so
 Indeed, in recent years, researchers have developed a series of network-wide policy 
 languages that target  software-defined networking (SDN) platforms for logically centralized control planes, such as OpenFlow~\cite{frenetic,srikant,flowlog,foster:merlin,vericon,sagiv:l,fattire,netkat,kinetic,sdn-languages}. These languages have developed intuitive high-level abstractions for specification
 of routing policy and developed algorithms that take care of many of the nitty-gritty details of
-generating a low-level implementation.
+generating a low-level implementation, thereby avoiding the errors caused by
+ad hoc manual configuration.
 Unfortunately, these solutions do not apply to the large number of commercial clouds and 
 enterprise networks that have invested in, and continue to use, distributed control planes and 
 traditional routers.  Moreover, most of the academic projects that use centralized control 
@@ -88,29 +104,19 @@ they may be deployed in many industrial settings.
 %policy (routing between one's network and a neighbor), which occupies a significant portion of route
 %configuration complexity.
 
-\begin{figure}[t]
-%\begin{wrapfigure}{R}{0.5\textwidth}
-  \centering
-  \includegraphics[width=.45\textwidth]{figures/errors1}
-  \hspace{1cm}
-  \includegraphics[width=.45\textwidth]{figures/errors2} \\
-  (a)  \hspace{3in} (b)
-  \caption{Two studies on network downtime:  (a) From the Yankee group (2002),
-roughly 60\% of network downtime is caused by human error; (b) From a Juniper
-study (2008), 50-80\% of outages are the result of human error.}
-  \label{fig:network-downtime}
-%\end{wrapfigure}
-\end{figure}
+
 
 In a nutshell,
 the overarching goal of this project is to find 
-\emph{a pragmatic and highly reliable path for deployment of
-high-level network abstractions} invented over recent years, and to invent new ones where necessary.
+\emph{a highly reliable path for deployment of
+high-level network abstractions} invented over recent years, and to invent new ones 
+where network operators need them.
 More specifically, to prepare for this proposal, the PIs have recently developed a 
 new network programming language called Propane~\cite{beckett+:propane} (winner of SIGCOMM 2016
-best paper award) that borrows from SDN languages an expressive set of primitives for specifying the allowed network-wide paths.  Propane further extends these capabilities to enable the specification of backup paths via a simple form of path preferences, and allows the expression of both intra-domain
-and inter-domain routing objectives.  Moreover, rather than compiling to OpenFlow,
-Propane compiles to BGP, the industry-standard and ubiquitous inter-domain routing protocol. 
+best paper award) that borrows from SDN languages an expressive set of primitives for specifying the allowed network-wide paths.  Propane further extends these capabilities to enable the specification of backup paths via a simple form of path preferences, and allows the expression of both intra-domain 
+and inter-domain routing objectives.  Crucially, rather than compiling to OpenFlow,
+Propane compiles to BGP, the industry-standard and ubiquitous inter-domain routing protocol.  In addition to being an industry standard, BGP is distributed, fault tolerant
+and scalable.
 However, despite its advances, it is impossible to deploy Propane in pragmatic settings
 at the moment for several fundamental reasons:
 
@@ -122,13 +128,21 @@ at the moment for several fundamental reasons:
 %to the current state of the art:
 
 \begin{description}
-\item[expressiveness]  Despite their challenges, today's low-level configuration languages provide fine-grained control over network functionality and performance.  Operators will not move to higher-level, network-wide policy languages unless they can express the subtle and complex policies that business requirements demand.  
+\item[expressiveness]  Despite their challenges, today's low-level configuration languages provide fine-grained control over network functionality and performance.  Operators will not move to higher-level, network-wide policy languages unless they can express the subtle and complex policies that business requirements demand.  Propane's current 
+abstractions on their own do not yet provide a sufficiently wide range of
+behaviors.
 
 \item[intelligibility] At least in the near term, the low-level configurations output by the Propane compiler must be human readable and match the configuration styles in use today.  This requirement has become clear in the PIs discussions with network engineers at two large cloud providers.  It is necessary to give them confidence in the behavior of their networks, enable the configurations to be processed with a variety of existing tools, and allow operators to directly modify and debug configurations when necessary.  
 % For instance, Network operators, especially for large, structured networks such as data centers, do not think in terms of individual devices.  Instead, they craft policy in terms of \emph{sets} of devices that
 % play similar roles such as top-of-rack switch, tier-one switch, \etc and the more general \emph{topological invariants} that connect these sets (\eg, the number of edges or paths that connect elements of each set).  The output of deployable synthesis must match the cognitive models used by network operators.
 
-\item[deployability] No large network is likely to switch from manual configuration to Propane in one ``flag day."   Rather, support for {\em incremental deployment} is critical, with parts of the network gradually moving to this new discipline over time.
+\item[migration safety]  If an operator's current network is operating smoothly,
+migration to a new management platform is a risk, even if that new platform
+offers improved efficiency and lower future management costs.  To reduce the
+risk, tools that faciliate migration and verify that new high-level policy is
+functionally equivalent to old legacy deployments are necessary.
+
+\item[incrementality] No large network is likely to switch from manual configuration to Propane in one ``flag day."   Rather, support for {\em incremental deployment} is critical, with parts of the network gradually moving to this new discipline over time.
 
 \end{description}
 
@@ -171,15 +185,21 @@ at the moment for several fundamental reasons:
 
 \paragraph*{Intellectual Merit.}
 Our goal in this proposal is to develop the techniques and associated tools
-to support {\em deployable configuration synthesis}.  Building in our preliminary work, we will develop a platform called \Name that addresses the deficiencies described above.  Specifically, our research has several thrusts:
+to support {\em deployable configuration synthesis}.  Building on our preliminary work, we will develop a new platform called \Name that addresses the deficiencies described above.  Our research has several main thrusts:
 
 \begin{enumerate}
 
 \item Network operators typically craft policy in terms of \emph{sets} of devices that
-play similar roles in the network (e.g., top-of-rack switches, border routers, \etc) and the  \emph{topological invariants} among these sets (\eg, the number of edges or paths that connect elements of each set).  We will devise new abstractions that allow network engineers to easily define such roles and specify policy in terms of them.  We will then develop compilation techniques that respect these roles, producing one {\em configuration template} per role which can be instantiated to produce the concrete configurations for each node.  This technique will ensure that output configurations match both the cognitive models of network engineers and their existing approach of manually implementing per-role configuration templates.
+play similar roles in the network (e.g., top-of-rack switches, border routers, \etc) and the  \emph{topological invariants} among these sets (\eg, the number of edges or paths that connect elements of each set).  We will devise new abstractions that allow network engineers to easily define such roles and specify policy in terms of them.  We will then develop compilation techniques that respect these roles, producing one {\em configuration template} per role which can be instantiated to produce the concrete configurations for each device.  
+%This technique will ensure that output configurations match both the cognitive models of network engineers and their existing approach of manually implementing per-role configuration templates.  
+In addition to making policies more \emph{expressive},
+they will make the results of compilation more \emph{intelligeable}, allowing
+network operators to examine a small number of templates
+rather than a vast number of individual configurations.
 
-\item We will study the kinds of routing policies that are in common use for enterprises, data centers, and ISPs~\cite{routingplaybook} and develop new language mechanisms for declaratively expressing such policies.  A key focus will be on inter-domain routing and specification of transit contracts.
-
+\item We will study the kinds of routing policies that are in common use for enterprises, data centers, and ISPs~\cite{routingplaybook} and develop new language mechanisms for declaratively expressing such policies.  A key new focus will be on inter-domain routing and specification of \emph{financial transit contracts} and \emph{networking costs}.
+By incorporating costs and contracts into inter-domain routing specifications,
+the underlying implementation can optimize its use of internet peers.
 
 \item There is no ``one size fits all'' networking protocol. Propane policies compile solely to BGP, but the additional expressiveness described above, along with performance requirements and the preferences of network engineers, will demand that configurations employ multiple protocols, as is standard for manual configurations today.  We will develop algorithms that synthesize configurations employing a combination of \emph{inter-domain routing} protocols such as BGP and \emph{intra-domain routing protocols} such as OSPF and RIP.  We will also target
 \emph{SDN-oriented protocols} such as OpenFlow~\cite{openflow}, P4~\cite{P4} and PIFO~\cite{pifo}, allowing networks to more easily adopt this technology when appropriate, and 
@@ -187,7 +207,7 @@ without operators necessarily needing to change high-level policy specifications
 
 \item We will develop approaches to help network engineers migrate existing configurations to network-wide policies.  First, we will develop new algorithms to translate legacy configurations into the intermediate language supported by the \Name language.  Second, we will leverage modern constraint solvers to automatically compare such configurations with a proposed high-level policy, either proving equivalence or providing counterexamples that guide policy refinement.  Third, we will explore techniques to automatically infer network-wide policies directly from the legacy configurations.
 
-\item Finally, we will develop approaches to support a mixed form of configuration, whereby some portions of the network behavior are specified with \Name and some using existing technologies.  Supporting manual configurations is essential to enable incremental deployment but also to allow an escape mechanism to specify behaviors outside the capability of \Name (just as higher-level languages allow calls to native code).  We envisage adopting and extending the notion of {\em assume-guarantee reasoning} from the literature on compositional program analysis~\cite{} to support verification and synthesis for mixed configurations.  
+\item Finally, we will develop approaches to support a mixed form of configuration, whereby some portions of the network behavior are specified with \Name and some using existing technologies.  Supporting manual configurations is essential to enable incremental deployment but also to allow an escape mechanism to specify behaviors outside the capability of \Name (just as higher-level languages allow calls to native code).  We envisage adopting and extending the notion of {\em assume-guarantee reasoning} from the literature on compositional program analysis~\cite{Jones:assume-guarantee} to support verification and synthesis for mixed configurations.  
 \end{enumerate}
 
 \tdm{This is a nice idea but I'm not sure where it fits.}
@@ -195,31 +215,54 @@ without operators necessarily needing to change high-level policy specifications
 updates to low-level network configurations given a pair of old and new \Name specifications, as well as a \emph{plan} to update network devices to
 safely transition the system from old configuration to new configuration while the system is in operation.}
 
-\paragraph{The Team.}  Our team has the breadth of skills, backgrounds, and perspectivesthat will be required to accomplish the agenda set out above.  David Walker is an expert in programming language design \tdm{fill in this part, Dave, and make sure to mention the prior SDN work etc.}  Todd Millstein is an expert in automated software verification as well as techniques for static and dynamic program analysis.  He has been applying and extending these approaches to reason about various aspects of networks for more than ten years.  This proposal particularly leverages his expertise in automated verification of low-level network configurations~\cite{batfish}.  George Varghese is an expert in network algorithmics \tdm{fill in this part, George.}
+\paragraph{The Team.}  Our team has the breadth of skills, backgrounds, and perspectivesthat will be required to accomplish the agenda set out above.  
+Over the last 8 years, David Walker and his collaborators
+developed the first high-level SDN programming languages, including
+Frenetic~\cite{frenetic}, Pyretic~\cite{pyretic} and NetKAT~\cite{netkat}.
+He also developed the concept of consistent network updates~\cite{reitblatt+:consistent-updates}
+and contributed to the design of P4~\cite{P4}.   Todd Millstein is an expert in automated software verification as well as techniques for static and dynamic program analysis.  He has been applying and extending these approaches to reason about various aspects of networks for more than ten years.  This proposal particularly leverages his expertise in automated verification of low-level network configurations~\cite{batfish}.  George Varghese is an expert in network algorithmics \tdm{fill in this part, George.}
 
 \paragraph{Broader Impacts.}  
 Our economy, businesses, governmental and military infrastructure all depend upon having networks that function
-reliably.  Unfortunately, current network configuration languages are
-terribly complex and difficult to reason about.  Consequently,
-operators all-too-often make mistakes when programming this critical
-infrastructure.  The primary goal of this proposal is to develop
-a platform for deployable synthesis, verification and update that
+reliably.  
+%Unfortunately, current network configuration languages are
+%terribly complex and difficult to reason about.  Consequently,
+%operators all-too-often make mistakes when programming this critical
+%infrastructure.  
+The primary goal of this proposal is to develop
+a path for deployment of high-level network programming abstractions
 improves the reliability of existing legacy networks and helps
-transition those networks to new management systems.
+transition those networks in a safe and reliable way to new management systems.
 
-As we have done in the development of our prior work on Propane~\cite{beckett+:propane} as well as tools such as Batfish~\cite{batfish}, we will obtain iterative feedback from network engineers and operators to ensure that our research results will meet their needs.  Indeed, Batfish identified serious misconfiguration errors in several real-world enterprise and cloud networks that were subsequently fixed.  Also as in our prior work, we will make our tools publicly available for use by other researchers and practitioners.
+In order to maximize the effectiveness of our proposed and make a broader
+impact, we must educate both students and industry alike.  To do so,
+we will engage in industry outreach, by organizing a workshop under
+the umbrella of the newly-formed
+Cornell-Princeton Center for Network Programming (CNP)~\cite{center-for-network-programming}.
+Modelled after the inaugural CNP summit in New York, which drew roughly 50
+invitation-only participants from the North-East, including industry participants
+from networking, hardware, software and financial companies, our workshop will 
+all academics to engage with industry via panel
+discussions, technical talks and informal discussions.  
+
+%As we have done in the development of our prior work on Propane~\cite{beckett+:propane} as well as tools such as Batfish~\cite{batfish}, we will obtain iterative feedback from network engineers and operators to ensure that our research results will meet their needs.  Indeed, Batfish identified serious misconfiguration errors in several real-world enterprise and cloud networks that were subsequently fixed.  Also as in our prior work, we will make our tools publicly available for use by other researchers and practitioners.
 
 We also plan on having educational impact in various ways.  
 The PIs have a track record of engaging undergraduates in research, often resulting in publications.  This project will allow us to engage undergraduates in interdisciplinary
 research that applies programming language techniques, such as
 automated verification and optimizing compilation, to problems in the networking domain.  At the graduate
-level, we will introduce a unit on network programming to our core
-graduate courses on programming languages and semantics.  Those core
-courses are taken by both programming languages students and students
-in other disciplines to cover PhD breadth requirements.  By
-demonstrating how PL techniques can be used to facilitate software
-development in other domains, we hope to increase engagement of
-students from other disciplines.
+level, we will introduce a unit on network programming with high-level
+abstractions to our core
+graduate courses on programming languages and semantics.  We hope to
+produce future network engineers with interdisciplinary skills in verification
+and programming languages.
+%Those core
+%courses are taken by both programming languages students and students
+%in other disciplines to cover PhD breadth requirements.  
+%By
+%demonstrating how PL techniques can be used to facilitate software
+%development in other domains, we hope to increase engagement of
+%students from other disciplines.
 
 Finally, the PIs have a history of engaging women and under-represented minorities in
 their research projects and will continue to seek out opportunities to
@@ -267,8 +310,11 @@ Ye, will be entering graduate school in Fall 2016.
     \end{minipage}
 \end{figure}
 
-In order to use \Name to synthesize configurations for collections
-of routing running BGP, users write down constraints that 
+In order to provide context for our proposed research, we first describe our
+preliminary work on \Propane. Reviewers familiar with \Propane may skip to section~\ref{sec:research}, where we describe our proposed new research.  
+
+\Propane allows users to program collections of routers running BGP
+by writing down high-level, declarative constraints that 
 describe the paths that traffic is allowed to flow along, as well
 as the back-up paths to use in case of failure.  These constraints are
 remarkably
@@ -392,7 +438,7 @@ From there, configurations for individual devices may be generated in
 vendor-specific formats such as Cisco or Quagga formats.
 
 \paragraph*{Related Work.}
-The \Name system and language design is inspired by past work on many 
+The \Propane system and language design is inspired by past work on many 
 recent SDN programming
 languages~\cite{frenetic,pyretic,flowlog,foster:merlin,netkat,kinetic,pga}.
 However, several significant differences stand out:  (1) the ability to express
@@ -410,13 +456,24 @@ point~\cite{sdx,isdx}. This project involves design of a route server, which
 composes the routing policy from
 many neighboring networks, which each exchange traffic
 with one another.
-In contrast, the goal of \Name is to support high-level 
+In contrast, the goal of \Propane is to support high-level 
 specification of routing policy for \emph{one}
 network.  Because
-\Name compiles to traditional distributed protocols (BGP) as opposed to
+\Propane compiles to traditional distributed protocols (BGP) as opposed to
 to infrastructure managed by a centralized route server, 
-\Name's compilation and synthesis algorithms
+\Propane's compilation and synthesis algorithms
 are completely different from those used in SDX.
+
+RPSL~\cite{rpsl}, Nettle~\cite{nettle} and DADC~\cite{dadc} are three
+other languages designed to routing policy for distributed control planes
+running legacy protocols.  RPSL uses attribute-value pairs to specify policy,
+Nettle embeds router specifications in Haskell, and DADC uses logic programming
+and SAT to infer parameters for configurations automatically and ensure they
+are consistent.  \Propane differs from this past work in a number of ways but most
+importantly in the kinds of abstractions provided.  In particular, \Propane supplies
+a high-level constraint language that allows programmers to specify
+network-wide paths and relations between paths.  This lifts the level of abstraction
+for programmers and avoids device-by-device configuration.
 
 %% The centralized control planes of SDN, however, are not a panacea.
 %% First, while many SDN programming systems~\cite{sdn-languages} provide effective \emph{intra}-domain routing
@@ -823,50 +880,51 @@ Redistrib. & Acyclic & Yes & Yes \\
 \label{fig:smt-vs-arc}
 \end{wrapfigure}
 
-\section{Related Work}
 
-To reduce configuration errors, operators are increasingly adopting an
-approach in which common tasks are captured as parameterized templates~\cite{hatch,thwack}.
-%
-%More powerful still are systems like
-%ConfigAssure~\cite{narain:lisa05,narain+:configassure}, which use SAT solving
-%and model finding tools to fill in parameters in configurations while
-%ensuring key correctness constraints are satisfied.
-%One step further, systems like
-%ConfigAssure~\cite{narain:lisa05,narain+:configassure} use SAT solving
-%and model finding tools to correctly and consistently fill in some parameters.
-%
-While templates help ensure certain kinds of consistency across devices,
-they do not provide fundamentally different abstractions from existing configuration languages
-or bridge the semantic divide between network-wide policies and device-level configuration.
-%They do not provide fundamentally different abstractions
-%from existing configuration languages and
-Thus, they still require operators to
-manually decompose policies into device behaviors and to reason manually about the interaction of different
-protocols.
+%% \section{Related Work}
 
-As a complementary approach, configuration analysis tools can help
-reduce misconfigurations by checking if low-level configurations match
-high-level policy~\cite{batfish,feamster+:rcc}. However, such tools, while
-an important component of any network management system,
-cannot, on their own, help operators with the challenging task of generating
-configurations in the first place.
+%% To reduce configuration errors, operators are increasingly adopting an
+%% approach in which common tasks are captured as parameterized templates~\cite{hatch,thwack}.
+%% %
+%% %More powerful still are systems like
+%% %ConfigAssure~\cite{narain:lisa05,narain+:configassure}, which use SAT solving
+%% %and model finding tools to fill in parameters in configurations while
+%% %ensuring key correctness constraints are satisfied.
+%% %One step further, systems like
+%% %ConfigAssure~\cite{narain:lisa05,narain+:configassure} use SAT solving
+%% %and model finding tools to correctly and consistently fill in some parameters.
+%% %
+%% While templates help ensure certain kinds of consistency across devices,
+%% they do not provide fundamentally different abstractions from existing configuration languages
+%% or bridge the semantic divide between network-wide policies and device-level configuration.
+%% %They do not provide fundamentally different abstractions
+%% %from existing configuration languages and
+%% Thus, they still require operators to
+%% manually decompose policies into device behaviors and to reason manually about the interaction of different
+%% protocols.
 
-%Further, today's tools cannot verify correctness under concrete failure scenarios, rather than under all possible failures.
+%% As a complementary approach, configuration analysis tools can help
+%% reduce misconfigurations by checking if low-level configurations match
+%% high-level policy~\cite{batfish,feamster+:rcc}. However, such tools, while
+%% an important component of any network management system,
+%% cannot, on their own, help operators with the challenging task of generating
+%% configurations in the first place.
 
-Software-defined networking (SDN) and its abstractions
-are, in part, the research
-community's response to the difficulty of maintaining policy
-compliance through distributed device interactions~\cite{ethane}.
-Instead of organizing networks around a distributed
-collection of devices that compute forwarding tables through
-mutual interactions, the devices are told how to
-forward packets by a centralized controller. The controller is responsible for ensuring that the
-paths taken are compliant with operator specifications.
-%Researchers
-%have developed increasingly sophisticated languages that let operators
-%specify desirable network paths~\cite{x,y,z} which are then translated
-%to forwarding tables at runtime.
+%% %Further, today's tools cannot verify correctness under concrete failure scenarios, rather than under all possible failures.
+
+%% Software-defined networking (SDN) and its abstractions
+%% are, in part, the research
+%% community's response to the difficulty of maintaining policy
+%% compliance through distributed device interactions~\cite{ethane}.
+%% Instead of organizing networks around a distributed
+%% collection of devices that compute forwarding tables through
+%% mutual interactions, the devices are told how to
+%% forward packets by a centralized controller. The controller is responsible for ensuring that the
+%% paths taken are compliant with operator specifications.
+%% %Researchers
+%% %have developed increasingly sophisticated languages that let operators
+%% %specify desirable network paths~\cite{x,y,z} which are then translated
+%% %to forwarding tables at runtime.
 
 
 
