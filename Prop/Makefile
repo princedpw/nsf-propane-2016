@@ -6,7 +6,7 @@ STYFILES = $(wildcard *.sty)
 
 proposal.pdf: ${TEXFILES} ${BIBFILES} ${STYFILES}
 	pdflatex proposal
-	-bibtex proposal
+	bibtex proposal
 	pdflatex proposal
 	pdflatex proposal
 
