@@ -189,7 +189,7 @@ to support {\em deployable configuration synthesis}.  Building on our preliminar
 
 \begin{enumerate}
 
-\item {\bf Rasing the Abstraction Level of Policy Specification:} Network operators typically craft policy in terms of \emph{sets} of devices that
+\item {\bf Policy Specification Abstractions:} Network operators typically craft policy in terms of \emph{sets} of devices that
 play similar roles in the network (e.g., top-of-rack switches, border routers, \etc) and the  \emph{topological invariants} among these sets (\eg, the number of edges or paths that connect elements of each set).  We will devise new abstractions that allow network engineers to easily define such roles and specify policy in terms of them.  We will then develop compilation techniques that respect these roles, producing one {\em configuration template} per role which can be instantiated to produce the concrete configurations for each device.  
 %This technique will ensure that output configurations match both the cognitive models of network engineers and their existing approach of manually implementing per-role configuration templates.  
 In addition to making policies more \emph{expressive},
@@ -197,17 +197,17 @@ they will make the results of compilation more \emph{intelligeible}, allowing
 network operators to examine a small number of templates
 rather than a vast number of individual configurations.
 
-\item {\bf Increasing Expressivity:} We will study the kinds of routing policies that are in common use for enterprises, data centers, and ISPs~\cite{routingplaybook} and develop new language mechanisms for declaratively expressing such policies.  A key new focus will be on inter-domain routing and specification of \emph{financial transit contracts} and \emph{networking costs}.
+\item {\bf Expressivity:} We will study the kinds of routing policies that are in common use for enterprises, data centers, and ISPs~\cite{routingplaybook} and develop new language mechanisms for declaratively expressing such policies.  A key new focus will be on inter-domain routing and specification of \emph{financial transit contracts} and \emph{networking costs}.
 By incorporating costs and contracts into inter-domain routing specifications,
 the underlying implementation can optimize its use of internet peers.
 
-\item {\bf Increasing Backend Diversity:} There is no ``one size fits all'' networking protocol. Propane policies compile solely to BGP, but the additional expressiveness described above, along with performance requirements and the preferences of network engineers, will demand that configurations employ multiple protocols, as is standard for manual configurations today.  We will develop algorithms that synthesize configurations employing a combination of \emph{inter-domain routing} protocols such as BGP and \emph{intra-domain routing protocols} such as OSPF and RIP.  We will also target
+\item {\bf Backend Diversity:} There is no ``one size fits all'' networking protocol. Propane policies compile solely to BGP, but the additional expressiveness described above, along with performance requirements and the preferences of network engineers, will demand that configurations employ multiple protocols, as is standard for manual configurations today.  We will develop algorithms that synthesize configurations employing a combination of \emph{inter-domain routing} protocols such as BGP and \emph{intra-domain routing protocols} such as OSPF and RIP.  We will also target
 \emph{SDN-oriented protocols} such as OpenFlow~\cite{openflow}, P4~\cite{P4} and PIFO~\cite{pifo}, allowing networks to more easily adopt this technology when appropriate, and 
 without operators necessarily needing to change high-level policy specifications.
 
-\item {\bf Creating Migration Abstractions:} We will develop approaches to help network engineers migrate existing configurations to network-wide policies.  First, we will develop new algorithms to translate legacy configurations into the intermediate language supported by the \Name language.  Second, we will leverage modern constraint solvers to automatically compare such configurations with a proposed high-level policy, either proving equivalence or providing counterexamples that guide policy refinement.  Third, we will explore techniques to automatically infer network-wide policies directly from the legacy configurations.
+\item {\bf Migration Abstractions:} We will develop approaches to help network engineers migrate existing configurations to network-wide policies.  First, we will develop new algorithms to translate legacy configurations into the intermediate language supported by the \Name language.  Second, we will leverage modern constraint solvers to automatically compare such configurations with a proposed high-level policy, either proving equivalence or providing counterexamples that guide policy refinement.  Third, we will explore techniques to automatically infer network-wide policies directly from the legacy configurations.
 
-\item {\bf Enabling Mixed Verification:} Finally, we will develop approaches to support a mixed form of configuration, whereby some portions of the network behavior are specified with \Name and some using existing technologies.  Supporting manual configurations is essential to enable incremental deployment but also to allow an escape mechanism to specify behaviors outside the capability of \Name (just as higher-level languages allow calls to native code).  We envisage adopting and extending the notion of {\em assume-guarantee reasoning} from the literature on compositional program analysis~\cite{Jones:assume-guarantee} to support verification and synthesis for mixed configurations.  
+\item {\bf Mixed Verification:} Finally, we will develop approaches to support a mixed form of configuration, whereby some portions of the network behavior are specified with \Name and some using existing technologies.  Supporting manual configurations is essential to enable incremental deployment but also to allow an escape mechanism to specify behaviors outside the capability of \Name (just as higher-level languages allow calls to native code).  We envisage adopting and extending the notion of {\em assume-guarantee reasoning} from the literature on compositional program analysis~\cite{Jones:assume-guarantee} to support verification and synthesis for mixed configurations.  
 \end{enumerate}
 
 \tdm{This is a nice idea but I'm not sure where it fits.}
@@ -220,7 +220,7 @@ Over the last 8 years, David Walker and his collaborators
 developed the first high-level SDN programming languages, including
 Frenetic~\cite{frenetic}, Pyretic~\cite{pyretic} and NetKAT~\cite{netkat}.
 He also developed the concept of consistent network updates~\cite{reitblatt+:consistent-updates}
-and contributed to the design of P4~\cite{P4}.   Todd Millstein is an expert in automated software verification as well as techniques for static and dynamic program analysis.  He has been applying and extending these approaches to reason about various aspects of networks for more than ten years.  This proposal particularly leverages his expertise in automated verification of low-level network configurations~\cite{batfish}.  George Varghese won the 2014 SIGCOMM lifetime award for his work on routers.  in the last 5 years, he has helped, with the other PIs and colleagues, create the field of network verification.  He has helped create open source verification tools for networks including Header Space Analysis~\cite{hsa} and Network Optimized Datalog (NoD)~\cite{nod}. NoD has been used by Amazon to create verification tools for customer-created virtual networks.  Together, the PIs cover the full spectrum of Network Verification from semantics and synthesis (Walker) to bottom-up verification (Millstein, Varghese) to networking (Varghese),
+and contributed to the design of P4~\cite{P4}.   Todd Millstein is an expert in automated software verification as well as techniques for static and dynamic program analysis.  He has been applying and extending these approaches to reason about various aspects of networks for more than ten years.  This proposal particularly leverages his expertise in automated verification of low-level network configurations~\cite{batfish}.  George Varghese won the 2014 SIGCOMM lifetime award for his work on routers.  in the last 5 years, he has helped, with the other PIs and colleagues, create the field of network verification.  He has helped create open source verification tools for networks including Header Space Analysis~\cite{hsa} and Network Optimized Datalog (NoD)~\cite{nod}. NoD has been used by Amazon to create verification tools for customer-created virtual networks.  Together, the PIs cover the full spectrum of Network Verification from semantics and synthesis (Walker) to bottom-up verification (Millstein, Varghese).
 
 \paragraph{Broader Impacts.}  
 Our economy, businesses, governmental and military infrastructure all depend upon having networks that function
@@ -234,9 +234,9 @@ a path for deployment of high-level network programming abstractions
 improves the reliability of existing legacy networks and helps
 transition those networks in a safe and reliable way to new management systems.
 
-{\bf Cloud Deployment:}  We will focus on two major clouds: Microsoft Azure and Google.  All 3 PIs have a strong connection with Microsoft.  Walker via student Ryan Beckett has deployed part of the Propane compiler at Microsoft; Millstein recently won the MSR outstanding collaborator award; Varghese worked at MSR from 2012-2016 and Albert Greenberg, head of Azure, is open to collaborating with the team.   
+{\bf Cloud Deployment:}  We will focus on two major clouds: Microsoft Azure and Google.  All 3 PIs have a strong connection with Microsoft.  Walker via student Ryan Beckett translated a number of Azure policies into Propane in 2015 and validated his models with operators. Millstein recently won the MSR outstanding collaborator award; Varghese worked at MSR from 2012-2016; Albert Greenberg, head of Azure, is open to collaborating with the team.   
 
-We will also seek to deploy at Google: both Walker and Varghese have collaborated with Amin Vahdat the head of networking at Google.  These two clouds are different because Azure is a public cloud while the Google cloud supports Google services; adding abstractions that cover both user cases will be an important step towards credibility.  Collaboration will be done (as with Ryan Beckett via students who will intern at Microsoft and Google
+We will also seek to deploy at Google: both Walker and Varghese have collaborated with Amin Vahdat the head of networking at Google.  These two clouds are different because Azure is a public cloud while the Google cloud supports Google services; adding abstractions that cover both user cases will be an important step towards credibility.  Collaboration will be done (as with Ryan Beckett and Ari Fogel) via students who will intern at Microsoft and Google
 
 {\bf Broader Outreach:}  While Microsoft and Google will teach us a great deal, we need to learn policies from a broader set of networks.  In order to maximize the effectiveness of our proposed and make a broader
 impact, we must educate both students and industry alike.  To do so,
@@ -315,8 +315,8 @@ co-advising Lili Qiu (now a professor at UT Austin) and Lavanya Jose (currently 
     \end{minipage}
 \end{figure}
 
-In order to provide context for our proposed research, we first describe our
-preliminary work on \Propane. Reviewers familiar with \Propane may skip to section~\ref{sec:research}, where we describe our proposed new research.  
+Our new ideas for deployable synthesis are best understood in the context of
+our preliminary work on \Propane. Reviewers familiar with \Propane may skip to section~\ref{sec:research}, where we describe our proposed new research.  
 
 \Propane allows users to program collections of routers running BGP
 by writing down high-level, declarative constraints that 
@@ -328,7 +328,7 @@ As such, they allow users to construct complex policies
 from relatively simpler parts.  In fact, in studies of policy we obtained
 for a data center 
 and a backbone network from a large cloud provider, we have found that 
-realisti
+realistic
 routing policy (not including definitions of prefix groups and ownership of
 prefixes) that faithfully expresses the concerns of network operators
 can be expressed in as little as 30-50 lines of Propane
@@ -503,9 +503,9 @@ for programmers and avoids device-by-device configuration.
 
 The initial \Name prototype provides a preliminary platform that
 the PI will use to support a wide range of research on distributed control
-plane specification, programming, synthesis, transformation and verification.
+plane specification, programming, synthesis, transformation and verification that we now detail.
 
-\subsection{New Abstractions for Distributed Control Plane Programming}
+\subsection{Policy Specification Abstractions}
 
 \begin{wrapfigure}{R}{0.15\textwidth}
   \centering
@@ -643,33 +643,6 @@ them correct.  It will take significant practical and theoretical
 research to develop, implement, test and prove correct the necessary 
 algorithms for fault tolerance, reachability and security analysis.
 
-\paragraph*{Traffic Engineering and Inter-domain Routing.}
-Many networks have complex business relationships with their peers, providers and 
-customers.  Such networks must satisfy agreements to carry traffic while minimizing
-cost, thereby maximizing their own profits.  
-Currently, Propane users may specify preferences between routes; these
-less-preferred routes are utilized only if failures occur.  However,
-many users have more sophisticated requirements than this ---
-requirements that require cost and network capacity as well as
-failures be taken into account.  In particular, to deal with higher
-load, bursts, or partial failures, networks may need to open more
-costly routes, at least temporarily.
-
-We propose to extend Propane with facilities that allow users to specify the
-costs associated with using different interdomain routes, the capacities of these
-routes and the obligations they have to customers and peers.  In doing so, there
-are a number of design choices to be made.  In particular, should capacity and cost
-be associated with the network topology or with the user policy?  How does such
-quantitative information interact with the non-quantitative information concerning
-routes and failures?  Once the language design choices have been made, we will 
-study compilation techniques.  Our current platform compiles to BGP, but BGP 
-does not contain mechanisms for processing quantitative information or managing
-traffic engineering mechanisms.  Consequently, we propose using a hetergeneous
-back-end composed in part of BGP running at the edge, to handle interdomain
-routing, and our own custom switch agents, implemented using P4~\cite{P4}, 
-to manage the traffic monitoring, shaping, policing and routing needed to implement
-cost-aware routing.  
-
 
 \paragraph*{Related research.}
 In terms of related research, the closest overlap is with the 
@@ -706,15 +679,6 @@ While the authors consider verification, they do not consider using
 abstract topologies to support compilation or synthesis
 of new configurations from high-level specifications.
 
-When it comes to implementing traffic engineering constraints generated from
-our proposal, we will exploit
-the vast literature in traffic engineering technology~\cite{?,?}.  From a programming language
-design perspective, the closest related work is the Merlin language~\cite{foster:merlin}.  Merlin
-combines regular routing specifications with formulae that describe minimum and maximum
-bandwidth guarantees.  Merlin does not consider the interaction of traffic engineering
-specifications with faults, with business costs, or with inter-domain routing objectives.  
-Such interactions will lead to different language designs and different implementation
-strategies (which mix BGP with traffic engineering mechanisms, for instance).
 
 \paragraph*{Summary of key research questions:}
 
@@ -728,15 +692,81 @@ Do we need hierarchical abstractions?  Probabilistic abstractions?
 \item How do we analyze properties of network policies, such as
 reachability and fault tolerance, over abstract
 topologies?  How do these algorithms perform?
-\item How do we define a specification language that combines inter-domain
-routing objectives, fault tolerance and traffic engineering?  How
-should we implement such combined specifications?
 \item What theory underpins this research?  What is the formal 
 semantics of these abstract topologies?  How do we prove our
 compilation algorithms and analyses are correct?
 \end{itemize}
 
-\subsection{Multi-Protocol Synthesis}
+\subsection{Expressivity}
+A key goal of \Name is to synthesize common policies used by Data Centers and ISPs, many of which are 
+detailed in \cite{routingplaybook}.   In particular, we aim to add to \Name the ability to craft policy based on
+traffic (in order to reduce billing costs) which is impossible to do in \Propane.
+\paragraph*{Traffic Engineering and Inter-domain Routing.}
+Many networks have complex business relationships with their peers, providers and 
+customers.  Such networks must satisfy agreements to carry traffic while minimizing
+cost, thereby maximizing their own profits.  
+Currently, Propane users may specify preferences between routes; these
+less-preferred routes are utilized only if failures occur.  However,
+many users have more sophisticated requirements than this ---
+requirements that require cost and network capacity as well as
+failures be taken into account.  In particular, to deal with higher
+load, bursts, or partial failures, networks may need to open more
+costly routes, at least temporarily.
+
+We propose to extend Propane with facilities that allow users to specify the
+costs associated with using different interdomain routes, the capacities of these
+routes and the obligations they have to customers and peers.  In doing so, there
+are a number of design choices to be made.  In particular, should capacity and cost
+be associated with the network topology or with the user policy?  How does such
+quantitative information interact with the non-quantitative information concerning
+routes and failures?  Once the language design choices have been made, we will 
+study compilation techniques.  Our current platform compiles to BGP, but BGP 
+does not contain mechanisms for processing quantitative information or managing
+traffic engineering mechanisms.  Consequently, we propose using a hetergeneous
+back-end composed in part of BGP running at the edge, to handle interdomain
+routing, and our own custom switch agents, implemented using P4~\cite{P4}, 
+to manage the traffic monitoring, shaping, policing and routing needed to implement
+cost-aware routing.  
+
+\paragraph*{Triggers and Time-dependent Routing Preferences}
+
+In order to support the large range of policies that real ISPs use, some of which are detailed in \cite{routingplaybook}, we will invent new abstractions in \Name.   We describe two such ideas, both
+of which are motivated by policies described in \cite{routingplaybook}.
+
+First, at the highest level, \Propane allows the operator to provide a list of routes ordered by preference and to specify that lower preference routes can be used when more preferred routes fail.  Thus in \Propane failure is the only  stimulus for changing a route.  However, a common paradigm is to allow a new route to take over when the amount of traffic volume on what was a high-preference route exceeds a threshold.  Thus, we are led to invent an abstraction and a language construct called a {\em trigger} which includes failures but also other performance related predicates, analagous to a guard~\cite{guardref} in programming languages.  We will need language constructs to model common performance measures that can be used in such triggers such as latency and traffic volume, and statistical measures such as average and 95th-percentile.
+
+Next, consider two paradigms described in \cite{routingplaybook}.   In the first, that we call a {\em Fusilade} pattern, a client network sends bursts of traffic in sequence to a series of say 5 providers.   Since billing is typically on the 95th percentile based on say 5 minute intervals, if the fusilade switches to a new provider in 1 minutes, each provider will measure 1/5th of the client's overall traffic volume.  
+
+In the second {\em End of Month} pattern, a client has two providers $P1$ and $P2$, and normally splits traffic between them.  However, the client has a minimum amount of traffic that it is charged for every month by say provider $P2$.   Thus by the end of the billing period (say a month), if the total traffic from the client to the provider falls below this floor, the client should exclusively use provider $P2$ until the bound is exceeded.
+
+It appears to be possible to synthesize both these policies by adding an {\em Optimizer} front-end to the architecture of \Propane that takes as input measured traffic in the past (and predictions for the future), and some choice of objective functions (for example, minimize billed cost).  The Optimizer outputs a set of time-indexed route preferences for a back-end such as the current \Propane system.   Note that while Triggers allow users to manually specify route preference based on performance, the optimizer allows such route preferences to be synthesized automatically.
+
+\paragraph*{Related research.}
+When it comes to implementing traffic engineering constraints generated from
+our proposal, we will exploit
+the vast literature in traffic engineering technology~\cite{?,?}.  From a programming language
+design perspective, the closest related work is the Merlin language~\cite{foster:merlin}.  Merlin
+combines regular routing specifications with formulae that describe minimum and maximum
+bandwidth guarantees.  Merlin does not consider the interaction of traffic engineering
+specifications with faults, with business costs, or with inter-domain routing objectives.  
+Such interactions will lead to different language designs and different implementation
+strategies (which mix BGP with traffic engineering mechanisms, for instance).
+
+\paragraph*{Summary of key research questions:}
+
+\begin{itemize}
+\item What abstraction boundaries (such as the interface to an optimization layer) can cleanly separate quantitative aspects of policy specification based on costs and traffic volume from non-quantitative aspects such as restricting or preferring certain routes as in \Propane today.
+\item Do we need probabilistic abstractions given that the effectiveness of traffic engineering is often analyzed  using probabistic models?  Can we benefit from recent progress in probabilistic verification such as Probabilistic NetKAT.
+\item How do we define a specification language that combines inter-domain
+routing objectives, fault tolerance and traffic engineering?  How
+should we implement such combined specifications?
+\item It is well known that even the simplest dynamic changes in BGP can lead to timer interactions (for example in Route Flap damping~\cite{routeflapdamping}.  How do we steer away an automatic optimizer from such perils?
+\item What is the formal 
+semantics of mixing quantitative and non-quantitative modules?  How do we prove our
+compilation algorithms and analyses are correct?
+\end{itemize}
+
+\subsection{Backend Diversity}
 
 Currently, the \Name prototype compiles high-level specifications into BGP
 configurations.  However, other protocols offer a range of other properties
@@ -802,7 +832,7 @@ to define more complete and efficient implementations of \Name
 provided this hardware is available?
 \end{itemize}
 
-\subsection{Migration and Integration}
+\subsection{Migration Abstractions and Mixed Verification}
 
 Higher-level policy languages such as provided by the \Name platform provide clear advantages for network understanding, maintenance, and reliability over the low-level style in use today.  While network engineers and operators would like to accrue these advantages, they are also hesitant to convert their networks to a new technology, and quite reasonably so.  It costs significant human time and effort to translate low-level configurations into a higher-level policy and to ensure that the original functionality and performance is preserved.  Further, an all-or-nothing approach to conversion to \Name is a non-starter for several reasons.  First, it precludes an incremental deployment strategy, whereby subnetworks are converted one at a time.  Second, it precludes a mixed configuration style consisting of both low-level directives and high-level policies.  Such a style allows legacy subnetworks to remain unchanged while enabling new subnetworks to take advantage of \Name.  It also provides an ``escape hatch" for engineers to obtain fine-grained, low-level control over network configuration when the desired behavior is not (easily) expressible in \Name.  
 
@@ -824,7 +854,7 @@ Second, we must convert the two resulting PGIRs into a set of logical axioms tha
 
 One downside of the proposed approach is that it requires the engineer to devise an initial \Name policy manually, which the migration tool then helps to iteratively improve.  We will therefore also consider approaches to {\em infer} a \Name policy directly from the given low-level configuration.  Since \Name policies employ regular expressions to specify allowed paths, it is natural to leverage existing approaches to learning regular expressions from examples.  For example, the L* algorithm learns regular expressions given a ``teacher" that can answer membership and equivalence queries~\cite{}.  In our setting, we can simulate the teacher by querying the PGIR representation of the low-level configuration, as well as by interaction with the user.  We will likely need to extend existing learning algorithms to handle other aspects of \Name, such as its support for prioritized paths.
 
-\paragraph{Integration} There are several challenges in supporting a mixed form of configuration, whereby some portions of the network behavior are specified with \Name and some using existing technologies.  Currently the \Name platform guarantees by construction that produced low-level configurations faithfully implement the high-level policy, and furthermore that this policy will be respected in the face of arbitrary failures.  The inclusion of existing low-level configurations for some portions of the network significant complicates the ability to provide these guarantees and any others that we may want to augment the platform to support. First, the \Name compiler has less flexibility because it must retain the given low-level configurations as is.  Second, the \Name platform must be able to reason about the network as a whole despite the fact that portions are manually configured.
+\paragraph{Mixed Verification} There are several challenges in supporting a mixed form of configuration, whereby some portions of the network behavior are specified with \Name and some using existing technologies.  Currently the \Name platform guarantees by construction that produced low-level configurations faithfully implement the high-level policy, and furthermore that this policy will be respected in the face of arbitrary failures.  The inclusion of existing low-level configurations for some portions of the network significant complicates the ability to provide these guarantees and any others that we may want to augment the platform to support. First, the \Name compiler has less flexibility because it must retain the given low-level configurations as is.  Second, the \Name platform must be able to reason about the network as a whole despite the fact that portions are manually configured.
 
 To address these challenges we plan to adapt ideas from the literature on compositional program analysis and verification.  In particular we will leverage the notion of {\em assume-guarantee reasoning}, which allows components to be analyzed separately in order to ensure global properties of interest.  In our setting, we require {\em interface specification} for the manually configured portions of the network.  The \Name platform then can {\em assume} that these specifications holds when reasoning about the network as a whole and compiling the \Name-specific portions.  Separately, we must {\em guarantee} that the manually configured portions indeed meet their interface specifications.
 
@@ -1054,7 +1084,7 @@ becoming an industry standard.
 \noindent
 {\bf NSF CNS-1161595, Broader Impacts:} The PIC and Batfish tools and Propane language are all publicly available and open source on Github.  PIC identified several previously unknown interoperability errors in popular implementations of the SIP and SPDY protocols, many of which were fixed by the developers.  Similarly, Batfish identified dozens of misconfigurations in the campus networks of two large universities as well as the data-center networks of a large cloud provider, many of which were fixed by the network engineers.
 
-{\bf George Varghese:}: George Varghese has not had NSF support in the last 5 years during his stint in industry.  Before that he has been awarded 10 NSF grants which have led to netwoirking innovations such as Deficit Round Robin, IP lookups, and automated worm fingerprinting.
+{\bf George Varghese:}: George Varghese has not had NSF support in the last 5 years during his stint in industry.  Before that, he was awarded 10 NSF grants which have led to netwoirking innovations such as Deficit Round Robin, IP lookups, and automated worm fingerprinting.
 
 %%% Local Variables:
 %%% mode: latex
