@@ -24,7 +24,7 @@ one per device.  As a result, errors range from simple consistency issues (commu
   \caption{
 %Two studies on network downtime:  (a) From the Yankee group (2002),
 %roughly 60\% of network downtime is caused by human error; (b) 
-A Juniper study (2008): 50-80\% of outages are the result of human error.}
+Juniper study~\cite{juniper-study}: 50-80\% of outages are the result of human error.}
   \label{fig:network-downtime}
 \end{wrapfigure}
 %\end{figure}
@@ -835,36 +835,41 @@ provided this hardware is available?
 
 \subsection{Migration Technology and Mixed Verification}
 
-Higher-level policy languages such as provided by the \Name platform provide clear advantages for network understanding, maintenance, and reliability over the low-level style in use today.  
-%While network engineers and operators would like to accrue these advantages, they are also hesitant to convert their networks to a new technology, and quite reasonably so.  
-However, it costs significant human time and effort to translate low-level configurations into a higher-level policy and to ensure that the original functionality and performance is preserved.  Moreover, migrating all ones operations at once is typically
-both logistically impossible and risky.   In our discussions with network engineers it has become clear that these issues are key barriers to practical deployment of new approaches to network configuration technology.  To address these problems, we plan to develop automated tools to help network engineers to \emph{incrementally} migrate existing subnetworks to the \Name platform.  In addition, we will
-support mixed-mode verification and operations technology so that networks can safely
-run a combination of legacy-controlled and \Name-controlled networks.  
-
-%% and legacy to help guarantee that \Name can {\em integrate} the \Name technology with existing approaches to support a flexible, hybrid approach to network configuration.
-
-%% Further, an all-or-nothing approach to conversion to \Name is a non-starter for several reasons.  First, it precludes an incremental deployment strategy, whereby subnetworks are converted one at a time.  Second, it precludes a mixed configuration style consisting of both low-level directives and high-level policies.  Such a style allows legacy subnetworks to remain unchanged while enabling new subnetworks to take advantage of \Name.  It also provides an ``escape hatch" for engineers to obtain fine-grained, low-level control over network configuration when the desired behavior is not (easily) expressible in \Name. 
-
-
-\begin{figure}
+\begin{figure}[t] 
   \centering
   \includegraphics[width=.9\textwidth]{figures/generic-equivalence}
 \caption{Architecture for \Name verification and migration technology.}
 \label{fig:transition-tech}
 \end{figure}
 
-\paragraph{Migration}  Figure~\ref{fig:transition-tech} shows a proposed architecture for tool-supported migration to the \Name platform.  The high-level idea is that a network engineer would 
-provide a \Name policy for the network and that policy would be compared to
+Higher-level policy languages such as provided by the \Name platform provide clear advantages for network understanding, maintenance, and reliability over the low-level style in use today.  
+%While network engineers and operators would like to accrue these advantages, they are also hesitant to convert their networks to a new technology, and quite reasonably so.  
+However, it costs significant human time and effort to translate low-level configurations into a higher-level policy and to ensure that the original functionality and performance is preserved.  Moreover, migrating all operations at once is typically
+both logistically impossible.   In our discussions with network engineers it has become clear that these issues are key barriers to practical deployment of new approaches to network configuration technology.  To address these problems, we plan to develop automated tools to help network engineers to \emph{incrementally} migrate existing subnetworks to the \Name platform.  In addition, we will
+support mixed-mode verification and operations technology so that networks can safely
+run a combination of legacy-controlled and \Name-controlled networks.  Mixed-mode operation will not only allow
+migration to proceed in a slow, controlled fashion, but will also allow nervous engineers to test \Name on a tiny fraction of their
+traffic first to reassure them that the technology is functioning properly.
+
+%% and legacy to help guarantee that \Name can {\em integrate} the \Name technology with existing approaches to support a flexible, hybrid approach to network configuration.
+
+%% Further, an all-or-nothing approach to conversion to \Name is a non-starter for several reasons.  First, it precludes an incremental deployment strategy, whereby subnetworks are converted one at a time.  Second, it precludes a mixed configuration style consisting of both low-level directives and high-level policies.  Such a style allows legacy subnetworks to remain unchanged while enabling new subnetworks to take advantage of \Name.  It also provides an ``escape hatch" for engineers to obtain fine-grained, low-level control over network configuration when the desired behavior is not (easily) expressible in \Name. 
+
+
+
+
+\paragraph{Migration}  Figure~\ref{fig:transition-tech} sketches our proposed architecture for tool-supported migration 
+to the \Name platform.  The high-level idea for phase one of our migration plan is that a network engineer will
+provide a candidate \Name policy for their network.  That candidate will be compared to
 the current low-level network configuration.  In order to perform the comparison, the
-high-level and low-level configurations would have to be converted into a common 
-intermediate format, and then a decision procedure would be applied.
-When the two policies differ, the system would automatically generate
-concrete \emph{counter-examples}.  These counter-examples would 
+high-level and low-level configurations will be converted into a common 
+intermediate format, and then a decision procedure that tests for equivalence, and possibly other properties, will be applied.
+When the two policies differ, the system will automatically generate
+concrete \emph{counter-examples}.  These counter-examples will
 include: (1) a network policy environment, including a failure scenario and advertisements
-sent from external peers, (2) a concrete packet, and (3) the path in each policy that this
-packet travels along in the given environment.
-The engineer would use this information to iteratively revise the candidate \Name policy until it achieves the desired correspondence with the legacy configuration.  
+sent from external peers, (2) a concrete packet, and (3) the path each policy causes the packet to use in the given environment.
+The engineer would use this information to iteratively revise the 
+candidate \Name policy until it achieves the desired correspondence with the legacy configuration.  
 
 \begin{wrapfigure}{R}{0.5\textwidth}
   \centering
@@ -878,129 +883,198 @@ eBGP  & Local pref & Yes & No & Yes \\
   & RE filters &  No & No & Yes \\
   & Communities & No & No & Yes \\\hline
 iBGP & & No & No & Yes \\\hline
-Route & Acyclic & Yes & Yes & Yes \\
-Redistrib.  & Cyclic & Yes & No & Yes \\
-%Aggregation & Black holes & No & Maybe \\
-\hline 
+%Route & Acyclic & Yes* & Yes* & Yes \\
+%Redistrib.  & Cyclic & Yes* & No & Yes \\
+%& \multicolumn{3}{|l|}{* ERA and ARC are unsound.} \\
+%& \multicolumn{3}{|l|}{For example: \cite{cisco-route-redistribution-tricky} \\
+%Aggregation & Black holes & No & Maybe \\\hline 
 \hline
 {\bf Property} & {\bf Variant} &  &  &  \\\hline\hline
 Equivalence & & No & Yes & Yes\\\hline
-Preferences & & No & No & Yes\\\hline
+%Preferences & & No & No & Yes\\\hline
 Stability & Unique & No & No & Yes \\
  & Wedgie & No & No & Yes \\\hline
   \end{tabular}
-\caption{Comparison with of our proposed work (Prop) with
-two recent control plane verification technologies: ERA (OSDI 2016)
-and ARC (SIGCOMM 2016)}
+\caption{ERA and ARC vs proposed work (Prop). }
 \label{fig:smt-vs-arc}
 \end{wrapfigure}
 
-The first major decision in realizing this architecture is to choose an effective
-intermediate language for representing both low-level legacy configurations and
-high-level policy.  In other words:  What is the common format?  
-This intermediate language must be capable of expressing the semantics
-of both kinds of policies and must be amenable to equivalence testing, and perhaps
-other kinds of less exacting tests (such as path inclusion testing --- the paths
-of an implementation should be a subset of the paths of a more abstract specification).
-One possible choice is to use the config language of the legacy network as the ``intermediate'' 
-format.  After all, one can just compile the \Name policy into a concrete configuration.
-Then one might try to use existing verification tools such as ERA~\cite{era} or ARC~\cite{arc} to test for
-equivalence.  However, this approach has several disadvantages.  First,
-existing control-plane verification tools are incapable of representing a sufficiently
-wide range of features.  As far as we are aware, no verification tool can handle
-core BGP features such as regular expression filters and communities, general interaction with
-other protocols via route redistribution or iBGP.  A second disadvantage is that existing tools 
-verify a subset of the properties needed for migration.  
-Some tools do not perform basic \emph{equivalence} testing.  Other tools do
-not ensure \emph{preferences} and backup paths are respected, do not check for important convergence
-properties such as the existence of a \emph{unique} stable solution or the non-existence of
-a \emph{wedgie}~\cite{wedgie} --- all facts operators need to know to ensure safe migration.
+One way to realize this architecture is to compile the high-level policy into a 2nd low-level configuration
+and then to use existing, off-the-shelf tools such as ERA~\cite{era} or ARC~\cite{arc} to validate and compare
+the two low-level configurations.  This is a reasonable approach, but much additional research is required before existing
+tools are powerful enough to achieve our migration goals.  More specifically, 
+existing control-plane verification tools are (1) incapable of representing a sufficiently
+wide range of features and (2) limited in the properties that they can analyze.
 Figure~\ref{fig:smt-vs-arc} summarizes
-a few key differences between the two recent verification efforts (ERA and ARC) and
-our goals (Prop).  
+a few key differences between two very recent tools (ERA and ARC) and the verification tool that we propose to
+build for migration purposes.  The figure shows that these tools cannot handle
+core BGP features such as regular expression filters and communities, nor can they handle the use of iBGP.
+It is unknown whether they can handle features of OSPF such as multiple areas.  In addition, 
+both tools are unsound in the presence of certain kinds of route redistribution, and will not
+detect the cycles that arise in certain 
+configurations (See the Cisco documentation~\cite{cisco-route-redistribution} for an example of such a configuration).
+When it comes to the properties
+that these tools can check, ERA only tests reachability properties rather than more general \emph{equivalence} properties.  
+Neither tool checks for important stability
+properties of configurations, such as the existence of a \emph{unique} stable solution or the non-existence of
+a \emph{wedgie}~\cite{bgp-wedgie}.\footnote{A wedgie is a configuration with more than one stable solution.  A wedgie may manifest itself 
+when a failure occurs, and routes shift to a new, different and
+undesirable, but stable solution.  Restoration of the failure does not cause the network to shift back to the prior preferred
+routing solution.}  
 
-\dpw{I'm kind of in the middle of this.}
 
-First, we must convert both the low-level configurations and
-higher-level policy to a common representation.  As shown in the figure, we
-plan to use our graph-based PGIR representation for this purpose, as it is a
-powerful context-sensitive representation that makes all allowed paths
-through the network explicit.  While conversion from vendor-specific
-configurations to the vendor-neutral ABGP format should be technically
-straightforward, the conversion from ABGP to PGIR is non-trivial due
-to the expressiveness of BGP policies.  Key elements of BGP policies
-include regular expression (and other) filters, complex local
-preferences and the use community tags.  Each of these features 
-must be translated into an equivalent PGIR
-representation in order to develop a robust migration tool.  We
-believe we can handle regular expression filters via translation to
-automata, whose graph-like structure may be represented directly as a
-PGIR subgraph. Arbitrary community values may be processed by encoding
-the set of valid communities attached to an advertisement in the PGIR
-nodes.  Local preferences may be handled via the PGIR's preference
-mechanisms.  However, implementing an efficient algorithm to
-manage translation of all of these mechanisms at once, and proving it correct, will take significant
-research.  In addition, in the later years of the project, we will
-extend our migration tools to handle additional protocols such as OSPF
-and RIP.  As suggested in Section~\ref{sec:diversity}, doing so will
-require extensions to the PGIR with link weights, and, of course, new
-algorithms that we plan both to implement and to explore theoretically
-via proofs of correctness.
+In order to create a more general, expressive and sound tool, we plan to take inspiration from Griffin's work~\cite{griffin+:stable-paths},
+which characterizes BGP as a process that solves the \emph{stable paths problem}, a more general problem than the
+\emph{shortest paths problem}, which lies at the heart of some other tools.  
+More specifically, we plan to build tools that can translate both low-level configurations and PGIR graphs into
+logical formulae that represent the stable paths problems being solved.
+For instance, the following logical phrases represent an idealized sketch of the core technique (below $x$, $y$, $z$ are routers):
+%
+\newcommand{\pfont}[1]{\mathsf{#1}}%
+%
+\[
+\begin{array}{ll}
+(1) & \pfont{canUse}(x,y) \leftarrow \neg \pfont{failed}(x,y) \wedge \pfont{hasPath}(y) \\
+(2) & \pfont{uses}(x,y) \leftarrow \pfont{canUse}(x,y) \wedge \pfont{best}(x,y) \\
+(3) & \pfont{best}(x,y) \leftarrow \bigwedge_z \neg \pfont{canUse}(x,z) \vee \pfont{localPref}_x(y) \ge \pfont{localPref}_x(z) 
+\end{array}
+\]
+Clause (1) says $x$ can use a route through $y$ if $y$ has not failed and $y$ has a path to the destination. 
+Clause (2) says $x$ actually \emph{does}
+use $y$ if it \emph{can} use $y$ and $y$ is its best option (this is the stability clause --- it does not prefer some other
+route).  Clause (3) defines what it means for $y$ to be the best option for $x$ --- that for all other options $z$, either
+$z$ cannot be used or $x$ prefers $y$ to $z$.  We believe this encoding will be efficient because it avoids having to reason
+explicitly about message ordering.  Instead, it characterizes the possible solutions to the routing problem --- the stable paths.
+We also believe that it can cover many different protocols and features due to the 
+generality of the stable paths problem.  We plan to implement this encoding and then use an automated Satisfiability Modulo 
+Theories (SMT) solver
+such as Z3~\cite{z3} to test configurations for a wide range of properties, including equivalence, 
+stability, reachability, fault tolerance and other properties of interest to network engineers during the
+migration process.  SMT solvers like Z3 will produce counter-examples when they cannot prove a formula correct. A secondary
+research problem is to develop techniques for massaging the counter-examples produced by Z3 into a simple form that may be presented
+to a network operator.  We  will also measure the scaling limits of our approach empiricially and test its generality.
+
+
+%% \dpw{I'm kind of in the middle of this.}
+
+%% First, we must convert both the low-level configurations and
+%% higher-level policy to a common representation.  As shown in the figure, we
+%% plan to use our graph-based PGIR representation for this purpose, as it is a
+%% powerful context-sensitive representation that makes all allowed paths
+%% through the network explicit.  While conversion from vendor-specific
+%% configurations to the vendor-neutral ABGP format should be technically
+%% straightforward, the conversion from ABGP to PGIR is non-trivial due
+%% to the expressiveness of BGP policies.  Key elements of BGP policies
+%% include regular expression (and other) filters, complex local
+%% preferences and the use community tags.  Each of these features 
+%% must be translated into an equivalent PGIR
+%% representation in order to develop a robust migration tool.  We
+%% believe we can handle regular expression filters via translation to
+%% automata, whose graph-like structure may be represented directly as a
+%% PGIR subgraph. Arbitrary community values may be processed by encoding
+%% the set of valid communities attached to an advertisement in the PGIR
+%% nodes.  Local preferences may be handled via the PGIR's preference
+%% mechanisms.  However, implementing an efficient algorithm to
+%% manage translation of all of these mechanisms at once, and proving it correct, will take significant
+%% research.  In addition, in the later years of the project, we will
+%% extend our migration tools to handle additional protocols such as OSPF
+%% and RIP.  As suggested in Section~\ref{sec:diversity}, doing so will
+%% require extensions to the PGIR with link weights, and, of course, new
+%% algorithms that we plan both to implement and to explore theoretically
+%% via proofs of correctness.
 
 %it does not suffice to simply ``invert" \Name's current translation from PGIR to ABGP, since that translation generates stylized ABGP configurations
 % which in our experience differ in important ways from manually written configurations.  We will instead identify common BGP idioms that network engineers use to enforce different aspects of network behavior and then develop translation strategies that target these idioms.  We may also be able to leverage a comprehensive model of low-level configurations that was developed in our prior work~\cite{}.
 
-Once both the low-level configuration and higher-level policy have been 
-converted to a common representation, we must compare the two resulting
-PGIRs for equivalence, or perhaps show that one (the low-level configuration)
-is a faithful implementation of the other (the higher-level policy).  Alternatively,
-if the two policies are incompatible,
-we might produce a counter-example---a packet that
-is treated differently by the two PGIRs, which the network operator may use
-to debug the policy.  One possibility is to generate our own custom equivalence
-algorithm over these structures.  A custom algorithm has the potential to exploit
-domain-specific heuristics for performance.  However, we will begin our research instead
-by looking at encodings of PGIRs and the equivalence question in logic
-and applying an off-the-shelf
-Satisfiability Modulo Theories (SMT) solver such as Z3~\cite{z3}.  Such solvers
-are often used to answer equivalence and other verification questions.  When
-verification fails, they will report counter-examples, which our system  We would have to take
-We can then
-ask the SMT solver to prove that the two policies are equivalent or
-otherwise produce a counterexample, which corresponds to We also determine the full
-path the network that the packet takes under each policy and present
-that to the user, allowing him to easily understand the differences
-and make appropriate changes to the \Name policy.
+%% Once both the low-level configuration and higher-level policy have been 
+%% converted to a common representation, we must compare the two resulting
+%% PGIRs for equivalence, or perhaps show that one (the low-level configuration)
+%% is a faithful implementation of the other (the higher-level policy).  Alternatively,
+%% if the two policies are incompatible,
+%% we might produce a counter-example---a packet that
+%% is treated differently by the two PGIRs, which the network operator may use
+%% to debug the policy.  One possibility is to generate our own custom equivalence
+%% algorithm over these structures.  A custom algorithm has the potential to exploit
+%% domain-specific heuristics for performance.  However, we will begin our research instead
+%% by looking at encodings of PGIRs and the equivalence question in logic
+%% and applying an off-the-shelf
+%% Satisfiability Modulo Theories (SMT) solver such as Z3~\cite{z3}.  Such solvers
+%% are often used to answer equivalence and other verification questions.  When
+%% verification fails, they will report counter-examples, which our system  We would have to take
+%% We can then
+%% ask the SMT solver to prove that the two policies are equivalent or
+%% otherwise produce a counterexample, which corresponds to We also determine the full
+%% path the network that the packet takes under each policy and present
+%% that to the user, allowing him to easily understand the differences
+%% and make appropriate changes to the \Name policy.
 
-One downside of the proposed approach is that it requires the engineer to devise an initial \Name policy manually, which the migration tool then helps to iteratively improve.  We will therefore also consider approaches to {\em infer} a \Name policy directly from the given low-level configuration.  Since \Name policies employ regular expressions to specify allowed paths, it is natural to leverage existing approaches to learning regular expressions from examples.  For example, the L* algorithm learns regular expressions given a ``teacher" that can answer membership and equivalence queries~\cite{}.  In our setting, we can simulate the teacher by querying the PGIR representation of the low-level configuration, as well as by interaction with the user.  We will likely need to extend existing learning algorithms to handle other aspects of \Name, such as its support for prioritized paths.
+One downside of the proposed approach is that it requires the engineer
+to devise an initial \Name policy manually, which the migration tool
+then helps to iteratively improve.  In the later portions of the project, 
+we will also consider approaches to partially or completely {\em infer} a \Name policy directly from the given
+low-level configuration.  One approach is to use the logical encoding of
+the low-level configuration, and an SMT solver, to help search for 
+collections of higher-level constraints that have the same semantics as the low-level configuration.
+Such SMT-based search procedures, such as those integrated into the Sketch~\cite{sketch} 
+and Rosette~\cite{rosette} tools have been highly effective in other domains.
+A second approach, since \Name policies employ regular
+expressions to specify allowed paths, is to expoit
+existing algorithms for learning regular expressions.
+For example, the L* algorithm learns regular expressions given a
+``teacher" that can answer membership and equivalence queries~\cite{}.
+%In our setting, we can simulate the teacher by querying the PGIR
+%representation of the low-level configuration, as well as by
+%interaction with the user.  
+We will likely need to extend existing
+learning algorithms to handle other aspects of \Name, such as its
+support for prioritized paths.
 
 \paragraph{Mixed Verification} There are several challenges in supporting a mixed form of configuration, whereby some portions of the network behavior are specified with \Name and some using existing technologies.  Currently the \Name platform guarantees by construction that produced low-level configurations faithfully implement the high-level policy, and furthermore that this policy will be respected in the face of arbitrary failures.  The inclusion of existing low-level configurations for some portions of the network significant complicates the ability to provide these guarantees and any others that we may want to augment the platform to support. First, the \Name compiler has less flexibility because it must retain the given low-level configurations as is.  Second, the \Name platform must be able to reason about the network as a whole despite the fact that portions are manually configured.
 
-To address these challenges we plan to adapt ideas from the literature on compositional program analysis and verification.  In particular we will leverage the notion of {\em assume-guarantee reasoning}, which allows components to be analyzed separately in order to ensure global properties of interest.  In our setting, we require {\em interface specification} for the manually configured portions of the network.  The \Name platform then can {\em assume} that these specifications holds when reasoning about the network as a whole and compiling the \Name-specific portions.  Separately, we must {\em guarantee} that the manually configured portions indeed meet their interface specifications.
+To address these challenges we plan to adapt ideas from the literature on compositional program analysis and verification.  In particular we will leverage the notion of {\em assume-guarantee reasoning}, which allows components to be analyzed separately in order to ensure global properties of interest.  In our setting, we will require {\em interface specifications} for the manually configured portions of the network. 
+The \Name platform then can {\em assume} that these specifications holds when reasoning about the network as a whole and compiling the \Name-specific portions.  Separately, we must {\em guarantee} that the manually configured portions indeed meet their interface specifications.
+Such interfaces could specify the property that, for example, a legacy OSPF configuration establishes full-mesh connectivity.  A
+\Name-controlled BGP configuration might depend upon full-mesh connectivity to implement inter-domain routing correctly.
+Alternatively, an interface might guarantee isolation properties of subnetworks. In general, interfaces 
+describe {\em abstractions} of low-level configurations that are relatively simple to reason about, yet precise enough to allow the platform to compile the remaining \Name policy while providing strong correctness guarantees.
+We believe we can exploit a wealth of ideas from the program analysis community on sound forms of abstraction
+to help generate such interfaces. 
+%for various properties of interest (e.g., overapproximations vs. underapproximations), along with techniques such as counterexample-driven refinement for incrementally improving candidate abstractions..
 
-Several questions must be answered to make this approach effective and practical.  What is the form of interface specifications?  How are they produced?  How are they verified?  How must the \Name platform's analysis and compilation algorithms be modified to accommodate these specifications?  As a first cut, a natural choice is for interface specifications to be written in the \Name policy language itself.  We can then leverage similar ideas as described above in the context of migration in order to produce and/or validate these specifications relative to existing low-level configurations.  
+%Several questions must be answered to make this approach effective and practical.  What is the form of interface specifications?  How are they produced?  How are they verified?  How must the \Name platform's analysis and compilation algorithms be modified to accommodate these specifications?  As a first cut, a natural choice is for interface specifications to be written in the \Name policy language itself.  We can then leverage similar ideas as described above in the context of migration in order to produce and/or validate these specifications relative to existing low-level configurations.  
 
-However, in the migration setting the goal is to infer {\em equivalent} \Name policies for low-level configurations.  In contrast, here that goal may not be possible due to expressiveness limitations of \Name, and furthermore it is not desirable even if it is possible. Rather, 
-the goal is to identify an 
-{\em abstraction} of the low-level configurations that is expressible in \Name, relatively simple to reason about, yet precise enough to allow the platform to compile the remaining \Name policy while providing strong correctness guarantees.  Here we can leverage a wealth of ideas from the program analysis community on sound forms of abstraction for various properties of interest (e.g., overapproximations vs. underapproximations), along with techniques such as counterexample-driven refinement for incrementally improving candidate abstractions.
+%, in the migration setting the goal is to infer {\em equivalent} \Name policies for low-level configurations.  In contrast, here that goal may not be possible due to expressiveness limitations of \Name, and furthermore it is not desirable even if it is possible. Rather, 
+
+%% More generally, interfaces describe {\em abstractions} of low-level configurations that are relatively simple to reason about, yet precise enough to allow the platform to compile the remaining \Name policy while providing strong correctness guarantees.  Here we can leverage a wealth of ideas from the program analysis community on sound forms of abstraction for various properties of interest (e.g., overapproximations vs. underapproximations), along with techniques such as counterexample-driven refinement for incrementally improving candidate abstractions.
 
 
-As a simple example, consider a subnetwork whose low-level configurations involve a sophisticated load balancing scheme via a form of multipath routing.  It is not useful to attempt to exactly represent this complex scheme in the language of \Name, and indeed it may not even be possible.  Rather, it suffices for the \Name policy to express the {\em possible} paths that each packet can take, along with any backup paths to use in the case of failures.
+%% As a simple example, consider a subnetwork whose low-level configurations involve a sophisticated load balancing scheme via a form of multipath routing.  It is not useful to attempt to exactly represent this complex scheme in the language of \Name, and indeed it may not even be possible.  Rather, it suffices for the \Name policy to express the {\em possible} paths that each packet can take, along with any backup paths to use in the case of failures.
 
 Finally, given an appropriate interface specification for manually configured portions of the network, we must generalize the \Name compilation strategy to incorporate the assumption that those portions meet their specifications as well as the constraint that those configurations cannot be modified.
 
 
-\paragraph*{Related research:}  \tdm{Shriram Krishnamurthi has some work on migration to SDN in the SDN workshop 2015.  What else?}
+\paragraph*{Related research:}  The ARC~\cite{arc} and ERA~\cite{era} systems, discussed earlier, are the closest related work.  
+Another related tool is Bagpipe~\cite{bagpipe}.  Bagpipe has the advantage that it has been proven correct in the theorem-proving
+environment Coq.  However, like ERA, it does not support equivalence testing and hence is insufficiently powerful for our purposes.
+Batfish~\cite{batfish}, anther control-plane analysis tool, is a \emph{testing} tool as opposed to a \emph{verification}. 
+Batfish may be used to find bugs in configurations but does not guarantee equivalence of control planes.
+
+There is a great deal of work on \emph{data plane} verification, such as work on AntEater~\cite{mai+:anteater}, Header Space Analysis~\cite{hsa},
+Veriflow~\cite{khurshid13veriflow}, Network Datalog~\cite{nod} and many, many others.  Such work is fundamentally different from the
+verification efforts that we are interested in, which focus on \emph{control plane} protocol configuration.
+
+\tdm{Shriram Krishnamurthi has some work on migration to SDN in the SDN workshop 2015.  What else?}
 
 
 \paragraph*{Summary of key research questions:}
 
 \begin{itemize}
-\item How can we faithfully translate low-level configurations into a format that is amenable to comparison with \Name policies?
+\item How do we translate low-level configurations into logical representations?  Can these logical representations be used
+for equivalence testing and verification of other important properties?  To what extent does this technique scale?
 
-\item How can we automate this comparison and provide feedback that enables users to refine their policies?
+\item How do we automate generation of counter-examples when policies differ? What form should user feedback take?
 
-\item Can we leverage machine learning techniques to infer \Name policies directly from low-level configurations?
+\item Can SMT-based synthesis or RE-learning techniques help us infer \Name policies directly from low-level configurations?
 
 \item What form of interface specification is necessary for a manually configured subnetwork, in order to support \Name analysis and compilation?
 
