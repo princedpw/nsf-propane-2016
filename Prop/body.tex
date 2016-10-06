@@ -528,7 +528,7 @@ The initial \Name prototype provides a preliminary platform that
 the PI will use to support a wide range of research on distributed control
 plane specification, programming, synthesis, transformation and verification that we now detail.
 
-\subsection{Policy Specification Abstractions}
+\subsection{Topological Abstractions}
 
 \begin{wrapfigure}{R}{0.15\textwidth}
   \centering
@@ -538,7 +538,7 @@ plane specification, programming, synthesis, transformation and verification tha
   \vspace{-1em}
 \end{wrapfigure}
 
-\paragraph*{New Topological Abstractions.}
+%\paragraph*{New Topological Abstractions.}
 In the previous section, we gave an example of a \Name{} policy for
 controlling data center routing.  In that example, the network operator
 referred to individual switches by name (A, B, C, \etc).  However,
@@ -627,7 +627,7 @@ a data center), probabilistic relations (to describe randomized network
 designs like Jellyfish~\cite{jellyfish}) and perhaps nested abstractions, to describe the
 hierarchical structure of some data center designs such as DCell~\cite{dcell}.  
 
-\paragraph*{Compilation and analysis with abstract topologies.}
+%\paragraph*{Compilation and analysis with abstract topologies.}
 Our new abstractions will also be an important component of the implementation
 infrastructure of \Name. 
 Many large cloud providers, such as Microsoft, define policy based on
@@ -706,12 +706,8 @@ of new configurations from high-level specifications.
 \paragraph*{Summary of key research questions:}
 
 \begin{itemize}
-\item What abstractions help us summarize properties network topologies?
-Multiplicities on edges?  On nodes?  Constraints between multiplicities?
-Do we need hierarchical abstractions?  Probabilistic abstractions? 
-\item How do we write \Name specifications using these abstractions?
+\item What abstractions help us summarize properties network topologies? How do we integrate such abstractions into the \Name system?
 \item How do we compile with abstract topologies and make use of templates?  
- How does the compiler perform?
 \item How do we analyze properties of network policies, such as
 reachability and fault tolerance, over abstract
 topologies?  How do these algorithms perform?
@@ -720,7 +716,7 @@ semantics of these abstract topologies?  How do we prove our
 compilation algorithms and analyses are correct?
 \end{itemize}
 
-\subsection{Expressivity}
+\subsection{Costs, Contracts and Inter-domain Transit}
 A key goal of \Name is to synthesize common policies used by Data Centers and ISPs, many of which are 
 detailed in \cite{routingplaybook}.   In particular, we aim to add to \Name the ability to craft policy based on
 traffic (in order to reduce billing costs) which is impossible to do in \Propane.
