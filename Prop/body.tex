@@ -707,48 +707,87 @@ compilation algorithms and analyses are correct?
 \end{itemize}
 
 \subsection{Costs, Contracts and Inter-domain Transit}
-A key goal of \Name is to synthesize common policies used by Data Centers and ISPs, many of which are 
-detailed in \cite{routingplaybook}.   In particular, we aim to add to \Name the ability to craft policy based on
-traffic (in order to reduce billing costs) which is impossible to do in \Propane.
-\paragraph*{Traffic Engineering and Inter-domain Routing.}
-Many networks have complex business relationships with their peers, providers and 
-customers.  Such networks must satisfy agreements to carry traffic while minimizing
-cost, thereby maximizing their own profits.  
-Currently, Propane users may specify preferences between routes; these
-less-preferred routes are utilized only if failures occur.  However,
-many users have more sophisticated requirements than this ---
-requirements that require cost and network capacity as well as
-failures be taken into account.  In particular, to deal with higher
-load, bursts, or partial failures, networks may need to open more
-costly routes, at least temporarily.
+%% A key goal of \Name is to synthesize common policies used by Data Centers and ISPs, many of which are 
+%% detailed in \cite{routingplaybook}.   In particular, we aim to add to \Name the ability to craft policy based on
+%% 5 traffic (in order to reduce billing costs) which is impossible to do in \Propane.
+%% \paragraph*{Traffic Engineering and Inter-domain Routing.}
 
-We propose to extend Propane with facilities that allow users to specify the
-costs associated with using different interdomain routes, the capacities of these
-routes and the obligations they have to customers and peers.  In doing so, there
-are a number of design choices to be made.  In particular, should capacity and cost
-be associated with the network topology or with the user policy?  How does such
-quantitative information interact with the non-quantitative information concerning
-routes and failures?  Once the language design choices have been made, we will 
-study compilation techniques.  Our current platform compiles to BGP, but BGP 
-does not contain mechanisms for processing quantitative information or managing
+Many networks have complex business relationships with their peers, providers and 
+customers \cite{routingplaybook}.  Such networks must satisfy agreements to carry traffic 
+while minimizing
+cost, thereby maximizing their own profits.  While some past high-level network configuration
+languages, such as Merlin~\cite{foster:merlin}, synthesized \emph{intra}-domain traffic
+engineering solutions from high-level specifications, no such languages have taken into account
+\emph{inter}-domain routing, peering relationships and business contracts.
+
+%% Currently, Propane users may specify preferences between routes; these
+%% less-preferred routes are utilized only if failures occur.  However,
+%% many users have more sophisticated requirements than this ---
+%% requirements that require cost and network capacity as well as
+%% failures be taken into account.  In particular, to deal with higher
+%% load, bursts, or partial failures, networks may need to open more
+%% costly routes, at least temporarily.
+
+Inspired in part by past domain-specific languages for specifying contracts for financial derivatives~\cite{spj+:contracts},
+we propose to develop a sub-language that allow users to specify the
+costs associated with using different interdomain routes, the peering agreements they
+engage in, and the contracts signed with customers or providers.  For example,
+our sub-language will allow description of the common 95/5 contract~\cite{routingplaybook}, in which 
+customer traffic is monitored in
+5 minute intervals.  In this contract, the customer is billed at some agreed upon rate X multiplied by the
+volume measured during 95th percentile 5-minute interval.  Such contracts allow customers to burst for small
+percentages of the time without suffering outsized bills.  Other common kinds of contracts include
+\emph{tiered contracts}~\cite{tiered-isp-contracts}, in which customers promise a certain monthly level
+of usages in advance in exchange for an improved rate in terms of Mbps.  
+
+There are (at least) two ways to explore using such contract and costs specifications.  One way is as a \emph{model}
+of network operations and their costs.  When such a model is equipped with an algorithm to evaluate (or simulate) costs under
+assumptions about current or future traffic, it can be used to evaluate (some of) the advantages of engaging
+in new peering arrangements or the potential costs of eliminating certain peering arrangements.  
+In the past, Valancius \emph{et al}~\cite{tiered-isp-contracts} have used network cost models to 
+answer \emph{general} questions about how ISPs should price their bandwidth.  In our case, network owners could
+use our language to specify their \emph{specific} situation and use it to help with their \emph{specific} peering
+policies.  In addition, configurations faithful to the model can be directly synthesized by the \Name system.  
+
+A second way to use such contract specifications is as an input to configuration synthesis.  In this case,
+our synthesizer would have to take in the quantitative information present in our models and use it to
+manage cost-aware inter-domain and intra-domain routing and traffic shaping.  For example,
+consider two paradigms used in practice and described in the Internet Peering Playbook~\cite{routingplaybook}.   
+In the first pattern, that we call a {\em Fusilade} pattern, a client network monitors its bursts of traffic and
+spreads bursts across 5 providers, ensuring that its total burst time for the month for any given provider 
+does not exceed 5\% of its 5-minute intervals when it has a 95/5 contract with that provider.
+In the second {\em End of Month} pattern, a client has two providers $P1$ and $P2$, and normally splits traffic between them.  However, the client has a minimum amount of traffic that it is charged for every month by provider $P2$.   Thus by the end of the billing period (say a month), if the total traffic from the client to the provider falls below this floor, the client should exclusively use provider $P2$ until the bound is exceeded.
+
+Implementing such strategies will require substantial new infrastructure.  Our current platform compiles to BGP, 
+but BGP does not contain mechanisms for processing quantitative information or managing
 traffic engineering mechanisms.  Consequently, we propose using a hetergeneous
 back-end composed in part of BGP running at the edge, to handle interdomain
 routing, and our own custom switch agents, implemented using P4~\cite{P4}, 
 to manage the traffic monitoring, shaping, policing and routing needed to implement
-cost-aware routing.  
+cost-aware routing.  Vargese and Walker both helped design P4 and have considerable experience with it.
+In addition, in order to optimize cost over a given time period, 
+such as a month, we will have to update BGP policy dynamically as well,
+while avoiding perils such as route flapping or oscillation.
 
-\paragraph*{Triggers and Time-dependent Routing Preferences}
+%In addition to a new source-level language
+%to allow users to specify contracts, we will require new intermediate languages to facilitate implementation of
+%our richer policies.  In particular, \Propane's current intermediate language, the PGIR, only allows specification
+%of \emph{static} policies---policies that do not change over time.  However, our system will have to include dynamic policies as well as
+%traffic monitoring infrastructure.
 
-In order to support the large range of policies that real ISPs use, some of which are detailed in \cite{routingplaybook}, we will invent new abstractions in \Name.   We describe two such ideas, both
-of which are motivated by policies described in \cite{routingplaybook}.
+%In particular,  
 
-First, at the highest level, \Propane allows the operator to provide a list of routes ordered by preference and to specify that lower preference routes can be used when more preferred routes fail.  Thus in \Propane failure is the only  stimulus for changing a route.  However, a common paradigm is to allow a new route to take over when the amount of traffic volume on what was a high-preference route exceeds a threshold.  Thus, we are led to invent an abstraction and a language construct called a {\em trigger} which includes failures but also other performance related predicates, analagous to a guard~\cite{guardref} in programming languages.  We will need language constructs to model common performance measures that can be used in such triggers such as latency and traffic volume, and statistical measures such as average and 95th-percentile.
+%% \paragraph*{Triggers and Time-dependent Routing Preferences}
 
-Next, consider two paradigms described in \cite{routingplaybook}.   In the first, that we call a {\em Fusilade} pattern, a client network sends bursts of traffic in sequence to a series of say 5 providers.   Since billing is typically on the 95th percentile based on say 5 minute intervals, if the fusilade switches to a new provider in 1 minutes, each provider will measure 1/5th of the client's overall traffic volume.  
+%% In order to support the large range of policies that real ISPs use, 
+%% some of which are detailed in \cite{routingplaybook}, we will invent new abstractions in \Name.   We describe two such ideas, both
+%% of which are motivated by policies described in \cite{routingplaybook}.
 
-In the second {\em End of Month} pattern, a client has two providers $P1$ and $P2$, and normally splits traffic between them.  However, the client has a minimum amount of traffic that it is charged for every month by say provider $P2$.   Thus by the end of the billing period (say a month), if the total traffic from the client to the provider falls below this floor, the client should exclusively use provider $P2$ until the bound is exceeded.
+%% First, at the highest level, \Propane allows the operator to provide a list of routes ordered by preference and to specify that lower preference routes can be used when more preferred routes fail.  Thus in \Propane failure is the only  stimulus for changing a route.  However, a common paradigm is to allow a new route to take over when the amount of traffic volume on what was a high-preference route exceeds a threshold.  Thus, we are led to invent an abstraction and a language construct called a {\em trigger} which includes failures but also other performance related predicates, analagous to a guard~\cite{guardref} in programming languages.  We will need language constructs to model common performance measures that can be used in such triggers such as latency and traffic volume, and statistical measures such as average and 95th-percentile.
 
-It appears to be possible to synthesize both these policies by adding an {\em Optimizer} front-end to the architecture of \Propane that takes as input measured traffic in the past (and predictions for the future), and some choice of objective functions (for example, minimize billed cost).  The Optimizer outputs a set of time-indexed route preferences for a back-end such as the current \Propane system.   Note that while Triggers allow users to manually specify route preference based on performance, the optimizer allows such route preferences to be synthesized automatically.
+%% Next, 
+
+%% It appears to be possible to synthesize both these policies by adding an {\em Optimizer} front-end to the architecture of \Propane that takes as input measured traffic in the past (and predictions for the future), and some choice of objective functions (for example, minimize billed cost).  The Optimizer outputs a set of time-indexed route preferences for a back-end such as the current \Propane system.   Note that while Triggers allow users to manually specify route preference based on performance, the optimizer allows such route preferences to be synthesized automatically.
 
 \paragraph*{Related research.}
 When it comes to implementing traffic engineering constraints generated from
@@ -764,11 +803,10 @@ strategies (which mix BGP with traffic engineering mechanisms, for instance).
 \paragraph*{Summary of key research questions:}
 
 \begin{itemize}
-\item What abstraction boundaries (such as the interface to an optimization layer) can cleanly separate quantitative aspects of policy specification based on costs and traffic volume from non-quantitative aspects such as restricting or preferring certain routes as in \Propane today.
-\item Do we need probabilistic abstractions given that the effectiveness of traffic engineering is often analyzed  using probabistic models?  Can we benefit from recent progress in probabilistic verification such as Probabilistic NetKAT.
 \item How do we define a specification language that combines inter-domain
 routing objectives, fault tolerance and traffic engineering?  How
 should we implement such combined specifications?
+\item What abstraction boundaries (such as the interface to an optimization layer) can cleanly separate quantitative aspects of policy specification based on costs and traffic volume from non-quantitative aspects such as restricting or preferring certain routes as in \Propane today.
 \item It is well known that even the simplest dynamic changes in BGP can lead to timer interactions (for example in Route Flap damping~\cite{routeflapdamping}.  How do we steer away an automatic optimizer from such perils?
 \item What is the formal 
 semantics of mixing quantitative and non-quantitative modules?  How do we prove our
