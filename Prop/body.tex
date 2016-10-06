@@ -94,31 +94,22 @@ generating a low-level implementation, thereby avoiding the errors caused by
 ad hoc manual configuration.
 Unfortunately, these solutions do not apply to the large number of commercial clouds and 
 enterprise networks that have invested in, and continue to use, distributed control planes and 
-traditional routers.  Moreover, most of the academic projects that use centralized control 
-infrastructure are not fault tolerant nor do they help users control inter-domain routing
-policy (routing between one's network and a neighbor), which occupies a significant portion of route
-configuration complexity.  In other words, there are many pragmatic hurdles to surmount before
-they may be deployed in many industrial settings.
+traditional routers.  These languages also cannot express critical aspects of network policy that occupy a significant portion of configuration complexity today, such as the desired network behavior in the presence of faults as well as an inter-domain routing policy (routing between one's network and its neighbors).  In other words, there are many pragmatic hurdles to surmount before
+these solutions can be widely deployed in industrial settings.
 %Moreover, while such languages facilitate specification of intra-domain
 %routing policy (routing within one's network), they do not help users control inter-domain routing
 %policy (routing between one's network and a neighbor), which occupies a significant portion of route
 %configuration complexity.
 
 
-
-In a nutshell,
-the overarching goal of this project is to find 
-\emph{a highly reliable path for deployment of
-high-level network abstractions} invented over recent years, and to invent new ones 
-where network operators need them.
-More specifically, to prepare for this proposal, the PIs have recently developed a 
-new network programming language called Propane~\cite{beckett+:propane} (winner of SIGCOMM 2016
-best paper award) that borrows from SDN languages an expressive set of primitives for specifying the allowed network-wide paths.  Propane further extends these capabilities to enable the specification of backup paths via a simple form of path preferences, and allows the expression of both intra-domain 
+In a nutshell, the overarching goal of this project is to {\em surmount the technical challenges that impede practical deployment of high-level network abstractions}.  In preliminary work, 
+the PIs have taken the first steps toward this goal by developing a
+new network programming language called Propane~\cite{beckett+:propane} (winner of a SIGCOMM 2016
+best student paper award) that borrows from SDN languages an expressive set of primitives for specifying the allowed network-wide paths.  Propane extends these capabilities to enable the specification of backup paths via a simple form of path preferences, and allows the expression of both intra-domain 
 and inter-domain routing objectives.  Crucially, rather than compiling to OpenFlow,
-Propane compiles to BGP, the industry-standard and ubiquitous inter-domain routing protocol.  In addition to being an industry standard, BGP is distributed, fault tolerant
-and scalable.
-However, despite its advances, it is impossible to deploy Propane in pragmatic settings
-at the moment for several fundamental reasons:
+Propane compiles to BGP, the industry-standard and ubiquitous inter-domain routing protocol.  In addition to being in wide usage, BGP is distributed, fault tolerant and scalable.
+
+Despite these advances, it is impossible to deploy Propane in industrial settings for several fundamental reasons:
 
 %Analogous to languages like RPSL, the Propane compiler automatically produces configurations for each router that leverage BGP to implement the desired policy.  Furthermore, the Propane compiler guarantees that the specified path preferences will be respected regardless of the link or node failures that may occur.
 %And yet, Propane in its current form is not suitable for widespread deployment.  
@@ -128,19 +119,18 @@ at the moment for several fundamental reasons:
 %to the current state of the art:
 
 \begin{description}
-\item[expressiveness]  Despite their challenges, today's low-level configuration languages provide fine-grained control over network functionality and performance.  Operators will not move to higher-level, network-wide policy languages unless they can express the subtle and complex policies that business requirements demand.  Propane's current 
-abstractions on their own do not yet provide a sufficiently wide range of
-behaviors.
+\item[expressiveness]  Today's low-level configuration languages provide fine-grained control over network functionality and performance.  Operators will not move to higher-level, network-wide policy languages unless they can express the subtle and complex policies that business requirements demand.  Propane's 
+language is not sufficient to express several common classes of policies.
 
-\item[intelligibility] At least in the near term, the low-level configurations output by the Propane compiler must be human readable and match the configuration styles in use today.  This requirement has become clear in the PIs discussions with network engineers at two large cloud providers.  It is necessary to give them confidence in the behavior of their networks, enable the configurations to be processed with a variety of existing tools, and allow operators to directly modify and debug configurations when necessary.  
+\item[intelligibility] At least in the near term, the low-level configurations output by the Propane compiler must be human readable and match the configuration styles in use today.  This requirement has become clear in the PIs' discussions with network engineers at two large cloud providers.  Intelligibility is necessary to give engineers confidence in the behavior of their networks, enable the configurations to be processed with a variety of existing tools, and allow operators to directly modify and debug configurations when necessary.  
 % For instance, Network operators, especially for large, structured networks such as data centers, do not think in terms of individual devices.  Instead, they craft policy in terms of \emph{sets} of devices that
 % play similar roles such as top-of-rack switch, tier-one switch, \etc and the more general \emph{topological invariants} that connect these sets (\eg, the number of edges or paths that connect elements of each set).  The output of deployable synthesis must match the cognitive models used by network operators.
 
 \item[migration safety]  If an operator's current network is operating smoothly,
 migration to a new management platform is a risk, even if that new platform
 offers improved efficiency and lower future management costs.  To reduce the
-risk, tools that faciliate migration and verify that new high-level policy is
-functionally equivalent to old legacy deployments are necessary.
+risk, it is necessary to have tools that faciliate migration and verify that a new high-level policy is
+functionally equivalent to the legacy configurations.
 
 \item[incrementality] No large network is likely to switch from manual configuration to Propane in one ``flag day."   Rather, support for {\em incremental deployment} is critical, with parts of the network gradually moving to this new discipline over time.
 
@@ -213,14 +203,13 @@ both intra- and inter-domain routes to minimize transit costs while adhering
 to contract constaints.
 
 \item {\bf Backend Diversity:} There is no ``one size fits all'' networking protocol. Propane policies compile solely to BGP, but the additional expressiveness described above, along with performance requirements and the preferences of network engineers, will demand that configurations employ multiple protocols, as is standard for manual configurations today.  We will develop algorithms that synthesize configurations employing a combination of \emph{inter-domain routing} protocols such as BGP and \emph{intra-domain routing protocols} such as OSPF and RIP.  We will also target
-\emph{SDN-oriented protocols} such as OpenFlow~\cite{openflow}, P4~\cite{P4} and PIFO~\cite{pifo}, allowing networks to more easily adopt this technology when appropriate, and 
-without operators necessarily needing to change high-level policy specifications.
+\emph{SDN-oriented protocols} such as OpenFlow~\cite{openflow}, P4~\cite{P4} and PIFO~\cite{pifo}, allowing networks to more easily adopt this technology when appropriate, ideally 
+without operators needing to change the high-level policy specification.
 
 \item {\bf Migration Technology:} We will develop technology to help network engineers migrate existing configurations to network-wide policies.  First, we will develop new algorithms to translate legacy configurations into a logical
 representation that reflects their semantics.  Second, we will leverage modern constraint solvers to automatically compare such configurations with a proposed high-level policy, either proving equivalence or providing counterexamples that guide policy refinement.  Third, we will explore techniques to automatically infer network-wide policies directly from the legacy configurations.
 
-\item {\bf Mixed Verification:} Finally, we support a mixed form of configuration, whereby some portions of the network behavior are specified with \Name and some using existing technologies.  Supporting manual configurations is essential to enable incremental deployment but also to allow an escape mechanism to specify behaviors outside the capability of \Name (just as higher-level languages allow calls to native code).  One technical challenge here is to define interfaces that specify the \emph{assumptions} and \emph{guarantees} that manual and synthesized configurations make and then to verify that
-each side lives up to its requirements. 
+\item {\bf Mixed Verification:} Finally, we will support a mixed form of configuration, whereby some portions of the network behavior are specified with \Name and some using existing technologies.  Supporting manual configurations is essential to enable incremental deployment but also to allow an escape mechanism to specify behaviors outside the capability of \Name (just as higher-level languages allow calls to native code).  A key technical challenge is to define interfaces that specify the \emph{assumptions} and \emph{guarantees} that manual and synthesized configurations make about one another and then to verify that each side lives up to its requirements. 
 %adopting and extending the notion of {\em assume-guarantee reasoning} from the literature on compositional program analysis~\cite{Jones:assume-guarantee} to support verification and synthesis for mixed configurations.  
 \end{enumerate}
 
@@ -229,19 +218,19 @@ each side lives up to its requirements.
 %% updates to low-level network configurations given a pair of old and new \Name specifications, as well as a \emph{plan} to update network devices to
 %% safely transition the system from old configuration to new configuration while the system is in operation.}
 
-\paragraph{The Team.}  Our team has the breadth of skills, backgrounds, and perspectivesthat will be required to accomplish the agenda set out above.  
-Over the last 8 years, David Walker and his collaborators
+\paragraph{The Team.}  Our team has the breadth of skills, backgrounds, and perspectives that will be required to accomplish the agenda set out above.  
+Over the last eight years, David Walker and his collaborators
 developed the first high-level SDN programming languages, including
 Frenetic~\cite{frenetic}, Pyretic~\cite{pyretic} and NetKAT~\cite{netkat}.
 He also developed the concept of consistent network updates~\cite{reitblatt+:consistent-updates},
  contributed to the design of P4~\cite{P4} and, together with Millstein, 
 developed the award-winning
-Propane system~\cite{beckett+:propane}.   Todd Millstein is an expert in automated software verification as well as techniques for static and dynamic program analysis.  He has been applying and extending these approaches to reason about various aspects of networks for more than ten years.  This proposal particularly leverages his expertise in automated verification of low-level network configurations~\cite{batfish}.  George Varghese won the 2014 SIGCOMM lifetime award for his work on routers.  in the last 5 years, he has helped, with the other PIs and colleagues, create the field of network verification.  He has helped create open source verification tools for networks including Header Space Analysis~\cite{hsa} and Network Optimized Datalog (NoD)~\cite{nod}. NoD has been used by Amazon to create verification tools for customer-created virtual networks.  Together, the PIs cover the full spectrum of skills required for this proposal including
-Language Semantics and Design,
-Compiler Implementation,
-Network Algorithmics,
-Program Synthesis, and
-Bottom-up Network Verification.
+Propane system~\cite{beckett+:propane}.   Todd Millstein is an expert in automated software verification as well as techniques for static and dynamic program analysis.  He has been applying and extending these approaches to reason about various aspects of networks for the last ten years~\cite{DBLP:conf/pldi/KothariGMG07,gullible,DBLP:conf/sigcomm/KothariMMGM11,DBLP:conf/nsdi/PedrosaFKGMM15}, including development of the Batfish~\cite{batfish} and ERA~\cite{era} tools for automatic network configuration analysis and verification. George Varghese won the 2014 SIGCOMM lifetime award for his work on routers.  In the last five years, he has helped, with the other PIs and colleagues, create the field of network verification.  He and colleagues have created open-source verification tools for networks including Header Space Analysis~\cite{hsa} and Network Optimized Datalog (NoD)~\cite{nod}. NoD has been used by Amazon to create verification tools for customer-created virtual networks.  Together, the PIs cover the full spectrum of skills required for this proposal including
+language semantics and design,
+compilation,
+network algorithmics,
+program synthesis, and
+network verification.
 
 \paragraph{Broader Impacts.}  
 Our economy, businesses, governmental and military infrastructure all depend upon having networks that function
@@ -251,11 +240,12 @@ reliably.
 %operators all-too-often make mistakes when programming this critical
 %infrastructure.  
 The primary goal of this proposal is to develop
-a path for deployment of high-level network programming abstractions
+a path for deployment of high-level network programming abstractions that
 improves the reliability of existing legacy networks and helps
 transition those networks in a safe and reliable way to new management systems.
 
-{\bf Cloud Deployment:}  We will work with the operators of two major clouds, Microsoft Azure and Google, to test our language and system using the policies of real industrial networks, to identify the pragmatic barriers to adoption, and to deploy our system where possible.  All 3 PIs have a strong connection with Microsoft.  Walker, via PhD student Ryan Beckett, and MSR collaborators Jitu Padhye and Ratul Mahajan, translated a number of Azure policies into Propane in 2015 and validated his models with Microsoft operators. Millstein recently won the MSR outstanding collaborator award; Varghese worked at MSR from 2012-2016; Albert Greenberg, head of Azure, is open to collaborating with the team.   We will also seek to deploy at Google: both Walker and Varghese have collaborated with Amin Vahdat, the head of networking at Google.  These two clouds are different because Azure is a public cloud while the Google cloud supports Google services; adding abstractions that cover both user cases will be an important step towards credibility.  Collaboration will be done (as with Ryan Beckett and Ari Fogel) via students who will intern at Microsoft and Google.
+{\bf Cloud Deployment:}  We will work with the operators of two major clouds, Microsoft Azure and Google, to test our language and system using the policies of real industrial networks, to identify the pragmatic barriers to adoption, and to deploy our system where possible.  All three PIs have a strong connection with Microsoft.  Walker, via PhD student Ryan Beckett, and MSR collaborators Jitu Padhye and Ratul Mahajan, translated a number of Azure policies into Propane in 2015 and validated his models with Microsoft operators. Millstein has collaborated with networking researchers at MSR for the last ten years and recently won an MSR Outstanding Collaborator Award. As part of this collaboration, Millstein's Batfish~\cite{batfish} tool identified several configuration errors in Azure data centers that were subsequently fixed.
+Varghese worked at MSR from 2012-2016 and continues to collaborate with his former colleagues.  We will also seek to deploy at Google: both Walker and Varghese have collaborated with Amin Vahdat, the head of networking at Google.  These two clouds are different because Azure is a public cloud while the Google cloud supports Google services; adding abstractions that cover both use cases will be an important step toward credibility.  Collaboration will be facilitated via student internships at Microsoft and Google, as we have done recently with Princeton and UCLA Ph.D.\ students Ryan Beckett and Ari Fogel.
 
 {\bf Broader Outreach:}  
 %While Microsoft and Google will teach us a great deal, we need to learn policies from a broader set of networks.  
@@ -279,7 +269,7 @@ research that applies programming language techniques, such as
 automated verification and optimizing compilation, to problems in the networking domain.  At the graduate
 level, we will introduce a unit on network programming with high-level
 abstractions to our core
-graduate courses on programming languages and semantics.  Varghese and Millstein are co-teaching a seminar class at UCLA in Fall 2016 on "Verification, Synthesis, and the Creative Habit" to jump-start a formal graduate class.  We hope to
+graduate courses on programming languages and semantics.  Varghese and Millstein are co-teaching a seminar class at UCLA in Fall 2016 on ``Verification, Synthesis, and the Creative Habit" to jump-start a formal graduate class.  We hope to
 produce future network engineers with interdisciplinary skills in verification
 and programming languages.
 %Those core
@@ -296,8 +286,8 @@ do so.  For example, PI Walker has mentored two winners of the CRA
 outstanding undergraduate award, and both happened to be
 under-represented minorities in computer science: one an African
 American student and one a woman.  The former, Lester Mackey, went
-gone on to get his PhD in computer science, and the latter, Katherine
-Ye, will be entering graduate school in Fall 2016.   Varghese has mentored several women, including
+on to get his Ph.D.\ in computer science, and the latter, Katherine
+Ye, started graduate school in Fall 2016.  Millstein co-advised female Ph.D.\ student Nupur Kothari (now at Microsoft) for her dissertation on analysis of networked systems and currently advises one female Ph.D.\ student (Lun Liu).  Varghese has mentored several women, including
 co-advising Lili Qiu (now a professor at UT Austin) and Lavanya Jose (currently a graduate student at Stanford).
 
 
