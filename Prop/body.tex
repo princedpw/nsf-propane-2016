@@ -508,9 +508,7 @@ network-wide paths and relations between paths, while this prior work still requ
 \section{Research Agenda}
 \label{sec:research}
 
-The initial \Name prototype provides a preliminary platform that
-the PI will use to support a wide range of research on distributed control
-plane specification, programming, synthesis, transformation and verification that we now detail.
+Our proposed \Name system will start from the preliminary work on \Propane and extend it to tackle a range of key technical challenges that impede practical deployment today.
 
 \subsection{Topological Abstractions}
 
@@ -523,7 +521,7 @@ plane specification, programming, synthesis, transformation and verification tha
 \end{wrapfigure}
 
 %\paragraph*{New Topological Abstractions.}
-In the previous section, we gave an example of a \Name{} policy for
+In the previous section, we gave an example of a \Propane policy for
 controlling data center routing.  In that example, the network operator
 referred to individual switches by name (A, B, C, \etc).  However,
 this idealized example involved a network with only 10 switches.  In
@@ -532,10 +530,10 @@ manage networks at this scale, it is not effective to define policy in
 terms of individual devices.  Operators must think 
 in terms of \emph{groups} of devices that have similar roles:  top-of-rack switch,
 tier-one switch, \etc.  Moreover, in order to plan policy and reason about
-fault tolerance, they rely on \emph{invariants} pertaining to the 
+fault tolerance, operators rely on \emph{invariants} pertaining to the 
 connectivity properties of these groups.  
-In order to support operators for large networks, we will extend
-\Name's specifications and programming process to support
+In order to support practical policies for large networks, \Name will extend
+\Propane's specifications to support
 new topological abstractions of this kind.
 
 One interesting source of inspiration for topology abstractions is,
@@ -557,12 +555,11 @@ Figure~\ref{fig:data-center-topo}.  This topology has three tiers of
 switches, and connectivity between the layers follows fixed rules,
 as is commonly the case.  In order to represent such a network,
 we can represent all nodes in each tier using a single, abstract group
-node, and we can represent the edges between nodes using multiplicities.
+node and represent the edges between nodes using multiplicities.
 Figure~\ref{fig:abstract-topo} presents one way of doing this.
 Here abstract topology node T represents the set of concrete nodes
 A, B, E and F --- T plays the ``role'' of top-of-rack switch.  Likewise,
 U represents concrete nodes C, D, G and H and V represents X and Y.
-Each edge in the abstract topology is annotated with 
 Here the multiplicity \texttt{2} annotated on the edge from T to U but closer
 to T indicates there are two edges extending from \emph{each} node
 represented by T.  Likewise, the 2 annotating the edge coming
@@ -597,19 +594,17 @@ equipment is provisioned in an existing data center.  In essence,
 such abstractions provide a new kind of modularity for network programs.
 
 Of course, to capture rich classes of networks with a variety of
-different kinds of striping patterns, inter-connections, and connectivity
+striping patterns, inter-connections, and connectivity
 invariants
 we will likely need many more different kinds abstractions than are
-shown in Figure~\ref{fig:abstract-topo}.  In particular, when we examine 
-topologies other than fat trees~\cite{al-fares:data-center-architecture,f10},
-Quasi Fat-Trees~\cite{quasi-fat-trees}, Aspen trees~\cite{aspen-trees}, DCell~\cite{dcell}, Jellyfish~\cite{jellyfish}, and more,
+shown in Figure~\ref{fig:abstract-topo}.  In particular, when we examine a wide range of network
+topologies~\cite{al-fares:data-center-architecture,f10,quasi-fat-trees,aspen-trees,jellyfish,dcell}, 
 we believe we many need multiplicities on nodes (constraining the
 number of nodes in an abstract node or pod), relations between 
-multiplicities ($m \leq n$
-to ensure each of $n$ nodes are connected by $m$ paths to other parts of
-a data center), probabilistic relations (to describe randomized network
-designs like Jellyfish~\cite{jellyfish}) and perhaps nested abstractions, to describe the
-hierarchical structure of some data center designs such as DCell~\cite{dcell}.  
+multiplicities (e.g., $n \geq 2$
+to ensure that nodes are connected by at least two edges to other parts of the data center), probabilistic relations (to describe randomized network
+designs like Jellyfish~\cite{jellyfish}) and perhaps nested abstractions (to describe the
+hierarchical structure of designs such as DCell~\cite{dcell}).  
 
 %\paragraph*{Compilation and analysis with abstract topologies.}
 Our new abstractions will also be an important component of the implementation
@@ -619,29 +614,25 @@ Many large cloud providers, such as Microsoft, define policy based on
 routers.  The parameters of each template may be instantiated to generate
 concrete router configurations for each router in the group.
 Indeed, there are a variety of tools available, such as Hatch~\cite{hatch}
-and Thwack~\cite{thwack} 
+and Thwack~\cite{thwack},
 to help with the definition and sharing of such templates.
 In order for \Name to exploit existing template-based infrastructure,
-it will be necessary to upgrade \Name's compilation algorithms so
+it will be necessary to revisit \Propane's compilation algorithms so
 that policy expressed over abstract topologies generates appropriate
 templates rather than concrete configurations.  Generating templates will
 also help network operators validate the output of the \Name compiler:
 they will only have to examine a small number of template files, one for
 each role, rather than one for each device.
 
-Finally, while writing policy over abstract topologies is attractive
-for its simplicity and the potential for reuse, it also adds a variety 
-of technical challenges.  In particular, to determine whether a network
-policy is ``good,'' we typically need to analyze it for a variety of
-properties.  For instance, we would like to know whether two destinations
+Finally, we will explore techniques for reasoning about abstract topologies in order to verify various kinds of properties.
+For instance, operators may like to know whether two destinations
 are reachable from one another, or for security purposes, whether
 two destinations are isolated from another, or how many failures
 it takes to partition a network or make certain destinations unreachable.
 One the positive side, abstract topologies are much smaller than concrete
-topologies --- this may be a massive advantage, allowing sophisticated 
-analyses to execute much more quickly on massive networks.  However, the
-abstractions also makes the analysis algorithms more challenging, as they
-are now proving properties over entire \emph{classes} of networks instead of
+topologies --- this may be a major advantage, allowing sophisticated 
+analyses to execute much more quickly on large networks.  However, the
+abstractions also make the analysis algorithms more challenging, as they must now prove properties over entire \emph{classes} of networks instead of
 individual \emph{concrete} networks.  We believe we will be able to exploit
 ideas from the field of \emph{abstract interpretation}~\cite{cousot+:ai} (the subfield of
 programming language research that deals with the science 
@@ -674,29 +665,23 @@ that enable virtual networking, but their abstractions do not describe
 connectivity invariants and their compilers do not perform analyses over
 abstract networks or generate template-based router configurations.
 
-Recent work on network ``symmetry and surgery''~\cite{bjorner+:scaling-network-verification} focused on verifying reachability properties of very large
-data centers networks by using a collection of transformation rules to 
-transform a large data center network into
-a related, smaller network and then by proving a similarly transformed
-logical formula is true of the smaller network.  Some of the abstractions
-developed here may be useful in our work, but the authors do not consider
-the multiplicity-based abstractions that we propose and which seem useful
-for verifying fault tolerance properties (\eg, by counting disjoint paths).
-While the authors consider verification, they do not consider using
-abstract topologies to support compilation or synthesis
-of new configurations from high-level specifications.
+Recent work by co-PI Varghese on network ``symmetry and surgery''~\cite{bjorner+:scaling-network-verification} verifies reachability properties of the data planes of very large
+data centers by leveraging symmetries in the networks to  
+transform them into
+related, smaller networks.  The ideas
+developed here may be a useful starting point for verifying properties of \Name policies on abstract topologies; we will need to extend these ideas to handle the expressive abstractions that \Name will support, such as multiplicities.  
 
 
 \paragraph*{Summary of key research questions:}
 
 \begin{itemize}
-\item What abstractions help us summarize properties network topologies? How do we integrate such abstractions into the \Name system?
+\item What abstractions help us specify invariants of network topologies? How do we integrate such abstractions into the \Name system?
 \item How do we compile with abstract topologies and make use of templates?  
 \item How do we analyze properties of network policies, such as
 reachability and fault tolerance, over abstract
 topologies?  How do these algorithms perform?
-\item What theory underpins this research?  What is the formal 
-semantics of these abstract topologies?  How do we prove our
+\item What is the formal 
+semantics of abstract topologies?  How do we prove our
 compilation algorithms and analyses are correct?
 \end{itemize}
 
