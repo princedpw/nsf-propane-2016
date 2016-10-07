@@ -800,19 +800,20 @@ configurations.  However, other protocols offer a range of other properties
 such as better convergence times or load balancing that network operators 
 will want to exploit.
 
-\paragraph*{Traditional Protocols.}  Most networks will use
+% \paragraph*{Traditional Protocols.}  
+Most networks use
 eBGP to communicate with neighboring networks and 
 then iBGP, OSPF or another IGP protocol to distribute routes internally.
 While BGP operates using local preferences, regular expression filters,
 and shortest paths based on path lengths, some protocols such as OSPF
 use real-valued link weights to compute shortest paths, which are not
-supported in \Name.  In addition, in order to support scalability, 
+supported in \Propane.  In addition, in order to support scalability, 
 an OSPF network may be divided into separate \emph{areas} that only selectively
 export shortest paths information --- here, there is a tradeoff between 
 convergence time and finding optimal paths.  
 
 In order to
-augment \Name so that it can process additional procotols, we will
+augment \Name so that it can process additional protocols, we will
 need to upgrade our intermediate languages to enable representation 
 of these additional features (\eg, link weights, OSPF areas, static routes,
 route redistribution, \etc).  
@@ -827,8 +828,6 @@ change our internal safety analysis algorithms to reflect the semantics of
 link weights, OSPF and other protocols.
 In addition, our synthesis algorithms will have to manage the interactions
 \emph{between} protocols.
-
-\paragraph*{Exploiting Programmable Switches.}
 
 \paragraph*{Related Work.}
 ConfigAssure~\cite{narain:lisa05,narain+:configassure}  is another
@@ -853,10 +852,10 @@ Which properties (convergence time, scalability?) govern these choices?
 \item How does the compiler reason about administrative distances
 and the interactions of several different protocols in a single
 implementation?
-\item Is it possible to exploit the properties of next generation
-programmable switches, such as those implementing P4,
-to define more complete and efficient implementations of \Name
-provided this hardware is available?
+% \item Is it possible to exploit the properties of next generation
+% programmable switches, such as those implementing P4,
+% to define more complete and efficient implementations of \Name
+% rovided this hardware is available?
 \end{itemize}
 
 \subsection{Migration Technology and Mixed Verification}
