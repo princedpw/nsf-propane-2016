@@ -884,7 +884,7 @@ traffic first to reassure them that the technology is functioning properly.
 
 
 \paragraph{Migration}  Figure~\ref{fig:transition-tech} sketches our proposed architecture for tool-supported migration 
-to the \Name platform.  The high-level idea for phase one of our migration plan is that a network engineer will
+to the \Name platform.  The high-level idea for our migration plan is that a network engineer will
 provide a candidate \Name policy for their network.  That candidate will be compared to
 the current low-level network configuration.  In order to perform the comparison, the
 high-level and low-level configurations will be converted into a common 
@@ -896,61 +896,11 @@ sent from external peers, (2) a concrete packet, and (3) the path each policy ca
 The engineer will use this information to iteratively revise the 
 candidate \Name policy until it achieves the desired correspondence with the legacy configuration.  
 
-\begin{wrapfigure}{R}{0.5\textwidth}
-  \centering
-  \small
-  \begin{tabular}{|l|l|l|l|l|}
-\hline\hline
-{\bf Protocol} & {\bf Feature} & {\bf ERA} & {\bf ARC} & {\bf Prop} \\\hline\hline
-OSPF & Single area & Yes & Yes & Yes \\
-& Multiple areas & ? & ? & Yes \\ \hline
-eBGP  & Local pref & Yes & No & Yes \\
-  & RE filters &  No & No & Yes \\
-  & Communities & No & No & Yes \\\hline
-iBGP & & No & No & Yes \\\hline
-%Route & Acyclic & Yes* & Yes* & Yes \\
-%Redistrib.  & Cyclic & Yes* & No & Yes \\
-%& \multicolumn{3}{|l|}{* ERA and ARC are unsound.} \\
-%& \multicolumn{3}{|l|}{For example: \cite{cisco-route-redistribution-tricky} \\
-%Aggregation & Black holes & No & Maybe \\\hline 
-\hline
-{\bf Property} & {\bf Variant} &  &  &  \\\hline\hline
-Equivalence & & No & Yes & Yes\\\hline
-%Preferences & & No & No & Yes\\\hline
-Stability & Unique & No & No & Yes \\
- & Wedgie & No & No & Yes \\\hline
-  \end{tabular}
-\caption{ERA and ARC vs proposed work (Prop). }
-\label{fig:smt-vs-arc}
-\end{wrapfigure}
 
-One way to realize this architecture is to compile the high-level policy into a 2nd low-level configuration
-and then to use existing, off-the-shelf tools such as ERA~\cite{era} or ARC~\cite{arc} to validate and compare
-the two low-level configurations.  This is a reasonable approach, but much additional research is required before existing
-tools are powerful enough to achieve our migration goals.  More specifically, 
-existing control-plane verification tools are (1) incapable of representing a sufficiently
-wide range of features, (2) sometimes unsound,
- and (3) limited in the properties that they can analyze.
-Figure~\ref{fig:smt-vs-arc} summarizes
-a few key differences between two very recent tools (ERA and ARC) and the verification tool that we propose to
-build for migration purposes.  The figure shows that these tools cannot handle
-core BGP features such as regular expression filters and communities, nor can they handle the use of iBGP.
-It is unknown whether they can handle features of OSPF such as multiple areas.  In addition, 
-both tools are unsound in the presence of certain kinds of route redistribution, and will not
-detect the cycles that arise in certain 
-configurations (See the Cisco documentation~\cite{cisco-route-redistribution} for an example of such a configuration).
-When it comes to the properties
-that these tools can check, ERA only tests reachability properties rather than more general \emph{equivalence} properties.  
-Neither tool checks for important stability
-properties of configurations, such as the existence of a \emph{unique} stable solution or the non-existence of
-a \emph{wedgie}~\cite{bgp-wedgie}.\footnote{A wedgie is a configuration with more than one stable solution.  A wedgie may manifest itself 
-when a failure occurs, and routes shift to a new, different and
-undesirable, but stable solution.  Restoration of the failure does not cause the network to shift back to the preferred routing solution.  Migration in the presence
-of wedgies could cause the network to shift to an undesirable stable state.}  
 
-In order to create a more general, expressive and sound tool, we plan to take inspiration from Griffin's work~\cite{griffin+:stable-paths},
-which characterizes BGP as a process that solves the \emph{stable paths problem}, a more general problem than the
-\emph{shortest paths problem}, which lies at the heart of some other tools.  
+We plan to take inspiration from Griffin's work~\cite{griffin+:stable-paths},
+which characterizes BGP as a process that solves the \emph{stable paths problem}, a generalization of the 
+\emph{shortest paths problem}.  
 More specifically, we plan to build tools that can translate both low-level configurations and PGIR graphs into
 logical formulae that represent the stable paths problems being solved.
 For instance, the following logical phrases represent an idealized sketch of the core technique (below $x$, $y$, $z$ are routers):
@@ -983,10 +933,10 @@ to a network operator.
 We have already begun to experiment with this encoding and our initial tests suggest
 that these techniques will scale to moderate-sized networks with at least 100 routers or
 more, depending on the network policies and properties of interest
-(and hence will be applicable to the majority of corporate and campus networks 
+(and hence will be applicable to the majority of corporate and campus networks
 that do not exceed this size).  To scale to larger data-center sized networks,
 we plan to investigate integrating these SMT-based techniques with
-Vargese's techniques involving symmetry and surgery~\cite{bjorner+:scaling-network-verification} as well as the topology
+Varghese's techniques involving symmetry and surgery~\cite{bjorner+:scaling-network-verification} as well as the topology
 abstractions described earlier in this proposal.
 
 
@@ -1059,7 +1009,7 @@ the existing low-level configuration.
 A second approach we will investigate involves focusing on inferring \Name's
 high-level abstractions more directly.  In particular, \Name's core policies are
 phrased in terms of regular expressions and there are a variety of algorithms
-in the literature, such as the L* algorithm~\cite{} that may be used
+in the literature, such as the L* algorithm~\cite{Angluin87} that may be used
 infer regular expression.
 %expressions to specify allowed paths, is to expoit
 %existing algorithms for learning regular expressions.
@@ -1097,16 +1047,42 @@ to help generate such interfaces.
 %Finally, given an appropriate interface specification for manually configured portions of the network, we must generalize the \Name compilation strategy to incorporate the assumption that those portions meet their specifications as well as the constraint that those configurations cannot be modified.
 
 
-\paragraph*{Related research:}  The ARC~\cite{arc} and ERA~\cite{era} systems, discussed earlier, are the closest related work.  
-Another related tool is Bagpipe~\cite{bagpipe}.  Bagpipe has the advantage that it has been proven correct in the theorem-proving
-environment Coq.  However, like ERA, it does not support equivalence testing and hence is insufficiently powerful for our purposes.
-Batfish~\cite{batfish}, anther control-plane analysis tool, is a \emph{testing} tool as opposed to a \emph{verification} tool. 
-Batfish may be used to find bugs in configurations but does not guarantee equivalence of control planes.  There is also a great deal of work on \emph{data plane} verification, such as work on AntEater~\cite{mai+:anteater}, Header Space Analysis~\cite{hsa},
-Veriflow~\cite{khurshid13veriflow}, Network Datalog~\cite{nod} and many, many others.  Such work is fundamentally different from the
-verification efforts that we are interested in, which focus on \emph{control plane} protocol configuration as opposed to \emph{data plane} rule analysis.
+% \begin{wrapfigure}{R}{0.5\textwidth}
+%   \centering
+%   \small
+%   \begin{tabular}{|l|l|l|l|l|}
+% \hline\hline
+% {\bf Protocol} & {\bf Feature} & {\bf ERA} & {\bf ARC} & {\bf Prop} \\\hline\hline
+% OSPF & Single area & Yes & Yes & Yes \\
+% & Multiple areas & ? & ? & Yes \\ \hline
+% eBGP  & Local pref & Yes & No & Yes \\
+%   & RE filters &  No & No & Yes \\
+%   & Communities & No & No & Yes \\\hline
+% iBGP & & No & No & Yes \\\hline
+% %Route & Acyclic & Yes* & Yes* & Yes \\
+% %Redistrib.  & Cyclic & Yes* & No & Yes \\
+% %& \multicolumn{3}{|l|}{* ERA and ARC are unsound.} \\
+% %& \multicolumn{3}{|l|}{For example: \cite{cisco-route-redistribution-tricky} \\
+% %Aggregation & Black holes & No & Maybe \\\hline 
+% \hline
+% {\bf Property} & {\bf Variant} &  &  &  \\\hline\hline
+% Equivalence & & No & Yes & Yes\\\hline
+% %Preferences & & No & No & Yes\\\hline
+% Stability & Unique & No & No & Yes \\
+%  & Wedgie & No & No & Yes \\\hline
+%   \end{tabular}
+% \caption{ERA and ARC vs proposed work (Prop). }
+% \label{fig:smt-vs-arc}
+% \end{wrapfigure}
 
-\tdm{Shriram Krishnamurthi has some work on migration to SDN in the SDN workshop 2015.  What else?}
+\paragraph*{Related research:}  
+One way to realize the migration architecture in Figure~\ref{fig:transition-tech} is to compile the \Name policy into a low-level configuration
+and then to use existing tools for configuration analysis~\cite{batfish,arc,bagpipe,era} to compare the two low-level configurations.  This is a reasonable approach, but much additional research is required before existing
+tools are powerful enough to achieve our migration goals.  Specifically, all existing configuration analysis tools have important limitations that would prevent their usage in our context.  Batfish~\cite{batfish} and ERA~\cite{era} can find configuration bugs in the context of specific user-specified environments but cannot verify configurations on all possible environments.  ARC~\cite{arc} soundly reasons about certain properties in the context of all possible failures but not all possible environments; Bagpipe~\cite{bagpipe} has exactly the opposite limitation.  Further, these tools are targeted at checking properties of a single configuration, while we require the ability to compare the behaviors of two configurations to one another.
 
+There is also a great deal of work on verification of a specific incarnation of the network as embodied by its \emph{data plane} (forwarding tables), such as work on AntEater~\cite{mai+:anteater}, Header Space Analysis~\cite{hsa},
+Veriflow~\cite{khurshid13veriflow}, Network Datalog~\cite{nod} and many others.  This work is fundamentally different from our
+verification needs, which requires reasoning about the network's \emph{control plane} as specified in its configuration.
 
 \paragraph*{Summary of key research questions:}
 
@@ -1116,7 +1092,7 @@ for equivalence testing and verification of other important properties?  To what
 
 \item How do we automate generation of counter-examples when policies differ? What form should user feedback take?
 
-\item Can SMT-based synthesis or RE-learning techniques help us infer \Name policies directly from low-level configurations given only partial or non-existant \Name policies to start from?
+\item Can SMT-based synthesis or RE-learning techniques help us infer \Name policies directly from low-level configurations given only partial \Name policies to start from?
 
 \item What form of interface specification is necessary for a manually configured subnetwork, in order to support safe mixed-mode \Name analysis, compilation and operation?
 
