@@ -291,7 +291,7 @@ Ye, started graduate school in Fall 2016.  Millstein co-advised female Ph.D.\ st
 co-advising Lili Qiu (now a professor at UT Austin) and Lavanya Jose (currently a graduate student at Stanford).
 
 
-\section{Current Propane Language and Architecture}
+\section{Preliminary Work}
 \label{sec:propane}
 
 \begin{figure}[t]
@@ -328,16 +328,15 @@ co-advising Lili Qiu (now a professor at UT Austin) and Lavanya Jose (currently 
 \end{figure}
 
 Our new ideas for deployable synthesis are best understood in the context of
-our preliminary work on \Propane. 
+our preliminary work on \Propane~\cite{beckett+:propane}. 
 %Reviewers familiar with \Propane may skip to section~\ref{sec:research}, where we describe our proposed new research.  
 %
 \Propane allows users to program collections of routers running BGP
 by writing down high-level, declarative constraints that 
 describe the paths that traffic is allowed to flow along, as well
 as the back-up paths to use in case of failure.  These constraints are
-remarkably
-concise as well as being modular and compositional.
-As such, they allow users to construct complex policies
+concise as well as {\em compositional}, allowing users to
+construct complex policies
 from relatively simpler parts.  In fact, in studies of policy we obtained
 for a data center 
 and a backbone network from a large cloud provider, we have found that 
@@ -346,7 +345,7 @@ routing policy (not including definitions of prefix groups and ownership of
 prefixes) that faithfully expresses the concerns of network operators
 can be expressed in as little as 30-50 lines of Propane
 code.  In contrast, representing the same policy in low-level BGP 
-configurations takes \emph{1000s of lines of code per device}.
+configurations requires \emph{thousands of lines of code per device}.
 Some of this surprising economy of notation comes from the high-level 
 abstractions we use
 (regular expressions and logical predicates, which may expand exponentially
@@ -354,7 +353,7 @@ when converted into lower level abstractions such as deterministic
 automata and prioritized tables); some comes from sharing
 policy effectively across groups of destinations; some comes from
 sharing policy across multiple devices; and some comes from the fact
-that our system synthesizes so many low-level details (local preferences,
+that our system automatically synthesizes so many low-level details (local preferences,
 community values, MEDs, import and export filters per device).  All told, 
 the savings make Propane policies vastly
 easier to understand, analyze, maintain and modify than traditional
@@ -371,26 +370,22 @@ A, B, C, \etc, and is connected to the rest of the internet via
 two peers, named Peer1 and Peer2, which it does not control, but with
 whom it communicates via BGP.
 
-The user of this data center has a number of policy objectives. First,
+Figure~\ref{fig:policy} shows a \Propane specification for this data center which meets a number of objectives.  Lines 1 and 2 define a policy named \texttt{Locality}, which expresses the requirement that
 the local services should not receive traffic from the rest of the internet.  
-Lines
-1 and 2 of Figure~\ref{fig:policy} express this concern.  They define
-a policy named Locality.  Such policies contain clauses of the form
+\Propane policies contain clauses of the form
 \texttt{$X$=>$P$} where $X$ defines a set of destination prefixes and 
 $P$ defines a set of ranked (acyclic) paths along which traffic may flow 
 to reach the given destination.  The keyword \texttt{in} refers to
 any network location that we control; the constraint \texttt{always($L$)}
 defines paths that only use locations in the set $L$.  Hence, line 2
 of the policy ensures traffic flowing to PL1 and PL2 comes from within
-our data center, not outside it.  Line 5 uses another constraint
-\texttt{transit($S$)}, which defines paths between members of the set $S$.
-The constraint\texttt{!transit($S$)} takes the compliment of such a set,
-and hence lines 4-5 define a policy named \texttt{NoTransit}, which prohibits
-traffic from Peer1 to Peer2 (and vice versa) from flowing through our
-data center.  The \texttt{Ownership} policy demands that any path
-to a given prefix group ends at the appropriate TOR switch.  Finally,
+our data center, not outside it.  The \texttt{NoTransit} policy on lines 4 and 5 prohibits traffic from Peer1 to Peer2 (and vice versa) from flowing through our data center.  This policy uses the constraint 
+\texttt{transit($S$)}, which defines the set of paths between members of the set $S$.
+The constraint\texttt{!transit($S$)} therefore represents the complement of such a set.
+The \texttt{Ownership} policy demands that any path
+to a given prefix group ends at the appropriate TOR switch.  On line 12 this policy also uses a preference constraint \texttt{>>} to indicate that paths \texttt{exit}ing Peer1 from the data center are preferred to paths \texttt{exit}ing Peer2.  The \Propane compiler, described below, will ensure that this preference is respected, with traffic exiting from Peer2 only when a path through Peer1 is unavailable (e.g., due to failures).  Finally,
 \texttt{Main} is defined as the conjunction of all of the previous constraints,
-and in addition, specifies a \emph{control constraint}.  The control
+and in addition specifies a \emph{control constraint}.  The control
 constraint \texttt{agg(PG,in->out)} demands that any announcement
 for a more precise prefix, such as PG1 or PG2, be transmitted as the
 more general prefix PG along any topology edge between nodes \texttt{in}
@@ -409,7 +404,7 @@ our network and nodes \texttt{out}side of our network.
 %% \end{code}
 %%   (b)
 %% \end{minipage}
-\caption{\Name architecture.
+\caption{\Propane architecture.
 %FE = Front End;
 %RIR = Regular expression Intermediate Representation;
 %PGIR = Product Graph Intermediate Representation;
@@ -423,7 +418,7 @@ our network and nodes \texttt{out}side of our network.
 %
 \paragraph*{Architecture.}
 Figure~\ref{fig:pipeline} presents the architecture of the
-current \Name compiler, which takes high-level constraints, such as those
+current \Propane compiler, which takes high-level constraints, such as those
 just described, and synthesizes low-level, device-by-device configurations.  
 To do so, the compiler transforms the front-end (FE) specifications through
 a series of intermediate languages.  The first intermediate language, the
@@ -439,11 +434,11 @@ We call this lower-level graph-based representation the \emph{product graph} (or
 Intuitively, every node in the PGIR contains both a topology location
 (A, B, C, \etc) and an automaton state (q1, q2, q3, \etc).  There is an
 edge from node (A,q1) to node (B,q2) in the product graph if there is
-a link in the topology from A to B, and the \Name policy states that
+a link in the topology from A to B, and the \Propane policy states that
 it is legal to progress from automaton state q1 to q2.  Hence,
 the key property of the PGIR is that any path from start to final state
 \emph{both} obeys the constraints of the topology and the constraints
-of the user policy.  As a consequence, the compiler may perform any
+of the policy.  As a consequence, the compiler may perform any
 analyses that depends on both topology and policy using this representation:  
 it may determine whether node A can be reached from node B; it can determine
 what the effect of failing a particular link or topology node has on 
@@ -466,32 +461,31 @@ previous SDN languages:
 \emph{back-up paths} is missing in
 previous SDN languages;
 and (3) the ability to compile to fully distributed control plane
-protocols such as BGP, which need no centralized controller, which
-scale to the largest networks, and which fail and recover locally.
+protocols such as BGP, which need no centralized controller,
+scale to the largest networks, and fail and recover locally.
 
 Another related system is SDX, the software-defined exchange 
 point~\cite{sdx,isdx}. This project involves design of a route server, which 
 composes the routing policy from
-many neighboring networks, which each exchange traffic
+many neighboring networks that exchange traffic
 with one another.
 In contrast, the goal of \Propane is to support high-level 
 specification of routing policy for \emph{one}
 network.  Because
-\Propane compiles to traditional distributed protocols (BGP) as opposed to
+\Propane compiles to traditional distributed protocols (BGP) as opposed
 to infrastructure managed by a centralized route server, 
 \Propane's compilation and synthesis algorithms
 are completely different from those used in SDX.
 
 RPSL~\cite{rpsl}, Nettle~\cite{nettle} and DADC~\cite{dadc} are three
-other languages designed to routing policy for distributed control planes
+other languages designed to specify routing policy for distributed control planes
 running legacy protocols.  RPSL uses attribute-value pairs to specify policy,
 Nettle embeds router specifications in Haskell, and DADC uses logic programming
 and SAT to infer parameters for configurations automatically and ensure they
 are consistent.  \Propane differs from this past work in a number of ways but most
 importantly in the kinds of abstractions provided.  In particular, \Propane supplies
 a high-level constraint language that allows programmers to specify
-network-wide paths and relations between paths.  This lifts the level of abstraction
-for programmers and avoids device-by-device configuration.
+network-wide paths and relations between paths, while this prior work still requires engineers to express policy and configuration on a device-by-device basis.
 
 %% The centralized control planes of SDN, however, are not a panacea.
 %% First, while many SDN programming systems~\cite{sdn-languages} provide effective \emph{intra}-domain routing
