@@ -1,8 +1,8 @@
 \section{Introduction}
 
-All sectors of society depend on properly functioning networks.  Further, both the complexity and requirements of these networks are increasing as more devices come online and richer data and services move to the cloud.  Unfortunately, network errors routinely lead to costly downtime~\cite{mahajan+:bgp-misconfiguration,feamster+:rcc,batfish,dc-failure-study}.
+All sectors of society depend on properly functioning networks.  Further, both the complexity and requirements of these networks are increasing as more devices come online and richer services move to the cloud.  Unfortunately, network errors routinely lead to costly downtime~\cite{mahajan+:bgp-misconfiguration,feamster+:rcc,batfish,dc-failure-study}.
 Figure~\ref{fig:network-downtime} reports the results of a Juniper
-study on network outages.  It shows that human error, which often occurs in configuration, update, or planned maintenance of networks, is the single largest cause of outages. 
+study on network outages.  It shows that human error, which often occurs in configuration or planned maintenance of networks, is the single largest cause of outages. 
 Anecdotally, the evidence is equally compelling.  For instance, recent misconfigurations at
 Time Warner led to an hour-long, nation-wide outage of their backbone network~\cite{time-warner} and at United led to temporary suspension of all US flights in July 2015~\cite{united}.
 
@@ -88,7 +88,7 @@ Finally, the described problems of network configuration affect not only the rob
 A natural solution to these problems, analogous to the trend in languages for software development over the last several decades, is to define a higher-level language for implementing desired network policies.  
 % Indeed, this solution has been pursued by prior work, yet none of these languages have been widely deployed to date.  An early attempt, Routing Policy Specification Language (RPSL) was not sufficiently high level, still requiring users to manually decompose network-wide policies into router-specific configuration~\cite{rpsl}.  
 Indeed, in recent years, researchers have developed a series of network-wide policy 
-languages that target  software-defined networking (SDN) platforms for logically centralized control planes, such as OpenFlow~\cite{frenetic,flowlog,foster:merlin,vericon,sagiv:l,fattire,netkat,kinetic,sdn-languages}. These languages have developed intuitive high-level abstractions for specification
+languages that target  software-defined networking (SDN) platforms for logically centralized control planes, such as OpenFlow~\cite{frenetic,flowlog,foster:merlin,vericon,sagiv:l,fattire,netkat,kinetic,sdn-languages}. These languages have developed intuitive, high-level abstractions for specification
 of routing policy and developed algorithms that take care of many of the nitty-gritty details of
 generating a low-level implementation, thereby avoiding the errors caused by
 ad hoc manual configuration.
@@ -108,7 +108,6 @@ new network programming language called Propane~\cite{beckett+:propane} (winner 
 best student paper award) that borrows from SDN languages an expressive set of primitives for specifying the allowed network-wide paths.  Propane extends these capabilities to enable the specification of backup paths via a simple form of path preferences, and allows the expression of both intra-domain 
 and inter-domain routing objectives.  Crucially, rather than compiling to OpenFlow,
 Propane compiles to BGP, the industry-standard and ubiquitous inter-domain routing protocol.  In addition to being in wide usage, BGP is distributed, fault tolerant and scalable.
-
 Despite these advances, it is impossible to deploy Propane in industrial settings for several fundamental reasons:
 
 %Analogous to languages like RPSL, the Propane compiler automatically produces configurations for each router that leverage BGP to implement the desired policy.  Furthermore, the Propane compiler guarantees that the specified path preferences will be respected regardless of the link or node failures that may occur.
@@ -122,7 +121,7 @@ Despite these advances, it is impossible to deploy Propane in industrial setting
 \item[expressiveness]  Today's low-level configuration languages provide fine-grained control over network functionality and performance.  Operators will not move to higher-level, network-wide policy languages unless they can express the subtle and complex policies that business requirements demand.  Propane's 
 language is not sufficient to express several common classes of policies.
 
-\item[intelligibility] At least in the near term, the low-level configurations output by the Propane compiler must be human readable and match the configuration styles in use today.  This requirement has become clear in the PIs' discussions with network engineers at two large cloud providers.  Intelligibility is necessary to give engineers confidence in the behavior of their networks, enable the configurations to be processed with a variety of existing tools, and allow operators to directly modify and debug configurations when necessary.  
+\item[intelligibility] In the near term, the low-level configurations output by the Propane compiler must be human readable and match the configuration styles in use today.  This requirement has become clear in the PIs' discussions with network engineers at two large cloud providers.  Intelligibility is necessary to give engineers confidence in the behavior of their networks, to enable configurations to be processed with a variety of existing tools, and to allow operators to directly modify configurations when necessary.  
 % For instance, Network operators, especially for large, structured networks such as data centers, do not think in terms of individual devices.  Instead, they craft policy in terms of \emph{sets} of devices that
 % play similar roles such as top-of-rack switch, tier-one switch, \etc and the more general \emph{topological invariants} that connect these sets (\eg, the number of edges or paths that connect elements of each set).  The output of deployable synthesis must match the cognitive models used by network operators.
 
@@ -207,7 +206,7 @@ to contract constaints.
 without operators needing to change the high-level policy specification.
 
 \item {\bf Migration Technology:} We will develop technology to help network engineers migrate existing configurations to network-wide policies.  First, we will develop new algorithms to translate legacy configurations into a logical
-representation that reflects their semantics.  Second, we will leverage modern constraint solvers to automatically compare such configurations with a proposed high-level policy, either proving equivalence or providing counterexamples that guide policy refinement.  Third, we will explore techniques to automatically infer network-wide policies directly from the legacy configurations.
+representation that reflects their semantics.  Second, we will leverage modern constraint solvers to automatically compare such configurations with a proposed high-level policy, either proving equivalence or providing counterexamples that guide policy refinement.  Third, we will explore techniques to automatically infer network-wide policies from legacy configurations.
 
 \item {\bf Mixed Verification:} Finally, we will support a mixed form of configuration, whereby some portions of the network behavior are specified with \Name and some using existing technologies.  Supporting manual configurations is essential to enable incremental deployment but also to allow an escape mechanism to specify behaviors outside the capability of \Name (just as higher-level languages allow calls to native code).  A key technical challenge is to define interfaces that specify the \emph{assumptions} and \emph{guarantees} that manual and synthesized configurations make about one another and then to verify that each side lives up to its requirements. 
 %adopting and extending the notion of {\em assume-guarantee reasoning} from the literature on compositional program analysis~\cite{Jones:assume-guarantee} to support verification and synthesis for mixed configurations.  
@@ -219,13 +218,13 @@ representation that reflects their semantics.  Second, we will leverage modern c
 %% safely transition the system from old configuration to new configuration while the system is in operation.}
 
 \paragraph{The Team.}  Our team has the breadth of skills, backgrounds, and perspectives that will be required to accomplish the agenda set out above.  
-Over the last eight years, David Walker and his collaborators
+Over the last eight years, PI David Walker and his collaborators
 developed the first high-level SDN programming languages, including
 Frenetic~\cite{frenetic}, Pyretic~\cite{pyretic} and NetKAT~\cite{netkat}.
 He also developed the concept of consistent network updates~\cite{reitblatt+:consistent-updates},
- contributed to the design of P4~\cite{P4} and, together with Millstein, 
+ contributed to the design of P4~\cite{P4} and, together with PI Millstein, 
 developed the award-winning
-Propane system~\cite{beckett+:propane}.   Todd Millstein is an expert in automated software verification as well as techniques for static and dynamic program analysis.  He has been applying and extending these approaches to reason about various aspects of networks for the last ten years~\cite{DBLP:conf/pldi/KothariGMG07,gullible,DBLP:conf/sigcomm/KothariMMGM11,DBLP:conf/nsdi/PedrosaFKGMM15}, including development of the Batfish~\cite{batfish} and ERA~\cite{era} tools for automatic network configuration analysis and verification. George Varghese won the 2014 SIGCOMM lifetime award for his work on routers.  In the last five years, he has helped, with the other PIs and colleagues, create the field of network verification.  He and colleagues have created open-source verification tools for networks including Header Space Analysis~\cite{hsa} and Network Optimized Datalog (NoD)~\cite{nod}. NoD has been used by Amazon to create verification tools for customer-created virtual networks.  Together, the PIs cover the full spectrum of skills required for this proposal including
+Propane system~\cite{beckett+:propane}.   Todd Millstein is an expert in automated software verification as well as techniques for static and dynamic program analysis.  He has been applying and extending these approaches to reason about various aspects of networks for the last ten years~\cite{DBLP:conf/pldi/KothariGMG07,gullible,DBLP:conf/sigcomm/KothariMMGM11,DBLP:conf/nsdi/PedrosaFKGMM15}, including development of the Batfish~\cite{batfish} and ERA~\cite{era} tools for automatic network configuration analysis and verification. PI George Varghese won the 2014 SIGCOMM lifetime award for his work on routers.  In the last five years, he has helped, with the other PIs and colleagues, create the field of network verification.  He and colleagues have created open-source verification tools for networks including Header Space Analysis~\cite{hsa} and Network Optimized Datalog (NoD)~\cite{nod}. NoD has been used by Amazon to create verification tools for customer-created virtual networks.  Together, the PIs cover the full spectrum of skills required for this proposal including programming
 language semantics and design,
 compilation,
 network algorithmics,
@@ -337,7 +336,7 @@ describe the paths that traffic is allowed to flow along, as well
 as the back-up paths to use in case of failure.  These constraints are
 concise as well as {\em compositional}, allowing users to
 construct complex policies
-from relatively simpler parts.  In fact, in studies of policy we obtained
+from relatively simple parts.  In fact, in studies of policy we obtained
 for a data center 
 and a backbone network from a large cloud provider, we have found that 
 realistic
@@ -418,8 +417,8 @@ our network and nodes \texttt{out}side of our network.
 %
 \paragraph*{Architecture.}
 Figure~\ref{fig:pipeline} presents the architecture of the
-current \Propane compiler, which takes high-level constraints, such as those
-just described, and synthesizes low-level, device-by-device configurations.  
+current \Propane compiler, which synthesizes low-level, device-by-device configurations
+from high-level, end-to-end specifications.  
 To do so, the compiler transforms the front-end (FE) specifications through
 a series of intermediate languages.  The first intermediate language, the
 RIR, unfolds definitions such as \texttt{end}, \texttt{transit} and \texttt{always} into raw regular expressions and merges all the constraints for a single
@@ -437,13 +436,14 @@ edge from node (A,q1) to node (B,q2) in the product graph if there is
 a link in the topology from A to B, and the \Propane policy states that
 it is legal to progress from automaton state q1 to q2.  Hence,
 the key property of the PGIR is that any path from start to final state
-\emph{both} obeys the constraints of the topology and the constraints
+obeys \emph{both} the constraints of the topology and the constraints
 of the policy.  As a consequence, the compiler may perform any
-analyses that depends on both topology and policy using this representation:  
-it may determine whether node A can be reached from node B; it can determine
-what the effect of failing a particular link or topology node has on 
-connectivity; and it can determine whether BGP can implement the policy
-faithfully (not all product graph policies can be implemented faithfully).
+analyses that depends on both topology and policy using this representation.  
+%For example,  
+%it may determine whether node A can be reached from node B; it can determine
+%what the effect of failing a particular link or topology node has on 
+%connectivity; and it can determine whether BGP can implement the policy
+%faithfully (not all product graph policies can be implemented faithfully).
 
 Once various analyses have been performed on the product graph, it is
 transformed into abstract BGP (ABGP), a vendor-agnostic variant of BGP.
@@ -456,7 +456,7 @@ recent SDN programming
 languages~\cite{frenetic,pyretic,flowlog,foster:merlin,netkat,kinetic,pga}.
 However, several significant differences stand out:  (1) the ability to express
 both intra-domain routing and \emph{inter}-domain routing is missing in
-previous SDN languages: 
+previous SDN languages;
 (2) the ability to express routing \emph{preferences} and 
 \emph{back-up paths} is missing in
 previous SDN languages;
@@ -481,11 +481,12 @@ RPSL~\cite{rpsl}, Nettle~\cite{nettle} and DADC~\cite{dadc} are three
 other languages designed to specify routing policy for distributed control planes
 running legacy protocols.  RPSL uses attribute-value pairs to specify policy,
 Nettle embeds router specifications in Haskell, and DADC uses logic programming
-and SAT to infer parameters for configurations automatically and ensure they
-are consistent.  \Propane differs from this past work in a number of ways but most
+and SAT to infer parameters for configurations automatically and to ensure they
+are consistent.  \Propane differs from this past work in a number of ways, but most
 importantly in the kinds of abstractions provided.  In particular, \Propane supplies
 a high-level constraint language that allows programmers to specify
-network-wide paths and relations between paths, while this prior work still requires engineers to express policy and configuration on a device-by-device basis.
+network-wide paths and relations between paths, while this prior work 
+still requires engineers to express policy and configuration on a device-by-device basis.
 
 %% The centralized control planes of SDN, however, are not a panacea.
 %% First, while many SDN programming systems~\cite{sdn-languages} provide effective \emph{intra}-domain routing
@@ -508,7 +509,8 @@ network-wide paths and relations between paths, while this prior work still requ
 \section{Research Agenda}
 \label{sec:research}
 
-Our proposed \Name system will start from the preliminary work on \Propane and extend it to tackle a range of key technical challenges that impede practical deployment today.
+Our proposed \Name system will exploit infrastructure we have developed for \Propane
+but will tackle a range of key new technical challenges that impede practical deployment today.
 
 \subsection{Topological Abstractions}
 
@@ -599,11 +601,11 @@ invariants
 we will likely need many more different kinds abstractions than are
 shown in Figure~\ref{fig:abstract-topo}.  In particular, when we examine a wide range of network
 topologies~\cite{al-fares:data-center-architecture,f10,quasi-fat-trees,aspen-trees,jellyfish,dcell}, 
-we believe we many need multiplicities on nodes (constraining the
+we believe we may need multiplicities on nodes (constraining the
 number of nodes in an abstract node or pod), relations between 
 multiplicities (e.g., $n \geq 2$
 to ensure that nodes are connected by at least two edges to other parts of the data center), probabilistic relations (to describe randomized network
-designs like Jellyfish~\cite{jellyfish}) and perhaps nested abstractions (to describe the
+designs like Jellyfish~\cite{jellyfish}) and nested abstractions (to describe the
 hierarchical structure of designs such as DCell~\cite{dcell}).  
 
 %\paragraph*{Compilation and analysis with abstract topologies.}
@@ -616,7 +618,7 @@ concrete router configurations for each router in the group.
 Indeed, there are a variety of tools available, such as Hatch~\cite{hatch}
 and Thwack~\cite{thwack},
 to help with the definition and sharing of such templates.
-In order for \Name to exploit existing template-based infrastructure,
+In order for \Name to be deployed in the context of existing template-based infrastructure,
 it will be necessary to revisit \Propane's compilation algorithms so
 that policy expressed over abstract topologies generates appropriate
 templates rather than concrete configurations.  Generating templates will
@@ -669,7 +671,7 @@ Recent work by co-PI Varghese on network ``symmetry and surgery''~\cite{bjorner+
 data centers by leveraging symmetries in the networks to  
 transform them into
 related, smaller networks.  The ideas
-developed here may be a useful starting point for verifying properties of \Name policies on abstract topologies; we will need to extend these ideas to handle the expressive abstractions that \Name will support, such as multiplicities.  
+developed there may be a useful starting point for verifying properties of \Name policies on abstract topologies; we will need to extend these ideas to handle the expressive abstractions that \Name will support, such as multiplicities.  
 
 
 \paragraph*{Summary of key research questions:}
