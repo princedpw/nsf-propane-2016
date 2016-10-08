@@ -477,10 +477,11 @@ to infrastructure managed by a centralized route server,
 \Propane's compilation and synthesis algorithms
 are completely different from those used in SDX.
 
-RPSL~\cite{rpsl}, Nettle~\cite{nettle} and DADC~\cite{dadc} are three
+RPSL~\cite{rpsl}, Nettle~\cite{nettle}, ConfigAssure~\cite{narain:lisa05,narain+:configassure}, and DADC~\cite{DADC} are three
 other languages designed to specify routing policy for distributed control planes
 running legacy protocols.  RPSL uses attribute-value pairs to specify policy,
-Nettle embeds router specifications in Haskell, and DADC uses logic programming
+Nettle embeds router specifications in Haskell, and
+ConfigAssure and DADC use logic programming
 and SAT to infer parameters for configurations automatically and to ensure they
 are consistent.  \Propane differs from this past work in a number of ways, but most
 importantly in the kinds of abstractions provided.  In particular, \Propane supplies
@@ -696,11 +697,7 @@ compilation algorithms and analyses are correct?
 Many networks have complex business relationships with their peers, providers and 
 customers \cite{routingplaybook}.  Such networks must satisfy agreements to carry traffic 
 while minimizing
-cost, thereby maximizing their own profits.  While some past high-level network configuration
-languages, such as Merlin~\cite{foster:merlin}, synthesized \emph{intra}-domain traffic
-engineering solutions from high-level specifications, no such languages have taken into account
-\emph{inter}-domain routing, peering relationships and business contracts.
-
+cost, thereby maximizing their own profits. 
 %% Currently, Propane users may specify preferences between routes; these
 %% less-preferred routes are utilized only if failures occur.  However,
 %% many users have more sophisticated requirements than this ---
@@ -708,47 +705,66 @@ engineering solutions from high-level specifications, no such languages have tak
 %% failures be taken into account.  In particular, to deal with higher
 %% load, bursts, or partial failures, networks may need to open more
 %% costly routes, at least temporarily.
-
+%
 Inspired in part by past domain-specific languages for specifying contracts for financial derivatives~\cite{spj+:contracts},
-we propose to develop a sub-language that allow users to specify the
-costs associated with using different interdomain routes, the peering agreements they
-engage in, and the contracts signed with customers or providers.  For example,
-our sub-language will allow description of the common 95/5 contract~\cite{routingplaybook}, in which 
-customer traffic is monitored in
-5 minute intervals.  In this contract, the customer is billed at some agreed upon rate X multiplied by the
-volume measured during 95th percentile 5-minute interval.  Such contracts allow customers to burst for small
+we will develop a \emph{sub-language} that allow users to specify the
+\emph{costs} associated with using different interdomain routes, the \emph{peering agreements} they
+engage in, and the \emph{contracts} signed with customers or providers.  For example,
+our sub-language will allow description of the common 95/5 contract~\cite{routingplaybook}.  In this contract, the customer traffic is measured at 5-minute intervals and is billed at 
+some agreed upon rate X multiplied by the
+volume measured during 95th percentile interval each month.  Such contracts allow customers to burst for small
 percentages of the time without suffering outsized bills.  Other common kinds of contracts include
 \emph{tiered contracts}~\cite{tiered-isp-contracts}, in which customers promise a certain monthly level
-of usages in advance in exchange for an improved rate in terms of Mbps.  
+of usages in advance in exchange for an improved rate in terms of Mbps.  Moreover,
+in addition to \emph{blended contracts}, which charge the same rate for every destination,
+there sometimes exist different rates for different destinations~\cite{tiered-isp-contracts}.
 
-There are (at least) two ways to explore using such contract and costs specifications.  One way is as a \emph{model}
-of network operations and their costs.  When such a model is equipped with an algorithm to evaluate (or simulate) costs under
-assumptions about current or future traffic, it can be used to evaluate (some of) the advantages of engaging
-in new peering arrangements or the potential costs of eliminating certain peering arrangements.  
-In the past, Valancius \emph{et al}~\cite{tiered-isp-contracts} have used network cost models to 
-answer \emph{general} questions about how ISPs should price their bandwidth.  In our case, network owners could
-use our language to specify their \emph{specific} situation and use it to help with their \emph{specific} peering
-policies.  In addition, configurations faithful to the model can be directly synthesized by the \Name system.  
+%% There are (at least) two ways for network operators to use such contract and costs specifications productively.  One way is as a \emph{model}
+%% of network operations and their costs.  When such a model is equipped with an algorithm to evaluate (or simulate) costs under
+%% assumptions about current or future traffic, it can be used to evaluate (some of) the advantages of engaging
+%% in new peering arrangements or the potential costs of eliminating certain peering arrangements.  
+%% In the past, Valancius \emph{et al}~\cite{tiered-isp-contracts} have used network cost models to 
+%% answer \emph{general} questions about how ISPs should price their bandwidth.  In our case, network owners could
+%% use our language to specify their \emph{specific} situation and use it to help with their \emph{specific} peering
+%% policies.  In addition, configurations faithful to the model can be directly synthesized by the \Name system.  
 
-A second way to use such contract specifications is as an input to configuration synthesis.  In this case,
-our synthesizer would have to take in the quantitative information present in our models and use it to
+When such contract specifications are an integrated part of the network operator's 
+policy specification language, they may be used to guide configuration synthesis.  
+In this case,
+our synthesizer would have to take in the quantitative information present in our models 
+and use it to
 manage cost-aware inter-domain and intra-domain routing and traffic shaping.  For example,
 consider two paradigms used in practice and described in the Internet Peering Playbook~\cite{routingplaybook}.   
 In the first pattern, that we call a {\em Fusilade} pattern, a client network monitors its bursts of traffic and
-spreads bursts across 5 providers, ensuring that its total burst time for the month for any given provider 
-does not exceed 5\% of its 5-minute intervals when it has a 95/5 contract with that provider.
-In the second {\em End of Month} pattern, a client has two providers $P1$ and $P2$, and normally splits traffic between them.  However, the client has a minimum amount of traffic that it is charged for every month by provider $P2$.   Thus by the end of the billing period (say a month), if the total traffic from the client to the provider falls below this floor, the client should exclusively use provider $P2$ until the bound is exceeded.
+spreads bursts across 5 providers, bursting at first one and then the next and then
+the next provider.  The goal is to minimize the level
+of its 95th percentile 5-minute interval when it has a 95/5 contracts, while possibly
+dramatically exceeding average volume when bursting in the 96-100 percentile intervals.
+In the second {\em End of Month} pattern, a client has two providers $P1$ and $P2$, and normally splits traffic between them.  However, the client has a minimum amount of traffic that it is charged for every month by provider $P2$.   Thus by the end of the billing period, if the total traffic from the client to the provider falls below this floor, the client should exclusively use provider $P2$ until the bound is exceeded.
 
-Implementing such strategies will require substantial new infrastructure.  Our current platform compiles to BGP, 
+Implementing such strategies will require substantial research.  
+Our current platform compiles to BGP, 
 but BGP does not contain mechanisms for processing quantitative information or managing
-traffic engineering mechanisms.  Consequently, we propose using a hetergeneous
-back-end composed in part of BGP running at the edge, to handle interdomain
-routing, and our own custom switch agents, implemented using P4~\cite{P4}, 
-to manage the traffic monitoring, shaping, policing and routing needed to implement
-cost-aware routing.  Vargese and Walker both helped design P4 and have considerable experience with it.
-In addition, in order to optimize cost over a given time period, 
-such as a month, we will have to update BGP policy dynamically as well,
-while avoiding perils such as route flapping or oscillation.
+traffic engineering mechanisms.  One implementation strategy we will investigate
+involves building a controller to monitor traffic levels and push BGP
+updates to switches periodically.  While doing so, we will investigate mechanisms to
+avoid perils such as route flapping or oscillation.  A second implementation
+strategy will use a wider range of network devices to implement our strategy,
+such as a switches running OpenFlow~\cite{openflow}, P4~\cite{P4} or PIFO~\cite{pifo}.
+The following section (backend diversity), we explain our complimentary efforts 
+to synthesize configurations
+for a wider range of protocols and devices in support of high-level \Name policies.  
+
+%% Consequently, we propose using a hetergeneous
+%% back-end composed in part of BGP running at the edge, and other mechanisms in the 
+
+%% to handle interdomain
+%% routing, and our own custom switch agents, implemented using P4~\cite{p4}, 
+%% to manage the traffic monitoring, shaping, policing and routing needed to implement
+%% cost-aware routing.  Vargese and Walker both helped design P4 and have considerable experience with it.
+%% In addition, in order to optimize cost over a given time period, 
+%% such as a month, we will have to update BGP policy dynamically as well,
+%% while avoiding perils such as route flapping or oscillation.
 
 %In addition to a new source-level language
 %to allow users to specify contracts, we will require new intermediate languages to facilitate implementation of
@@ -771,13 +787,20 @@ while avoiding perils such as route flapping or oscillation.
 %% It appears to be possible to synthesize both these policies by adding an {\em Optimizer} front-end to the architecture of \Propane that takes as input measured traffic in the past (and predictions for the future), and some choice of objective functions (for example, minimize billed cost).  The Optimizer outputs a set of time-indexed route preferences for a back-end such as the current \Propane system.   Note that while Triggers allow users to manually specify route preference based on performance, the optimizer allows such route preferences to be synthesized automatically.
 
 \paragraph*{Related research.}
-When it comes to implementing traffic engineering constraints generated from
-our proposal, we will exploit
-the vast literature in traffic engineering technology~\cite{?,?}.  From a programming language
-design perspective, the closest related work is the Merlin language~\cite{foster:merlin}.  Merlin
-combines regular routing specifications with formulae that describe minimum and maximum
-bandwidth guarantees.  Merlin does not consider the interaction of traffic engineering
-specifications with faults, with business costs, or with inter-domain routing objectives.  
+There is a vast literature on traffic engineering, much of it designed to avoid congestion 
+and minimize cost (see \cite{Awduche:traffic-engineering,Fortz:traffic-engineering}, for
+example).  Our research will directly exploit and build upon this research.
+What is new is the design of
+sophisticated, declarative, high-level \emph{programming languages} that 
+(1) specify routes (including inter-domain routes), (2) back-ups for fault
+tolerance, and (3) financial contracts.
+Other recent languages that consider elements of both routing and traffic
+engineering include SIMPLE~\cite{simple}
+ Merlin~\cite{foster:merlin}, and PANE~\cite{Ferguson:2013}. However, these systems focus on 
+policing and steering of \emph{intra}-domain traffic
+and/or management of middleboxes.  They have not tackled 
+\emph{inter}-domain routing or specification of peering relationships and 
+financial business contracts.  
 Such interactions will lead to different language designs and different implementation
 strategies (which mix BGP with traffic engineering mechanisms, for instance).
 
@@ -785,10 +808,11 @@ strategies (which mix BGP with traffic engineering mechanisms, for instance).
 
 \begin{itemize}
 \item How do we define a specification language that combines inter-domain
-routing objectives, fault tolerance and traffic engineering?  How
+routing objectives, fault tolerance and financial contracts?  What range of
+practical policies can we cover?  How
 should we implement such combined specifications?
 \item What abstraction boundaries (such as the interface to an optimization layer) can cleanly separate quantitative aspects of policy specification based on costs and traffic volume from non-quantitative aspects such as restricting or preferring certain routes as in \Propane today.
-\item It is well known that even the simplest dynamic changes in BGP can lead to timer interactions (for example in Route Flap damping~\cite{routeflapdamping}.  How do we steer away an automatic optimizer from such perils?
+%\item It is well known that even the simplest dynamic changes in BGP can lead to timer interactions (for example in Route Flap damping~\cite{routeflapdamping}.  How do we steer away an automatic optimizer from such perils?
 \item What is the formal 
 semantics of mixing quantitative and non-quantitative modules?  How do we prove our
 compilation algorithms and analyses are correct?
@@ -801,11 +825,12 @@ Currently, the \Name prototype compiles high-level specifications into BGP
 configurations.  However, other protocols offer a range of other properties
 such as better convergence times or load balancing that network operators 
 will want to exploit.
-
+%
 % \paragraph*{Traditional Protocols.}  
-Most networks use
+Consequently, most networks use
 eBGP to communicate with neighboring networks and 
 then iBGP, OSPF or another IGP protocol to distribute routes internally.
+Some recent networks also use SDN capabilities.
 While BGP operates using local preferences, regular expression filters,
 and shortest paths based on path lengths, some protocols such as OSPF
 use real-valued link weights to compute shortest paths, which are not
@@ -832,8 +857,8 @@ In addition, our synthesis algorithms will have to manage the interactions
 \emph{between} protocols.
 
 \paragraph*{Related Work.}
-ConfigAssure~\cite{narain:lisa05,narain+:configassure}  is another
-system designed to help users synthesize
+ConfigAssure~\cite{narain:lisa05,narain+:configassure} and DADC~\cite{DADC} are alternative
+systems designed to help users synthesize
 router configurations. However, ConfigAssure does not 
 provide the same kind of high-level abstractions as \Name
 (regular paths, predicates and abstract topologies) and does not
@@ -885,7 +910,7 @@ traffic first to reassure them that the technology is functioning properly.
 
 
 
-\paragraph{Migration}  Figure~\ref{fig:transition-tech} sketches our proposed architecture for tool-supported migration 
+\paragraph{Migration.}  Figure~\ref{fig:transition-tech} sketches our proposed architecture for tool-supported migration 
 to the \Name platform.  The high-level idea for our migration plan is that a network engineer will
 provide a candidate \Name policy for their network.  That candidate will be compared to
 the current low-level network configuration.  In order to perform the comparison, the
@@ -898,14 +923,19 @@ sent from external peers, (2) a concrete packet, and (3) the path each policy ca
 The engineer will use this information to iteratively revise the 
 candidate \Name policy until it achieves the desired correspondence with the legacy configuration.  
 
-
-
-We plan to take inspiration from Griffin's work~\cite{griffin+:stable-paths},
-which characterizes BGP as a process that solves the \emph{stable paths problem}, a generalization of the 
-\emph{shortest paths problem}.  
-More specifically, we plan to build tools that can translate both low-level configurations and PGIR graphs into
-logical formulae that represent the stable paths problems being solved.
-For instance, the following logical phrases represent an idealized sketch of the core technique (below $x$, $y$, $z$ are routers):
+In order to implement this ``meet-in-the-middle'' strategy, we plan to use the
+fragment of first-order logic supported by 
+automated Satisfiability Modulo Theories (SMT) solver such as Z3~\cite{z3} as the
+common intermediate language.  Using this logic as an intermediate language has both the
+advantages of great encoding flexibility and also backing by automated decision procedures.
+More specifically, our encoding will take 
+inspiration from Griffin's work~\cite{griffin+:stable-paths},
+which characterizes BGP as a process that solves the \emph{stable paths problem}, 
+a generalization of the  \emph{shortest paths problem}.  
+%In order to translate both low-level configurations and PGIR graphs into
+%logical formulae that represent the stable paths problems being solved.
+For instance, the following logical phrases present an idealized sketch of the 
+core technique we will investigate (below $x$, $y$, $z$ are routers):
 %
 \newcommand{\pfont}[1]{\mathsf{#1}}%
 %
@@ -922,14 +952,12 @@ use $y$ if it \emph{can} use $y$ and $y$ is its best option (this is the stabili
 route).  Clause (3) defines what it means for $y$ to be the best option for $x$ --- that for all other options $z$, either
 $z$ cannot be used or $x$ prefers $y$ to $z$.  We believe an encoding 
 based around this technique will be efficient because it avoids having to reason
-explicitly about message ordering.  Instead, it characterizes the possible solutions to the routing problem, which Griffin~\cite{griffin+:stable-paths} has shown will be stable paths.
-We also believe that it can cover many different protocols and features due to the 
-generality of the stable paths problem.  We plan to implement this encoding and then use an automated Satisfiability Modulo 
-Theories (SMT) solver
-such as Z3~\cite{z3} to test configurations for a wide range of properties, including equivalence, 
+explicitly about message ordering.  Instead, it characterizes the possible solutions to the routing problem, which Griffin has shown will be stable paths~\cite{griffin+:stable-paths}.
+We plan to implement this encoding and then use an SMT solver to test configurations for a wide range of properties, including equivalence, 
 stability, reachability, fault tolerance and other properties of interest to network engineers during the
-migration process.  SMT solvers like Z3 will produce counter-examples when they cannot prove a formula correct. A secondary
-research problem is to develop techniques for massaging the counter-examples produced by Z3 into a simple form that may be presented
+migration process.  SMT solvers like Z3 will also produce \emph{counter-examples} 
+when they cannot prove a formula correct. A secondary
+research problem is to develop techniques for massaging the counter-examples produced by Z3 into a form to present
 to a network operator.  
 
 We have already begun to experiment with this encoding and our initial tests suggest
@@ -1080,7 +1108,8 @@ to help generate such interfaces.
 \paragraph*{Related research:}  
 One way to realize the migration architecture in Figure~\ref{fig:transition-tech} is to compile the \Name policy into a low-level configuration
 and then to use existing tools for configuration analysis~\cite{batfish,arc,bagpipe,era} to compare the two low-level configurations.  This is a reasonable approach, but much additional research is required before existing
-tools are powerful enough to achieve our migration goals.  Specifically, all existing configuration analysis tools have important limitations that would prevent their usage in our context.  Batfish~\cite{batfish} and ERA~\cite{era} can find configuration bugs in the context of specific user-specified environments but cannot verify configurations on all possible environments.  ARC~\cite{arc} soundly reasons about certain properties in the context of all possible failures but not all possible environments; Bagpipe~\cite{bagpipe} has exactly the opposite limitation.  Further, these tools are targeted at checking properties of a single configuration, while we require the ability to compare the behaviors of two configurations to one another.
+tools are powerful enough to achieve our migration goals.  Specifically, all existing configuration analysis tools have important limitations that would prevent their usage in our context.  Batfish~\cite{batfish} and ERA~\cite{era} can find configuration bugs in the context of specific user-specified environments but cannot verify configurations on \emph{all} possible environments.  ARC~\cite{arc} soundly reasons about certain properties in the context of all possible failures but not all possible environments; Bagpipe~\cite{bagpipe} has exactly the opposite limitation.  
+Further, these tools are targeted at checking properties of a single configuration, while we require the ability to compare the behaviors of two configurations to one another.
 
 There is also a great deal of work on verification of a specific incarnation of the network as embodied by its \emph{data plane} (forwarding tables), such as work on AntEater~\cite{mai+:anteater}, Header Space Analysis~\cite{hsa},
 Veriflow~\cite{khurshid13veriflow}, Network Datalog~\cite{nod} and many others.  This work is fundamentally different from our
