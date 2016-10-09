@@ -10,6 +10,9 @@ proposal.pdf: ${TEXFILES} ${BIBFILES} ${STYFILES}
 	pdflatex proposal
 	pdflatex proposal
 
+summary.pdf: ${TEXFILES} ${STYFILES}
+	pdflatex summary
+
 xelatex: ${TEXFILES} ${BIBFILES} ${STYFILES}
 	xelatex proposal
 	-bibtex proposal
