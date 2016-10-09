@@ -21,80 +21,132 @@
 
 %% State the "objectives", "goals" or "challenges" of this work
 
+\documentclass[12pt]{article}
 
-\begin{center}\large\bf
-SHF: Small: Collaborative Research:  \\
-Higher-order Type-theoretic Program Synthesis with Examples
+\topmargin=-0.5in
+\oddsidemargin=0in
+\evensidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+
+\usepackage{color}
+\usepackage{xspace}
+
+\newcommand{\Propane}{{\sc Propane}\@\xspace}
+\newcommand{\Name}{{\sc Butane}\@\xspace}
+
+\begin{document}
+\setcounter{page}{1}
+
+ \begin{large}
+\begin{center}
+NeTS: Medium: Collaborative Research: \\
+Network Configuration Synthesis: A Path to Practical Deployment
 \end{center}
+\end{large}
 
-One of the great bottlenecks in many aspects of scientific discovery, in 
-economic development, in the functioning of our government, and even in 
-completing repetitive, personal, day-to-day tasks is the rate at which
-we can write programs that automate our work and analyze data.  
-One key way to alleviate this
-bottleneck is to develop fundamental new techniques to \textit{synthesize} the 
-programs we need to accomplish these tasks.
+\noindent
+\textbf{Overview:} 
+Surveys of network operators have shown that human error during
+network configuration and update is one of the top causes of network
+downtime.  
+%% One fundamental reason for these misconfigurations is the
+%% mismatch between the intended high-level
+%% policies of operators and the low-level, device-by-device configurations
+%% that implement them.  On the one hand, most routing policies involve
+%% network-wide properties:  never announce a particular destination externally, isolate two subnetworks from one another, prefer traffic through a transit customer over a transit provider, etc.
+%% On the other hand, these policies must be implemented via hundreds of low-level configuration directives at each individual router in the network. 
+%% As a result, errors range from simple consistency issues (community values do not match) to more subtle scenarios (misconfigured ACLs causing intermittent disconnectivity).  Moreover, networks networks must continue to function properly when node and link failures occur---a near impossible task when reasoning
+%% about network behavior without automated help. 
+Recently, researchers have proposed a number of
+high-level abstractions for programmatic network control, as well
+as compiler algorithms that synthesize the nitty-gritty details
+of router configurations.  The PIs recent work on \Propane 
+(SIGCOMM 2016 Best Paper Award) is a promising effort in this direction
+as it allows users to describe end-to-end paths for intra- and
+inter-domain routing, as well as the back-up paths needed in the case of 
+failure.  Unfortunately, many barriers to practical deployment of this 
+and related technologies persist as current languages are insufficiently
+expressive, lack tools that make their outputs intelligeable, 
+provide no help migrating legacy configurations to new models, and
+do not admit incremental deployment.
+%(1) they are insufficiently \emph{expressive},
+%lacking abstractions that match operator cognitive models; (2) their
+%output configurations are insufficiently \emph{intelligeable}, preventing
+%operators from auditing or debugging their outputs; (3) they provide
+%no tools to help \emph{migrate} from legacy configurations to new
+%abstractions; and (4) they do not admit \emph{incremental deployment}.
 
-\textbf{Intellectual Merit:}  Over the last several years, there has
-been tremendous progress in the synthesis of pure, first-order
-functions from a remarkably small number of examples.  Such progress
-has led to high-profile industrial successes such as Gulwani's FlashFill~\cite{flashfill},
-which transforms Excel spreadsheet data, and PowerShell~\cite{powershell},
-which parses structured text files given examples.  
-Reuseable synthesis platforms such 
-Sketch~\cite{sketch}, a synthesizer for first-order, C-like programs, have
-demonstrated their utility by supporting applications such as X, Y, and Z! 
-(Z is so great!!)
+\noindent
+\textbf{Intellectual Merit:} 
+The goal of this project is to 
+{\em surmount the technical challenges that impede practical 
+deployment of high-level network abstractions}.  We will demonstrate
+our advances by building on \Propane and delivering a new system \Name, which
+will exhibit:  
+\begin{enumerate}
+\item {\bf New topological abstractions}:  Users will be able to declare device 
+\emph{roles} (\emph{e.g.}, top-of-rack switch)
+and the \emph{connectivity invariants} related to them.  A new compiler
+will verify safety properties of policies in the presence of such 
+declarations and generate parameterized \emph{templates}
+that make compiler outputs more \emph{intelligeable} for operators.  
+\item {\bf Costs and contracts for inter-domain transit:}
+Users will specify the 
+\emph{financial transit contracts} that govern transit
+costs using a new declarative, sub-language and our compiler will
+optimize inter- and intra-domain routes for them automatically.
+\item {\bf Backend diversity:}  We will develop algorithms that
+can synthesize and exploit the relative benefits of heterogenous back-ends 
+involving BGP, OSPF, OpenFlow and P4.
+%In order to give users access to
+%the benefits of performance properties of different protocols,
+%we will develop algorithms that synthesize configurations employing a 
+%combination of \emph{inter-domain routing} protocols such as BGP 
+%and \emph{intra-domain routing protocols} such as OSPF and RIP as well
+%as OpenFlow and P4. 
+\item {\bf Migration technology:} We will develop
+tools that will help network operators \emph{infer} 
+new high-level configurations from existing low-level configurations
+and to \emph{verify} that new configurations are equivalent to old ones.
+\item {\bf Mixed operation and verification:} We will support mixed
+legacy- and \Name-managed network operations so engineers can
+migrate their networks slowly over time and test partial deployment on
+small fractions of their live traffic.
+\end{enumerate}
 
-\dpw{re-write this to focus on higher-order, polymorphic and refinement types, 
-I think.}
-However, in general, these synthesis techniques have been limited in
-scope to the synthesis of \emph{first-order} And \emph{effect-free} 
-programs.  In contrast, we propose a new research program that will
-tackle the problem of how to synthesis \emph{higher-order} and
-\emph{effectful} programs in their full generality.  The key to doing
-so, we believe, is to exploit not only examples, but also \emph{type theory}
-in the synthesis process.  To illustrate the potential
-of our ideas, we have already built an initial prototype
-system that uses novel algorithms driven by structure of 
-\emph{simple} (recursive) types and is capable of synthesizing
-higher-order functions given only a small number of examples.
-Our proposed research will involve developing new data structures
-and algorithms to improve the scaling properties of our prototype
-and to investigate how to incorporate a broad range of more advanced
-type theories in to our synthesis algorithms.  These new type theories
-will include 
-(1) \emph{polymorphic types} to learn more general functions, 
-(2) \emph{dependent types} to further constrain functions where specification
-via examples is inefficient, 
-(3) \emph{monadic types} to encapsulate simple effects such as exceptions, 
-(4) \emph{linear types} (to encapsulate resource utilization effects such as 
-memory allocation), and 
-(5) \emph{advanced type-and-effect systems} to encapsulate more general
-kinds of effect specifications.
-In order to evaluate our ideas in practice, we propose to develop a new
-general-purpose, higher-order, effectful and typed programming language,
-called \OSynth{}, based around OCaml, which incorporates synthesis
-features in to the language.
-
-
-\dpw{This paragraph perhaps shouldn't be in the summary? Move to intro?}
-The two PIs are uniquely qualified to carry out the proposed research.
-Both PIs are experts in type systems and logic.  PI Zdancewic has been
-developing a pure type-and-example-based system that will form the
-initial kernel of the proposed work.  PI Walker brings experience in
-data-driven synthesis from his past NSF-sponsored work on the PADS
-project~\cite{pads,pads-synth}.
-
-The PIs have worked together successfully in the past and the
-collaboration will get off to a quick start with PI Walker will be on
-sabbatical at Pi Zdancewic's institution (University of Pennsylvania)
-in the 2015-2016 academic year.
+\noindent
+\textbf{Broader Impacts:} 
+%Our economy, businesses, governmental and 
+%military infrastructure all depend upon having networks that function
+%reliably. This proposal will tackle the technical challenges that
+%prevent deployment of high-level programming abstractions capable
+%of improving network reliability.  In addition, 
+We will 
+\emph{work with
+operators of two major clouds}, Microsoft Azure and Google
+to test our language and system using the policies of real industrial networks, to identify the pragmatic barriers to adoption, and to deploy our system where possible.   We will also engage in more general \emph{industry outreach}
+by organizing a workshop under
+the umbrella of the newly-formed
+Cornell-Princeton Center for Network Programming (CNP).
+% in which 
+%academics and industrial researchers exchange problems, solutions,
+%ideas and contact information.  
+Our \emph{educational plan} involves
+developing new curriculum at UCLA with the aim of producing
+future network engineers with interdisciplinary skills in verification
+and programming languages.  
+We will also work to provide both
+graduate and undergraduate
+\emph{under-represented minorities} research opportunities as we
+have successfully done in the past.
 
 \medskip
-\noindent\textbf{Keywords:} linear logic, linear algebra, probability,
-statistics, denotational semantics, nonstandard models, programming
-languages
+\noindent\textbf{Keywords:} network programming languages, 
+domain-specific programming languages, program synthesis, 
+network verification, network management, inter-domain routing
+
+\end{document}
 
 
 %%% Local Variables:
