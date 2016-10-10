@@ -243,9 +243,12 @@ a path for deployment of high-level network programming abstractions that
 improves the reliability of existing legacy networks and helps
 transition those networks in a safe and reliable way to new management systems.
 
-{\bf Cloud Deployment:}  We will work with the operators of two major clouds, Microsoft Azure and Google, to test our language and system using the policies of real industrial networks, to identify the pragmatic barriers to adoption, and to deploy our system where possible.  All three PIs have a strong connection with Microsoft.  Walker, via PhD student Ryan Beckett, and MSR collaborators Jitu Padhye and Ratul Mahajan, translated a number of Azure policies into Propane in 2015 and validated his models with Microsoft operators. Millstein has collaborated with networking researchers at MSR for the last ten years and recently won an MSR Outstanding Collaborator Award. As part of this collaboration, Millstein's Batfish~\cite{batfish} tool identified several configuration errors in Azure data centers that were subsequently fixed.
-Varghese worked at MSR from 2012-2016 and continues to collaborate with his former colleagues.  We will also seek to deploy at Google: both Walker and Varghese have collaborated with Amin Vahdat, the head of networking at Google.  These two clouds are different because Azure is a public cloud while the Google cloud supports Google services; adding abstractions that cover both use cases will be an important step toward credibility.  Collaboration will be facilitated via student internships at Microsoft and Google, as we have done recently with Princeton and UCLA Ph.D.\ students Ryan Beckett and Ari Fogel.
+\noindent
+{\bf Cloud Deployment:}  We will work with the operators of two major clouds, Microsoft Azure and Google, to test our language and system using the policies of real industrial networks, to identify the pragmatic barriers to adoption, and to deploy our system where possible. 
+% All three PIs have a strong connection with Microsoft.  Walker, via PhD student Ryan Beckett, and MSR collaborators Jitu Padhye and Ratul Mahajan, translated a number of Azure policies into Propane in 2015 and validated his models with Microsoft operators. Millstein has collaborated with networking researchers at MSR for the last ten years and recently won an MSR Outstanding Collaborator Award. As part of this collaboration, Millstein's Batfish~\cite{batfish} tool identified several configuration errors in Azure data centers that were subsequently fixed.
+%Varghese worked at MSR from 2012-2016 and continues to collaborate with his former colleagues.  We will also seek to deploy at Google: both Walker and Varghese have collaborated with Amin Vahdat, the head of networking at Google.  These two clouds are different because Azure is a public cloud while the Google cloud supports Google services; adding abstractions that cover both use cases will be an important step toward credibility.  Collaboration will be facilitated via student internships at Microsoft and Google, as we have done recently with Princeton and UCLA Ph.D.\ students Ryan Beckett and Ari Fogel.
 
+\noindent
 {\bf Broader Outreach:}  
 %While Microsoft and Google will teach us a great deal, we need to learn policies from a broader set of networks.  
 In order to maximize the effectiveness of our proposed research and make a broader
@@ -261,6 +264,7 @@ discussions, technical talks and informal discussions.
 
 %As we have done in the development of our prior work on Propane~\cite{beckett+:propane} as well as tools such as Batfish~\cite{batfish}, we will obtain iterative feedback from network engineers and operators to ensure that our research results will meet their needs.  Indeed, Batfish identified serious misconfiguration errors in several real-world enterprise and cloud networks that were subsequently fixed.  Also as in our prior work, we will make our tools publicly available for use by other researchers and practitioners.
 
+\noindent
 {\bf Education:} 
 %We also plan on having educational impact in various ways.  
 The PIs have a track record of engaging undergraduates in research, often resulting in publications.  This project will allow us to engage undergraduates in interdisciplinary
@@ -268,7 +272,9 @@ research that applies programming language techniques, such as
 automated verification and optimizing compilation, to problems in the networking domain.  At the graduate
 level, we will introduce a unit on network programming with high-level
 abstractions to our core
-graduate courses on programming languages and semantics.  Varghese and Millstein are co-teaching a seminar class at UCLA in Fall 2016 on ``Verification, Synthesis, and the Creative Habit" to jump-start a formal graduate class.  We hope to
+graduate courses on programming languages and semantics.  
+%Varghese and Millstein are co-teaching a seminar class at UCLA in Fall 2016 on ``Verification, Synthesis, and the Creative Habit" to jump-start a formal graduate class.  
+We hope to
 produce future network engineers with interdisciplinary skills in verification
 and programming languages.
 %Those core
@@ -279,16 +285,10 @@ and programming languages.
 %development in other domains, we hope to increase engagement of
 %students from other disciplines.
 
+\noindent
 {\bf Under-represented Minorities:} Finally, the PIs have a history of engaging women and under-represented minorities in
 their research projects and will continue to seek out opportunities to
-do so.  For example, PI Walker has mentored two winners of the CRA
-outstanding undergraduate award, and both happened to be
-under-represented minorities in computer science: one an African
-American student and one a woman.  The former, Lester Mackey, went
-on to get his Ph.D.\ in computer science, and the latter, Katherine
-Ye, started graduate school in Fall 2016.  Millstein co-advised female Ph.D.\ student Nupur Kothari (now at Microsoft) for her dissertation on analysis of networked systems and currently advises one female Ph.D.\ student (Lun Liu).  Varghese has mentored several women, including
-co-advising Lili Qiu (now a professor at UT Austin) and Lavanya Jose (currently a graduate student at Stanford).
-
+do so.  
 
 \section{Preliminary Work}
 \label{sec:propane}
@@ -477,8 +477,7 @@ to infrastructure managed by a centralized route server,
 \Propane's compilation and synthesis algorithms
 are completely different from those used in SDX.
 
-RPSL~\cite{rpsl}, Nettle~\cite{nettle}, ConfigAssure~\cite{narain:lisa05,narain+:configassure}, and DADC~\cite{DADC} are three
-other languages designed to specify routing policy for distributed control planes
+RPSL~\cite{rpsl}, Nettle~\cite{nettle}, ConfigAssure~\cite{narain:lisa05,narain+:configassure}, and DADC~\cite{DADC} are languages designed to specify routing policy for distributed control planes
 running legacy protocols.  RPSL uses attribute-value pairs to specify policy,
 Nettle embeds router specifications in Haskell, and
 ConfigAssure and DADC use logic programming
@@ -1063,7 +1062,7 @@ However, we will likely need to extend such
 learning algorithms to handle other aspects of \Name, such as its
 support for prioritized paths.
 
-\paragraph{Mixed Verification} There are several challenges in supporting a mixed form of configuration, whereby some portions of the network behavior are specified with \Name and some using existing technologies.  Currently the \Propane platform guarantees by construction that produced low-level configurations faithfully implement the high-level policy, and furthermore that this policy will be respected in the face of arbitrary failures.  The inclusion of existing low-level configurations for some portions of the network significant complicates the ability to provide these guarantees and any others that we may want to augment the platform to support. First, the \Name compiler has less flexibility because it must retain the given low-level configurations as is.  Second, the \Name platform must be able to reason about the network as a whole despite the fact that portions are manually configured.
+\paragraph{Mixed Operation and Verification} There are several challenges in supporting a mixed form of configuration, whereby some portions of the network behavior are specified with \Name and some using existing technologies.  Currently the \Propane platform guarantees by construction that produced low-level configurations faithfully implement the high-level policy, and furthermore that this policy will be respected in the face of arbitrary failures.  The inclusion of existing low-level configurations for some portions of the network significant complicates the ability to provide these guarantees and any others that we may want to augment the platform to support. First, the \Name compiler has less flexibility because it must retain the given low-level configurations as is.  Second, the \Name platform must be able to reason about the network as a whole despite the fact that portions are manually configured.
 
 To address these challenges we plan to adapt ideas from the literature on compositional program analysis and verification.  In particular we will leverage the notion of {\em assume-guarantee reasoning}, which allows components to be analyzed separately in order to ensure global properties of interest.  In our setting, we will require {\em interface specifications} for the manually configured portions of the network. 
 The \Name platform then can {\em assume} that these specifications hold when reasoning about the network as a whole and compiling the \Name-specific portions.  Separately, we must {\em guarantee} that the manually configured portions indeed meet their interface specifications.
@@ -1204,15 +1203,18 @@ to decrease network downtime and vulnerability to attack.  However,
 for maximum impact, we need to engage in both industrial outreach and
 educational activities.
 
+\paragraph*{Cloud Deployment.} 
+We will work with the operators of two major clouds, Microsoft Azure and Google, to test our language and system using the policies of real industrial networks, to identify the pragmatic barriers to adoption, and to deploy our system where possible.
+All three PIs have a strong connection with Microsoft. Walker, via PhD student Ryan Beckett, and MSR collaborators Jitu Padhye and Ratul Mahajan, translated a number of Azure policies into Propane in 2015 and validated his models with Microsoft operators. Millstein has collaborated with networking researchers at MSR for the last ten years and recently won an MSR Outstanding Collaborator Award. As part of this collaboration, Millstein’s Batfish [18] tool identified several configuration errors in Azure data centers that were subsequently fixed. Varghese worked at MSR from 2012-2016 and continues to collaborate with his former colleagues. We will also seek to de- ploy at Google: both Walker and Varghese have collaborated with Amin Vahdat, the head of networking at Google. These two clouds are different because Azure is a public cloud while the Google cloud supports Google services; adding abstractions that cover both use cases will be an important step toward credibility. Collaboration will be facilitated via student internships at Microsoft and Google, as we have done recently with Princeton and UCLA Ph.D. students Ryan Beckett and Ari Fogel.
+
 \paragraph*{Industrial Outreach.}
 In 2016, the networking and programming languages
-researchers at Cornell and Princeton universities came together
-to form the Cornell-Princeton Center for Network 
+researchers at Cornell and Princeton universities 
+formed the Cornell-Princeton Center for Network 
 Programming (CNP)~\cite{center-for-network-programming}.
 While there is a large an vibrant networking community on the US
 West Coast, centered in the Bay Area, there was no such community on
 the US East Coast.  The CNP was formed to create such a community.
-
 Our first major event was a 1-day workshop held in June 2016 at
 Cornell Tech in New York.  It included roughly 50 participants from
 academia and a wide array of businesses in the New York area including
@@ -1233,18 +1235,12 @@ we need to begin educating the network operators and engineers
 of tomorrow.  Such engineers will need a mix of skills that include
 both knowledge of networking protocols and knowledge of formal methods.
 With that in mind, we plan to develop new modules for networking courses
-at both the graduate and undergraduate level.  Such modules will have
-several goals:
-
-\begin{itemize}
-\item To teach both low-level mechanisms and high-level abstractions.
-\item To emphasize the principles that make the high-level abstractions.
-\item To introduce a range of \emph{rigorous}, \emph{formal} properties of
- interest.
-\item To expose to students to basic algorithms for verification of such
+at both the graduate and undergraduate level.  
+Such modules will have
+several goals: (1) To teach both low-level mechanisms and high-level abstractions;
+(2) To introduce a range of \emph{rigorous}, \emph{formal} properties of
+ interest; (3) To expose to students to basic algorithms for verification of such
 properties.
-\end{itemize}
-
 In addition to teaching concepts, we will give students hands-on
 experience writing policy using our language and verification tools.  
 More specifically, we plan to develop online tutorials for our tools
@@ -1252,6 +1248,11 @@ that we can use in our classes.  To do so effectively, we will
 integrate our work with the CORE simulator~\cite{core}.  CORE
 will allow students to visualize, experiment with, and test their
 use of our specification language and verification tools.
+Varghese and Millstein have already begun developing a curriculum for this initiative
+by co-teaching a seminar class at UCLA in Fall 2016 on ``Verification, Synthesis, and the Creative Habit'' 
+and plan to use this experience to create a formal graduate class.  PI Walker will work with
+his colleague and long-time collaborator Jennifer Rexford to integrate modules tested by Varghese and Millstein into Princeton's
+graduate and undergraduate networking courses.
 
 In addition to traditional in-classroom teaching, the PIs have a strong 
 track record of mentoring
@@ -1266,6 +1267,16 @@ minorities.  For instance, two of Walker's past undergraduate advisees,
 Lester Mackey (African American) and Katherine Ye, won the CRA undergraduate 
 outstanding undergraduate
 research award.
+%% For example, PI Walker has mentored two winners of the CRA
+%% outstanding undergraduate award, and both happened to be
+%% under-represented minorities in computer science: one an African
+%% American student and one a woman.  The former, Lester Mackey, went
+%% on to get his Ph.D.\ in computer science, and the latter, Katherine
+%% Ye, started graduate school in Fall 2016.  
+Millstein co-advised female Ph.D.\ student Nupur Kothari (now at Microsoft) for her dissertation on analysis of networked systems and currently advises one female Ph.D.\ student (Lun Liu).  Varghese has mentored several women, including
+co-advising Lili Qiu (now a professor at UT Austin) and Lavanya Jose (currently a graduate student at Stanford).
+The PIs will work to continue to seek out under-represented minorities and provide exciting 
+research opportunities for them.
 
 \section{Results from Prior NSF Support}
 \label{sec:prior-support}
@@ -1283,14 +1294,14 @@ Frenetic~\cite{frenetic},
 Pyretic~\cite{pyretic},
 NetKAT~\cite{netkat} and others, all adhere to the
 \emph{principle of compositionality}, a key design element missing
-from earlier network programming languages.  They also invented the
-notion of consistent network update~\cite{reitblatt+:consistent-updates},
-which ensures key safety invariants are preserved across network update.
+from earlier network programming languages.  
+%They also invented the
+%notion of consistent network update~\cite{reitblatt+:consistent-updates},
+%which ensures key safety invariants are preserved across network update.
 Open source code for compilers produced by this project is available
 at \url{frenetic-lang.org}.
-
-\noindent
-{\bf NSF CNS-1111520, Broader Impacts:} 
+%
+{\bf Broader Impacts:} 
 The Pyretic programming language was used in Nick Feamster's popular
 SDN MOOC and was used to teach tens of thousands of students and
 network operators all over the US.  Thanks to its inclusion in this
@@ -1301,11 +1312,10 @@ becoming an industry standard.
 \medskip
 \noindent
 {\bf Todd Millstein, PI. NSF CNS-1161595, Intellectual Merit}: In NSF CNS-1161595, {\em NeTS: Medium: Collaborative Research: Systematic Analysis of Protocol Implementations} (\$446,860, 5/12--4/17), PI Millstein and collaborators developed techniques for automatically testing and verifying properties of network protocols and configurations.  Our PIC tool leverages and extends symbolic execution techniques to automatically identify subtle interoperability errors in network protocol implementations~\cite{DBLP:conf/nsdi/PedrosaFKGMM15}.  Our Batfish~\cite{batfish} and ERA~\cite{era} tools employ novel logical models of a network's control plane to verify properties of low-level network configurations.  This award also partially funded Millstein's work on the Propane network programming language~\cite{beckett+:propane}. 
+%
+{\bf Broader Impacts:} The PIC, Batfish, and ERA tools and Propane language are all publicly available and open source on Github.  PIC identified several previously unknown interoperability errors in popular implementations of the SIP and SPDY protocols, many of which were fixed by the developers.  Similarly, Batfish identified dozens of misconfigurations in the campus networks of two large universities as well as the data-center networks of a large cloud provider, many of which were fixed by the network engineers.
 
-\noindent
-{\bf NSF CNS-1161595, Broader Impacts:} The PIC, Batfish, and ERA tools and Propane language are all publicly available and open source on Github.  PIC identified several previously unknown interoperability errors in popular implementations of the SIP and SPDY protocols, many of which were fixed by the developers.  Similarly, Batfish identified dozens of misconfigurations in the campus networks of two large universities as well as the data-center networks of a large cloud provider, many of which were fixed by the network engineers.
-
-{\bf George Varghese:}: George Varghese has not had NSF support in the last 5 years during his stint in industry.  Before that, he was awarded 10 NSF grants which have led to netwoirking innovations such as Deficit Round Robin, IP lookups, and automated worm fingerprinting.
+{\bf George Varghese:} George Varghese has worked in industry over the last 5 years and has not had NSF support.  Before that, he was awarded 10 NSF grants, which have led to networking innovations such as Deficit Round Robin, IP lookups, and automated worm fingerprinting.
 
 %%% Local Variables:
 %%% mode: latex
