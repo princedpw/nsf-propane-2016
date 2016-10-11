@@ -58,16 +58,16 @@ downtime.
 %% On the other hand, these policies must be implemented via hundreds of low-level configuration directives at each individual router in the network. 
 %% As a result, errors range from simple consistency issues (community values do not match) to more subtle scenarios (misconfigured ACLs causing intermittent disconnectivity).  Moreover, networks networks must continue to function properly when node and link failures occur---a near impossible task when reasoning
 %% about network behavior without automated help. 
-Recently, researchers have proposed a number of
+In response researchers have proposed a number of
 high-level abstractions for programmatic network control, as well
 as compiler algorithms that synthesize the nitty-gritty details
-of router configurations.  The PIs recent work on \Propane 
+of router configurations.  The PIs' recent work on \Propane 
 (SIGCOMM 2016 Best Paper Award) is a promising effort in this direction
 as it allows users to describe end-to-end paths for intra- and
-inter-domain routing, as well as the back-up paths needed in the case of 
+inter-domain routing, as well as the backup paths needed in the case of 
 failure.  Unfortunately, many barriers to practical deployment of this 
 and related technologies persist as current languages are insufficiently
-expressive, lack tools that make their outputs intelligeable, 
+expressive, lack tools that make their outputs intelligible, 
 provide no help migrating legacy configurations to new models, and
 do not admit incremental deployment.
 %(1) they are insufficiently \emph{expressive},
@@ -90,14 +90,14 @@ will exhibit:
 and the \emph{connectivity invariants} related to them.  A new compiler
 will verify safety properties of policies in the presence of such 
 declarations and generate parameterized \emph{templates}
-that make compiler outputs more \emph{intelligeable} for operators.  
+that make compiler outputs more \emph{intelligible} for operators.  
 \item {\bf Costs and contracts for inter-domain transit:}
 Users will specify the 
 \emph{financial transit contracts} that govern transit
 costs using a new declarative, sub-language and our compiler will
 optimize inter- and intra-domain routes for them automatically.
 \item {\bf Backend diversity:}  We will develop algorithms that
-can synthesize and exploit the relative benefits of heterogenous back-ends 
+can synthesize and exploit the benefits of heterogenous back-ends 
 involving BGP, OSPF, OpenFlow and P4.
 %In order to give users access to
 %the benefits of performance properties of different protocols,
@@ -124,8 +124,8 @@ small fractions of their live traffic.
 %of improving network reliability.  In addition, 
 We will 
 \emph{work with
-operators of two major clouds}, Microsoft Azure and Google
-to test our language and system using the policies of real industrial networks, to identify the pragmatic barriers to adoption, and to deploy our system where possible.   We will also engage in more general \emph{industry outreach}
+operators of two major clouds}, Microsoft Azure and Google,
+to identify the pragmatic barriers to adoption, evaluate our proposed solutions using the policies of real industrial networks, and deploy our system where possible.   We will also engage in more general \emph{industry outreach}
 by organizing a workshop under
 the umbrella of the newly-formed
 Cornell-Princeton Center for Network Programming (CNP).
@@ -133,7 +133,7 @@ Cornell-Princeton Center for Network Programming (CNP).
 %academics and industrial researchers exchange problems, solutions,
 %ideas and contact information.  
 Our \emph{educational plan} involves
-developing new curriculum at UCLA with the aim of producing
+developing a new curriculum at UCLA with the aim of producing
 future network engineers with interdisciplinary skills in verification
 and programming languages.  
 We will also work to provide both
