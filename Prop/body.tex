@@ -201,7 +201,7 @@ such contracts, we will investigate techniques to optimize
 both intra- and inter-domain routes to minimize transit costs while adhering
 to contract constaints.
 
-\item {\bf Backend Diversity:} There is no ``one size fits all'' networking protocol. Propane policies compile solely to BGP, but the additional expressiveness described above, along with performance requirements and the preferences of network engineers, will demand that configurations employ multiple protocols, as is standard for manual configurations today.  We will develop algorithms that synthesize configurations employing a combination of \emph{inter-domain routing} protocols such as BGP and \emph{intra-domain routing protocols} such as OSPF and RIP.  We will also target
+\item {\bf Back-end Diversity:} There is no ``one size fits all'' networking protocol. Propane policies compile solely to BGP, but the additional expressiveness described above, along with performance requirements and the preferences of network engineers, will demand that configurations employ multiple protocols, as is standard for manual configurations today.  We will develop algorithms that synthesize configurations employing a combination of \emph{inter-domain routing} protocols such as BGP and \emph{intra-domain routing protocols} such as OSPF and RIP.  We will also target
 \emph{SDN-oriented protocols} such as OpenFlow~\cite{openflow}, P4~\cite{P4} and PIFO~\cite{pifo}, allowing networks to more easily adopt this technology when appropriate, ideally 
 without operators needing to change the high-level policy specification.
 
@@ -819,7 +819,7 @@ semantics of mixing quantitative and non-quantitative modules?  How do we prove 
 compilation algorithms and analyses are correct?
 \end{itemize}
 
-\subsection{Backend Diversity}
+\subsection{Back-end Diversity}
 \label{sec:diversity}
 
 The original \Propane prototype used BGP as a back-end because it is ubiquitous and
@@ -840,7 +840,7 @@ supported in \Propane.  In addition, in order to support scalability,
 an OSPF network may be divided into separate \emph{areas} that only selectively
 export shortest paths information --- here, there is a tradeoff between 
 convergence time and finding optimal paths.  
-If \Name ca not synthesize configurations that take advantage of available
+If \Name cannot synthesize configurations that take advantage of available
 back-ends, operators will be reluctant to deploy the system.
 
 The central technical challenges involved in generation of multiple back-end protocols, involve
@@ -935,7 +935,7 @@ candidate \Name policy until it achieves the desired correspondence with the leg
 
 In order to implement this ``meet-in-the-middle'' strategy, we plan to use the
 fragment of first-order logic supported by 
-automated Satisfiability Modulo Theories (SMT) solver such as Z3~\cite{z3} as the
+automated Satisfiability Modulo Theories (SMT) solvers such as Z3~\cite{z3} as the
 common intermediate language.  Using this logic as an intermediate language has both the
 advantages of great encoding flexibility and also backing by automated decision procedures.
 More specifically, our encoding will take 
@@ -1049,8 +1049,8 @@ the existing low-level configuration.
 A second approach we will investigate involves focusing on inferring \Name's
 high-level abstractions more directly.  In particular, \Name's core policies are
 phrased in terms of regular expressions and there are a variety of algorithms
-in the literature, such as the L* algorithm~\cite{Angluin87} that may be used
-infer regular expression.
+in the literature, such as the L* algorithm~\cite{Angluin87} that may be used to
+infer regular expressions.
 %expressions to specify allowed paths, is to expoit
 %existing algorithms for learning regular expressions.
 %For example, the L* algorithm learns regular expressions given a
@@ -1118,7 +1118,7 @@ to help generate such interfaces.
 \paragraph*{Related research:}  
 One way to realize the migration architecture in Figure~\ref{fig:transition-tech} is to compile the \Name policy into a low-level configuration
 and then to use existing tools for configuration analysis~\cite{batfish,arc,bagpipe,era} to compare the two low-level configurations.  This is a reasonable approach, but much additional research is required before existing
-tools are powerful enough to achieve our migration goals.  Specifically, all existing configuration analysis tools have important limitations that would prevent their usage in our context.  Batfish~\cite{batfish} and ERA~\cite{era} can find configuration bugs in the context of specific user-specified environments but cannot verify configurations on \emph{all} possible environments.  ARC~\cite{arc} soundly reasons about certain properties in the context of all possible failures but not all possible environments; Bagpipe~\cite{bagpipe} has exactly the opposite limitation.  
+tools are powerful enough to achieve our migration goals.  Specifically, all existing configuration analysis tools have important limitations that would prevent their usage in our context.  Batfish~\cite{batfish} and ERA~\cite{era} can find configuration bugs in the context of a specific user-specified environment (i.e., a particular failure scenario and set of route announcements from neighboring networks) but cannot verify configurations on \emph{all} possible environments.  ARC~\cite{arc} soundly reasons about certain properties in the context of all possible failures but not all possible route announcements; Bagpipe~\cite{bagpipe} has exactly the opposite limitation.  
 Further, these tools are targeted at checking properties of a single configuration, while we require the ability to compare the behaviors of two configurations to one another.
 
 There is also a great deal of work on verification of a specific incarnation of the network as embodied by its \emph{data plane} (forwarding tables), such as work on AntEater~\cite{mai+:anteater}, Header Space Analysis~\cite{hsa},
