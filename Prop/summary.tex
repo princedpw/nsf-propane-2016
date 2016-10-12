@@ -48,7 +48,7 @@ Network Configuration Synthesis: A Path to Practical Deployment
 \noindent
 \textbf{Overview:} 
 Surveys of network operators have shown that human error during
-network configuration and update is one of the top causes of network
+network configuration and update is one of the major causes of network
 downtime.  
 %% One fundamental reason for these misconfigurations is the
 %% mismatch between the intended high-level
@@ -58,14 +58,14 @@ downtime.
 %% On the other hand, these policies must be implemented via hundreds of low-level configuration directives at each individual router in the network. 
 %% As a result, errors range from simple consistency issues (community values do not match) to more subtle scenarios (misconfigured ACLs causing intermittent disconnectivity).  Moreover, networks networks must continue to function properly when node and link failures occur---a near impossible task when reasoning
 %% about network behavior without automated help. 
-In response researchers have proposed a number of
+In response, researchers have proposed several
 high-level abstractions for programmatic network control, as well
 as compiler algorithms that synthesize the nitty-gritty details
 of router configurations.  The PIs' recent work on \Propane 
-(SIGCOMM 2016 Best Paper Award) is a promising effort in this direction
+(SIGCOMM 2016 Best Paper Award) is promising in this regard
 as it allows users to describe end-to-end paths for intra- and
-inter-domain routing, as well as the backup paths needed in the case of 
-failure.  Unfortunately, many barriers to practical deployment of this 
+inter-domain routing, as well as backup paths in the case of 
+failure.  Unfortunately, many barriers to practical deployment of \Propane
 and related technologies persist as current languages are insufficiently
 expressive, lack tools that make their outputs intelligible, 
 provide no help migrating legacy configurations to new models, and
@@ -92,10 +92,10 @@ will verify safety properties of policies in the presence of such
 declarations and generate parameterized \emph{templates}
 that make compiler outputs more \emph{intelligible} for operators.  
 \item {\bf Costs and contracts for inter-domain transit:}
-Users will specify the 
+Users will specify 
 \emph{financial transit contracts} that govern transit
-costs using a new declarative, sub-language and our compiler will
-optimize inter- and intra-domain routes for them automatically.
+costs using a new declarative language and our compiler will
+optimize routes automatically by generating  \emph{time-varying route preferences}.
 \item {\bf Back-end diversity:}  We will develop algorithms that
 can synthesize and exploit the benefits of heterogenous back-ends 
 involving BGP, OSPF, OpenFlow and P4.

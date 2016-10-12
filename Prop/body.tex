@@ -102,7 +102,7 @@ these solutions can be widely deployed in industrial settings.
 %configuration complexity.
 
 
-In a nutshell, the overarching goal of this project is to {\em surmount the technical challenges that impede practical deployment of high-level network abstractions}.  In preliminary work, 
+Hence, the overarching goal of this project is to {\em surmount the technical challenges that impede practical deployment of high-level network abstractions}.  In preliminary work, 
 the PIs have taken the first steps toward this goal by developing a
 new network programming language called Propane~\cite{beckett+:propane} (winner of a SIGCOMM 2016
 Best Paper Award) that borrows from SDN languages an expressive set of primitives for specifying the allowed network-wide paths.  Propane extends these capabilities to enable the specification of backup paths via a simple form of path preferences, and allows the expression of both intra-domain 
@@ -173,8 +173,8 @@ functionally equivalent to the legacy configurations.
 %configurations or update their existing \Propane-managed configurations.
 
 \paragraph*{Intellectual Merit.}
-Our goal in this proposal is to develop the techniques and associated tools
-to support {\em deployable configuration synthesis}.  Building on our preliminary work, we will develop a new platform called \Name that addresses the deficiencies described above.  Our research has several main thrusts:
+Our goal in this proposal is to develop the tools and techniques
+to support high-level abstractions and {\em deployable configuration synthesis}.  Building on our preliminary work, we will develop a new platform, \Name, that addresses the deficiencies described above.  Our research has several thrusts:
 
 \begin{enumerate}
 
@@ -192,14 +192,16 @@ template-based router configuration systems.
 \item {\bf Costs, Contracts and Inter-domain Transit:} 
 Existing ISPs and transit providers engage in a wide range of business
 relationships with their peers, providers and customers~\cite{routingplaybook}.
-Past high-level network languages have had no way to integrate
-information on inter-domain transit costs into their specifications.
-We plan to allow users to specify the 
+In order to optimize costs in the face of such arrangements, networks
+must adjust their operations according to billing cycles and traffic
+volume.  We plan to build two new abstraction layers on top of our
+existing infrastructure to support such operations.  At the highest
+level of abstraction, we plan to allow users to specify the 
 \emph{financial transit contracts} that govern these relationships
-directly, declaratively and precisely within a \Name policy.  Given
-such contracts, we will investigate techniques to optimize 
-both intra- and inter-domain routes to minimize transit costs while adhering
-to contract constaints.
+directly, declaratively and precisely within a \Name policy.
+The implementation of such constraints will be engineered in terms of  
+new mechanisms for \emph{time-varying} and \emph{volume-dependent} routing 
+preferences.   
 
 \item {\bf Back-end Diversity:} There is no ``one size fits all'' networking protocol. Propane policies compile solely to BGP, but the additional expressiveness described above, along with performance requirements and the preferences of network engineers, will demand that configurations employ multiple protocols, as is standard for manual configurations today.  We will develop algorithms that synthesize configurations employing a combination of \emph{inter-domain routing} protocols such as BGP and \emph{intra-domain routing protocols} such as OSPF and RIP.  We will also target
 \emph{SDN-oriented protocols} such as OpenFlow~\cite{openflow}, P4~\cite{P4} and PIFO~\cite{pifo}, allowing networks to more easily adopt this technology when appropriate, ideally 
@@ -267,16 +269,14 @@ discussions, technical talks and informal discussions.
 \noindent
 {\bf Education:} 
 %We also plan on having educational impact in various ways.  
-The PIs have a track record of engaging undergraduates in research, often resulting in publications.  This project will allow us to engage undergraduates in interdisciplinary
-research that applies programming language techniques, such as
-automated verification and optimizing compilation, to problems in the networking domain.  At the graduate
-level, we will introduce a unit on network programming with high-level
-abstractions to our core
-graduate courses on programming languages and semantics.  
+High-level network engineers will require a mix of skills in 
+formal methods and network protocols.  We will develop modules for
+both graduate and undergraduate networking classes to expose students
+to these ideas.
 %Varghese and Millstein are co-teaching a seminar class at UCLA in Fall 2016 on ``Verification, Synthesis, and the Creative Habit" to jump-start a formal graduate class.  
-We hope to
-produce future network engineers with interdisciplinary skills in verification
-and programming languages.
+%We hope to
+%produce future network engineers with interdisciplinary skills in verification
+%and programming languages.
 %Those core
 %courses are taken by both programming languages students and students
 %in other disciplines to cover PhD breadth requirements.  
@@ -284,6 +284,10 @@ and programming languages.
 %demonstrating how PL techniques can be used to facilitate software
 %development in other domains, we hope to increase engagement of
 %students from other disciplines.
+In addition,
+the PIs have a track record of engaging undergraduates in research, often resulting in publications.  This project will allow us to engage undergraduates in interdisciplinary
+research that applies programming language techniques, such as
+automated verification and optimizing compilation, to problems in the networking domain. 
 
 \noindent
 {\bf Under-represented Minorities:} Finally, the PIs have a history of engaging women and under-represented minorities in
