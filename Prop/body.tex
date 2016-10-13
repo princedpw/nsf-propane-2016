@@ -107,7 +107,7 @@ the PIs have taken the first steps toward this goal by developing a
 new network programming language called Propane~\cite{beckett+:propane} (winner of a SIGCOMM 2016
 Best Paper Award) that borrows from SDN languages an expressive set of primitives for specifying the allowed network-wide paths.  Propane extends these capabilities to enable the specification of back-up paths via a simple form of path preferences, and allows the expression of both intra-domain 
 and inter-domain routing objectives.  Crucially, rather than compiling to OpenFlow,
-Propane compiles to BGP, the industry-standard and ubiquitous inter-domain routing protocol.  In addition to being in wide usage, BGP is distributed, fault tolerant and scalable.
+Propane compiles to BGP, the industry-standard, distributed, fault-tolerant and scalable inter-domain routing protocol. 
 Despite these advances, it is impossible to deploy Propane in industrial settings for several fundamental reasons:
 
 %Analogous to languages like RPSL, the Propane compiler automatically produces configurations for each router that leverage BGP to implement the desired policy.  Furthermore, the Propane compiler guarantees that the specified path preferences will be respected regardless of the link or node failures that may occur.
@@ -184,7 +184,8 @@ play similar \emph{roles} in the network (e.g., top-of-rack switches, border rou
 In addition to making policies more \emph{expressive},
 they will make the results of compilation more \emph{intelligible}, allowing
 network operators to examine a small number of templates
-rather than a vast number of individual configurations.  Finally,
+rather than a vast number of individual configurations.  Templates should
+also make verification more scalable.  Finally,
 such infrastructure will facilitate \emph{deployment} of \Name
 at large cloud providers such as Microsoft, which currently use such
 template-based router configuration systems.
@@ -380,15 +381,15 @@ two peers, named Peer1 and Peer2, which it does not control, but with
 whom it communicates via BGP.
 
 Figure~\ref{fig:policy} shows a \Propane specification for this data center which meets a number of objectives.  Lines 1 and 2 define a policy named \texttt{Locality}, which expresses the requirement that
-the local services should not receive traffic from the rest of the internet.  
+the local services should be isolated from the rest of the internet.  
 \Propane policies contain clauses of the form
 \texttt{$X$=>$P$} where $X$ defines a set of destination prefixes and 
 $P$ defines a set of ranked (acyclic) paths along which traffic may flow 
 to reach the given destination.  The keyword \texttt{in} refers to
 any network location that we control; the constraint \texttt{always($L$)}
 defines paths that only use locations in the set $L$.  Hence, line 2
-of the policy ensures traffic flowing to PL1 and PL2 comes from within
-our data center, not outside it.  The \texttt{NoTransit} policy on lines 4 and 5 prohibits traffic from Peer1 to Peer2 (and vice versa) from flowing through our data center.  This policy uses the constraint 
+of the policy ensures traffic flowing to and from PL1 and PL2 remains within
+our data center.  The \texttt{NoTransit} policy on lines 4 and 5 prohibits traffic from Peer1 to Peer2 (and vice versa) from flowing through our data center.  This policy uses the constraint 
 \texttt{transit($S$)}, which defines the set of paths between members of the set $S$.
 The constraint\texttt{!transit($S$)} therefore represents the complement of such a set.
 The \texttt{Ownership} policy demands that any path
