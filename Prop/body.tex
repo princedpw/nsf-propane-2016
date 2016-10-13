@@ -756,14 +756,13 @@ in network latency when updating BGP or OSPF.
 
 Finally, while our optimization tools will provide a system for minimizing cost, operators may have 
 other non-standard, time-varying objectives.  In order to provide them with the control needed to 
-implement these objectives directly, we will develop new \emph{dynamic} abstractions.  
+implement these objectives directly, we will develop new \emph{dynamic} abstractions in \Name.  
 More specifically, we plan to explore the idea of \emph{time-varying policies}---that is, 
-routing policies expressed declaratively \emph{functions of time and traffic volume}.  We 
+routing policies expressed declaratively as \emph{functions of time and traffic volume}.  We 
 also plan to expand the kinds of routing preferences available to programmers 
 by allowing \emph{soft preferences},
 which admit the possibility that excess traffic may spill over to lower preference routes,
-under certain conditions.  Such preferences will generalize \Propane's existing \emph{hard preferences} 
-which lower preference routes to be used in case of failure, but in no other circumstance.
+under certain conditions.  Such preferences will generalize \Propane's existing \emph{hard preferences}, whereby lower preference routes are only used in case of failure.
 
 %Initially, we do not plan research on new optimization techniques, though, of course, we will
 %pursue such research opportunistically when appropriate.  Rather, we will rely on past research on
