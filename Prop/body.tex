@@ -745,11 +745,31 @@ Once a refined specification has been determined, the difference (delta) between
 specification and this specification is computed.  The result of compiling the delta will be
 pushed to the switches.
 
-Initially, we do not plan research on new optimization techniques, though, of course, we will
-pursue such research opportunistically when appropriate.  Rather, we will rely on past research on
-optimization algorithms that balance cost and performance~\cite{Goldenberg:multi-home}.  Such work
-defines both online and offline algorithms.  We will experiment first with the online algorithms 
-that do not assume a priori knowledge of traffic statistics, as they can be applied more easily.
+We plan to tackle the wide variety of challenges involved in implementing such infrastructure.
+When it comes to optimization, we plan to lean on past work 
+of Goldenberg~\cite{Goldenberg:multi-home} and others for optimizing multi-homed networks.
+When it comes to managing update of router configurations, we will study the right kind
+of \emph{consistent update}~\cite{reitblatt+:consistent-updates,Katta:incremental-consistent,Jin:dynamic-updates,McClurg:update-synthesis,McClurg:event-driven-network-programming} to avoid problems that can
+occur during update of router configurations.  In particular, we hope to exploit work by 
+Francois and others~\cite{FCDB07,CMPFB13} on avoiding packet loss or transient increases 
+in network latency when updating BGP or OSPF.  
+
+Finally, while our optimization tools will provide a system for minimizing cost, operators may have 
+other non-standard, time-varying objectives.  In order to provide them with the control needed to 
+implement these objectives directly, we will develop new \emph{dynamic} abstractions.  
+More specifically, we plan to explore the idea of \emph{time-varying policies}---that is, 
+routing policies expressed declaratively \emph{functions of time and traffic volume}.  We 
+also plan to expand the kinds of routing preferences available to programmers 
+by allowing \emph{soft preferences},
+which admit the possibility that excess traffic may spill over to lower preference routes,
+under certain conditions.  Such preferences will generalize \Propane's existing \emph{hard preferences} 
+which lower preference routes to be used in case of failure, but in no other circumstance.
+
+%Initially, we do not plan research on new optimization techniques, though, of course, we will
+%pursue such research opportunistically when appropriate.  Rather, we will rely on past research on
+%optimization algorithms that balance cost and performance~\cite{Goldenberg:multi-home}.  Such work
+%defines both online and offline algorithms.  We will experiment first with the online algorithms 
+%that do not assume a priori knowledge of traffic statistics, as they can be applied more easily.
 
 %% \dpw{xxxxxxxxxxxxxxxxxxxx}
 
@@ -823,18 +843,15 @@ that do not assume a priori knowledge of traffic statistics, as they can be appl
 
 \paragraph*{Related research.}
 There is a vast literature on traffic engineering, much of it designed to avoid congestion 
-and minimize cost (see \cite{Awduche:traffic-engineering,Fortz:traffic-engineering}, for
-example).  Our research will directly exploit and build upon this research, especially
-the work of Goldenberg \emph{et al}~\cite{Goldenberg:multi-home}.
-What is new is the design of
-sophisticated, declarative, high-level \emph{programming languages} that 
-(1) specify routes (including inter-domain routes), (2) back-ups for fault tolerance, and 
-(3) financial contracts.
+and minimize cost (see \cite{Awduche:traffic-engineering,Fortz:traffic-engineering,Goldenberg:multi-home}, for
+example).  Our research will build upon this work directly; What is new is the design of
+compositional high-level \emph{programming languages} that 
+specify routes (including inter-domain routes) and financial contracts.
 Other recent languages that consider elements of both routing and traffic
 engineering include SIMPLE~\cite{simple},
  Merlin~\cite{foster:merlin}, and PANE~\cite{Ferguson:2013}. However, these systems focus on 
-policing and steering of \emph{intra}-domain traffic, capacities, congestion and
-management of middleboxes.  They have not tackled 
+specifying capacities, steering \emph{intra}-domain traffic, avoiding congestion and
+managing of middleboxes.  They have not tackled 
 \emph{inter}-domain routing and optimization for cost-based objectives such as
 95/5 contracts signed with multiple ISPs.
 Such interactions will lead to different language designs and different implementation
@@ -844,16 +861,13 @@ strategies (which mix BGP with traffic engineering mechanisms, for instance).
 
 \begin{itemize}
 \item How do we define a specification language that combines inter-domain
-routing objectives, fault tolerance and financial contracts?  What range of
-practical policies can we cover?  How do we modularize policy that combines 
-routing, preferences, fault tolerance, cost and contracts?
+routing objectives, fault tolerance and financial contracts?  
 %\item It is well known that even the simplest dynamic changes in BGP can lead to timer interactions (for example in Route Flap damping~\cite{routeflapdamping}.  How do we steer away an automatic optimizer from such perils?
-\item How do we engineer system interfaces to ensure a clean separation between optimization
-infrastructure and the rest of the compiler?
-\item How do we compute deltas between one configuration and the next?  How do we install deltas
-while ensuring minimal disruption?  What form of \emph{consistent update}~\cite{reitblatt+:consistent-updates} should be used here?
-\item Can we make use of heterogeneous back-ends (as discussed in the next subsection) to implement 
-a combination of load balancing and inter-domain routing effectively and automaticallly? 
+\item What are the right abstractions for managing each component of our implementation: 
+the optimizer, the time-varying policies, the run-time system and update mechanisms?  
+\item What data structures and optimization algorithms, compilation algorithms,
+and dynamic route update mechanisms maximize both system performance (compile times and scalability)
+and network performance (cost, utilization, and latency)?
 \end{itemize}
 
 \subsection{Back-end Diversity}
@@ -1175,7 +1189,7 @@ for equivalence testing and verification of other important properties?  To what
 
 \item How do we automate generation of counter-examples? What form should user feedback take?
 
-\item Can SMT-based synthesis or RE-learning techniques help us infer \Name policies directly from low-level configurations given only partial \Name policies to start from?
+\item Can SMT-based synthesis or RE-learning techniques help us infer \Name policies directly from low-level configurations given a partial \Name polic or no \Name policy at all to start from?
 
 \item What form of interface specification is necessary for a manually configured subnetwork, in order to support safe mixed-mode \Name analysis, compilation and operation?
 
@@ -1360,7 +1374,8 @@ becoming an industry standard.
 {\bf Broader Impacts:} PIC, Batfish, ERA and Propane are all publicly available and open source on Github.  PIC identified several previously unknown interoperability errors in popular implementations of the SIP and SPDY protocols, many of which were fixed by the developers.  Similarly, Batfish identified dozens of misconfigurations in the campus networks of two large universities as well as the data-center networks of a large cloud provider.
 
 \noindent
-{\bf George Varghese:} George Varghese has worked in industry over the last 5 years and has not had NSF support during this time.  Before that, he was awarded 10 NSF grants, which have led to networking innovations such as Deficit Round Robin, IP lookups, and automated worm fingerprinting.
+{\bf George Varghese:} Varghese has been awarded 10 NSF grants, but none in the last 5 years 
+as he worked in industry.  Past grants led to innovations such as Deficit Round Robin, IP lookups and worm fingerprinting.
 
 %%% Local Variables:
 %%% mode: latex
