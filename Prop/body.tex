@@ -870,15 +870,17 @@ Indeed, most networks use
 eBGP to communicate with neighboring networks and 
 then iBGP, OSPF or another IGP protocol to distribute routes internally.
 Some recent networks also use SDN capabilities.
-While BGP operates using local preferences, regular expression filters,
-and shortest paths based on path lengths, some protocols such as OSPF
+While BGP operates using local preferences, filters and community values,
+some protocols such as OSPF
 use real-valued link weights to compute shortest paths, which are not
-supported in \Propane.  In addition, in order to support scalability, 
-an OSPF network may be divided into separate \emph{areas} that only selectively
-export shortest paths information --- here, there is a tradeoff between 
-convergence time and finding optimal paths.  
+supported in \Propane.  
+%In addition, in order to support scalability, 
+%an OSPF network may be divided into separate \emph{areas} that only selectively
+%export shortest paths information --- here, there is a tradeoff between 
+%convergence time and finding optimal paths.  
 If \Name cannot synthesize configurations that take advantage of available
-back-ends, operators will be reluctant to deploy the system.
+back-ends and their performance properties, 
+operators will be reluctant to deploy the system.
 
 The central technical challenges involved in generation of multiple back-end protocols, involve
 extending our key intermediate languages to enable representation 
@@ -886,10 +888,10 @@ of these additional features (\eg, link weights, OSPF areas, static routes,
 route redistribution, \etc).  
 In addition to changing our intermediate representation, we will also need to 
 change our internal safety analysis algorithms to reflect the semantics of 
-link weights, OSPF and other protocols.
+link weights and other new features.
 Some additional challenges include deciding exactly which protocols should be used,
 as well as how and where
-a synthesis algorithm should divide a network into areas.  We will also
+a synthesis algorithm should divide a network into OSPF areas.  We will also
 explore extensions to the \Name front end language to give users
 control over such features.
 Finally, our synthesis algorithms will have to manage the interactions
@@ -898,7 +900,7 @@ is surprisingly tricky and can easily lead to unexpected routing loops~\cite{cis
 Past tools for control plane synthesis, including \Propane, have not been formalized or proven correct. 
 In order to defend against such problems and to ensure the reliability of our tools, we plan to formalize 
 our techniques using programming language
-theory (using similar techniques to those employed in research on NetKAT~\cite{netkat}), and prove their correctness
+theory (using similar techniques to those employed in research on NetKAT~\cite{netkat} or BagPipe~\cite{bagpipe}), and prove their correctness
 rigorously.
 
 \paragraph*{Related Work.}
