@@ -445,7 +445,8 @@ Intuitively, every node in the PGIR contains both a topology location
 (A, B, C, \etc) and an automaton state (q1, q2, q3, \etc).  There is an
 edge from node (A,q1) to node (B,q2) in the product graph if there is
 a link in the topology from A to B, and the \Propane policy states that
-it is legal to progress from automaton state q1 to q2.  Hence,
+it is legal to progress from automaton state q1 to q2 when traversing
+location B.  Hence,
 the key property of the PGIR is that any path from start to final state
 obeys \emph{both} the constraints of the topology and the constraints
 of the policy.  As a consequence, the compiler may perform any
@@ -482,11 +483,9 @@ many neighboring networks that exchange traffic
 with one another.
 In contrast, the goal of \Propane is to support high-level 
 specification of routing policy for \emph{one}
-network.  Because
+network.  The technical challenges are different too:
 \Propane compiles to traditional distributed protocols (BGP) as opposed
-to infrastructure managed by a centralized route server, 
-\Propane's compilation and synthesis algorithms
-are completely different from those used in SDX.
+to infrastructure managed by a centralized route server.
 
 RPSL~\cite{rpsl}, Nettle~\cite{nettle}, ConfigAssure~\cite{narain:lisa05,narain+:configassure}, and DADC~\cite{DADC} are languages designed to specify routing policy for distributed control planes
 running legacy protocols.  RPSL uses attribute-value pairs to specify policy,
