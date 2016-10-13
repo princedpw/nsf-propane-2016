@@ -105,7 +105,7 @@ these solutions can be widely deployed in industrial settings.
 Hence, the overarching goal of this project is to {\em surmount the technical challenges that impede practical deployment of high-level network abstractions}.  In preliminary work, 
 the PIs have taken the first steps toward this goal by developing a
 new network programming language called Propane~\cite{beckett+:propane} (winner of a SIGCOMM 2016
-Best Paper Award) that borrows from SDN languages an expressive set of primitives for specifying the allowed network-wide paths.  Propane extends these capabilities to enable the specification of backup paths via a simple form of path preferences, and allows the expression of both intra-domain 
+Best Paper Award) that borrows from SDN languages an expressive set of primitives for specifying the allowed network-wide paths.  Propane extends these capabilities to enable the specification of back-up paths via a simple form of path preferences, and allows the expression of both intra-domain 
 and inter-domain routing objectives.  Crucially, rather than compiling to OpenFlow,
 Propane compiles to BGP, the industry-standard and ubiquitous inter-domain routing protocol.  In addition to being in wide usage, BGP is distributed, fault tolerant and scalable.
 Despite these advances, it is impossible to deploy Propane in industrial settings for several fundamental reasons:
@@ -708,7 +708,7 @@ customers \cite{routingplaybook}.  Such networks must satisfy agreements to carr
 while minimizing
 cost, thereby maximizing their own profits. The current \Propane language does
 not incorporate any information about transit costs 
-and hence \Propane's compiler no way to optimize routes to achieve these
+and hence \Propane's compiler has no way to optimize routes to achieve these
 business objectives.
 Inspired in part by past domain-specific languages for specifying contracts for financial derivatives~\cite{spj+:contracts},
 we will develop a sub-language that allow users to specify the
@@ -717,10 +717,10 @@ engage in, and the \emph{contracts} signed with customers or providers.  For exa
 our sub-language will allow description of the common 95/5 contract~\cite{routingplaybook}.  
 In this contract, customer traffic is measured at 5-minute intervals and is billed at 
 some agreed upon rate X multiplied by the
-volume measured during 95th percentile interval each month.  Such contracts allow customers to burst for small
+volume measured during the 95th percentile interval each month.  Such contracts allow customers to burst for small
 percentages of the time without suffering outsized bills.  Other common kinds of contracts include
 \emph{tiered contracts}~\cite{tiered-isp-contracts}, in which customers promise a certain monthly level
-of usages in advance in exchange for an improved rate in terms of Mbps.  Moreover,
+of usage in advance in exchange for an improved rate in terms of Mbps.  Moreover,
 in addition to \emph{blended contracts}, which charge the same rate for every destination,
 there sometimes exist different rates for different destinations~\cite{tiered-isp-contracts}.
 
@@ -733,7 +733,7 @@ there sometimes exist different rates for different destinations~\cite{tiered-is
 \end{wrapfigure}
 
 In order to implement these richer policies, we plan to build on top of our other infrastructure,
-as suggested in Figure~\ref{fig:optimizer}.  The main inputs to the system are (1) a conventional
+as shown in Figure~\ref{fig:optimizer}.  The main inputs to the system are (1) a conventional
 \Name specification, which determines a \emph{set of allowed routes}, (2) a set of contracts, which
 define transit costs, and (3) traffic statistics.  These inputs are fed into an optimizer and
 its output is a \emph{refined} \Name specification
@@ -749,7 +749,7 @@ Initially, we do not plan research on new optimization techniques, though, of co
 pursue such research opportunistically when appropriate.  Rather, we will rely on past research on
 optimization algorithms that balance cost and performance~\cite{Goldenberg:multi-home}.  Such work
 defines both online and offline algorithms.  We will experiment first with the online algorithms 
-that do not assume a priori knowledge of traffic statistics as they can be applied more easily.
+that do not assume a priori knowledge of traffic statistics, as they can be applied more easily.
 
 %% \dpw{xxxxxxxxxxxxxxxxxxxx}
 
