@@ -119,7 +119,7 @@ Despite these advances, it is impossible to deploy Propane in industrial setting
 
 \begin{description}
 \item[expressiveness]  Today's low-level configuration languages provide fine-grained control over network functionality and performance.  Operators will not move to higher-level, network-wide policy languages unless they can express the subtle and complex policies that business requirements demand.  Propane's 
-language is not sufficient to express several common classes of policies.
+language is not sufficient to express several common policies used by ISPs today~\cite{routingplaybook}.
 
 \item[intelligibility] In the near term, the low-level configurations output by the Propane compiler must be human readable and match the configuration styles in use today.  This requirement has become clear in the PIs' discussions with network engineers at two large cloud providers.  Intelligibility is necessary to give engineers confidence in the behavior of their networks, to enable configurations to be processed with a variety of existing tools, and to allow operators to directly modify configurations when necessary.  
 % For instance, Network operators, especially for large, structured networks such as data centers, do not think in terms of individual devices.  Instead, they craft policy in terms of \emph{sets} of devices that
@@ -687,8 +687,8 @@ developed there may be a useful starting point for verifying properties of \Name
 \paragraph*{Summary of key research questions:}
 
 \begin{itemize}
-\item What abstractions help us specify invariants of network topologies? How do we integrate such abstractions into the \Name system?
-\item How do we compile with abstract topologies and make use of templates?  
+\item What abstractions help us specify invariants of common data center and ISP network topologies? How do we integrate such abstractions into the \Name system?
+\item How do we compile with abstract topologies and make use of operator-friendly templates?  
 \item How do we analyze properties of network policies, such as
 reachability and fault tolerance, over abstract
 topologies?  How do these algorithms perform?
