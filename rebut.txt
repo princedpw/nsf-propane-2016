@@ -1,0 +1,77 @@
+NeTS is considering awarding your NeTS Medium project.  Before making final decisions we would like you to address by return email the following panel concerns. (Please answer “in line” and do not group concerns together as grouping makes it hard to tell if the concerns are actually addressed.)
+ 
+Panel Summary:
+ 
+Weaknesses: Industrial contacts and use cases are heavily influenced by Microsoft and Google, who are in similar market spaces. It is not clear the proposal offers the right set of topological abstractions for folks other than cloud operators. Will this work for ISPs? Will this apply to firewalls and NATs in addition to routers?
+ 
+One further application environment the proposers might consider is the CORD project, which is targeted at telco Central Offices. If this proves valuable in the CORD project then the likelihood of adoption by ISPs and telcos is significantly enhanced. The proposed work may not expand to other business spaces such as that occupied by Time Warner.
+ 
+The proposed work picks a specific solver rather than figuring out which mathematical model they want to use. Mathematical models, however, generally drive the choice of the solver. Boon Tau Loos work appears relevant here but is not mentioned.
+ 
+The proposal is overly ambitious in attempting to solve the problem of verifying the Butane compiler. While this is desirable, the essential verification problem is to demonstrate that each generated configuration is consistent with the specified configuration. This is a much more tractable problem.
+ 
+Broader Impact: 
+ 
+Weaknesses: If proposers are not using NSF Cloud or GENI for experiments then proposers need to explain why not.
+ 
+Reviewer 1:
+ 
+Weaknesses
+
+- Relevant work didn't discuss Boon Thau Loo's work on declarative networking, especially its extensions to BGP. By itself its minor, but then in the migration/verification section there's discussion of using FOL SMT as an intermediate representation without much discussion of expressivity limits. Datalog, for instance, would offer ability to express recursive rules (according to Gurevich papers many problems in CS dealing with declarative rule-based systems end up reducing to Datalog; this may not be the case here, but no discussion in the proposal).
+
+- There has also been some work on formal contract specification, e.g. Gao/Singh "Extracting Normative Relationships from Business Contracts"
+ 
+Data management plan does not explicitly discuss if the code will be made available to the research community.
+ 
+Reviewer 2
+ 
+Weaknesses:
+
+The main weaknesses (or concerns) with the proposal are that (a) the scenarios considered seem rather specific to cloud settings and (b) that the generality and applicability of contributions outside the adoption of Butane.
+
+The notion of topological abstractions needs more thought. While this idea does reduce work that operators have to do, it is unclear how applicable it will be in more generalized settings. For example, what if (in theory) there are hundreds of categories of devices? What if devices of the same role need different policies based on different use cases?
+
+While the arguments presented in the proposal make sense for clouds, how applicable are they for ISPs or other networks where BGP and OSPF similar protocols are commonly used? For transit between tier-1 ISPs the notion of costs and contracts may not apply.
+
+The proposal does not make it clear if the capabilities made available are applicable to certain types of devices (e.g., routers) or if they can be used more broadly to other middleboxes (e.g., firewalls, NAT, etc). These middleboxes also speak BGP/OSPF but also have other policies associated with them.
+
+The proposal does not make it clear if the techniques used for verification can be used more broadly outside of Butane.
+ 
+BI:
+ 
+Weakness: 
+- The proposal would benefit if the authors can validate their system with a broader set of networks (ISPs, IXPs, etc).
+
+- The proposal should aim to identify techniques that can be used not just in Butane but also other tools, especially for aspects such as policy validation and for gradual deployment since these are generic problems.
+
+- The plans for inclusion or educating the next generation of users seems generic.
+ 
+Reviewer 3
+ 
+- The proposers' industrial contacts and use cases are very heavily influenced by two providers, Microsoft Azure and Google. These are strong use cases. the proposal would be stronger if a network from another usage class were explored, even in simulation (I appreciate that strong industrial contacts are hard to find).
+
+- It's troubling that translating a specification to a logical representation is identified as a key research area. The fact that SDN configurations (at least, the rule base that comes out of a program) is isomorphic to a logic network was known as early as 2011, and a number of validation tools have been based on this realization. It is perfectly true that legacy networks don't have this property, and so it's hoped that the difficulty referred to is in modeling legacy networks
+
+- It's more important to find a mathematical model of the configuration than to identify a specific solver. The proposers should identify the precise mathematical model of the output of Propane (Logic network, communicating FSMs, etc) before identifying a specific solver.
+
+- It is said that tools like Propane "have never been proven correct" (page 10). This is true; however, correspondence between an abstract network and a generated network is isomorphic to the problem of proving that a logic circuit is correct, a well-solved problem. In other words (unless Propane is doing something very odd) its execution CAN be checked rigorously on a case-by-case basis, typically as a last step before the generated configuration is loaded into the network. This is why the abstract model underlying Butane is so important. It is also important to note that optimality with respect to some cost criteria is likely a more difficult problem.
+ 
+The lack of formal models is a hazard both for compiling to multiple back ends and for verification. It's always worth remembering the maxim: if it isn't trivial to write a bad but correct compiler, then the language or the execution environment is ill-defined or the language is ill-matched to the execution environment, and at the end of the day Butane is a compiler.
+ 
+BI:
+ 
+If the PIs used NSF Cloud, GENI or the Massachusetts Open Cloud for experimentation they would leave a much richer collection of data and artifacts for other researchers in this area.
+ 
+Reviewer 4:
+ 
+These challenges are substantial -- I have seen many prior projects attempt some of these challenges and fail. So as a reviewer I was looking for signs that the current project would succeed on the various challenges -- recognizing that success in some but not all would represent substantial progress.
+
+Looking at the specific strengths and weaknesses:
+
+topological abstractions -- I could clearly see both the need for additional abstractions and paths by which the challenges of adding these abstractions could be surmounted. My major concern here is that simply specifying that each edge needs two connections is clearly insufficient -- and one can sort of see this in Figure 6 -- if the lower groups of four were connected in ring form (so links from A to B to D to C to A) then the connections to C and D are a mistake -- as severing the link from C to A will cause all traffic from X and Y to A to flow through D (either directly, or indirectly via C). I think this is straightforward to handle with a slight extension of the proposed abstractions -- so I'm simply noting surprise it was not raised.
+
+Including cost and contract constraints. Trying to reduce contracts or legal rules to formal abstractions has been a repeated failure in the past (cf. efforts to encode FCC spectrum rules). Here I did not see any signs of success against this problem -- rather what I saw was a suggestion that *most* contracts are standard enough that they can be represented by a common abstraction and applied to optimize policies. I think that's correct, if slightly unexciting.
+
+
+On abstracting low level configurations to BUTANE (intended to help incremental migration) failed to convince me that there was any insight about how to build up from a low level spec into BUTANE.
