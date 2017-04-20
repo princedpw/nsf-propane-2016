@@ -54,6 +54,8 @@
 > Data management plan does not explicitly discuss if the code will be
 > made available to the research community.
  
+We will make our code freely available to the research community, as we have done in the past.  The Data Management Plan states that we will maintain a project web page on Github that "will provide code, evaluation data, and meta-data."
+
 > Reviewer 2
  
 > Weaknesses:
@@ -69,6 +71,8 @@
 > if (in theory) there are hundreds of categories of devices? What if
 > devices of the same role need different policies based on different
 > use cases?
+
+While it is a potential concern that there could be too many roles to scalably handle, in our preliminary work to date we have seen that in practice even large networks have a relatively small number of roles, and further that nodes in the same role are intended to have similar policies.  These constraints are driven by the need for network engineers and operators to be able to more easily manage the network and understand its behavior.
 
 > While the arguments presented in the proposal make sense for clouds,
 > how applicable are they for ISPs or other networks where BGP and OSPF
