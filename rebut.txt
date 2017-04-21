@@ -10,28 +10,63 @@
 > clear the proposal offers the right set of topological abstractions
 > for folks other than cloud operators. Will this work for ISPs? Will
 > this apply to firewalls and NATs in addition to routers?
+
+* makes sense to start with one kind of network and understand it deeply. 
+* we have the great  contacts there and data centers have a lot of
+symmetry and it makes sense for us.
+
+* George
+* min-cut abstraction for backbone
+
+* we have recently been looking 
+ * eg: min-cut abstraction, backbone networks 
+ * we are seeing new abstractions
  
 > One further application environment the proposers might consider is
 > the CORD project, which is targeted at telco Central Offices. If this
 > proves valuable in the CORD project then the likelihood of adoption by
 > ISPs and telcos is significantly enhanced. The proposed work may not
 > expand to other business spaces such as that occupied by Time Warner.
+
+* George
+* this is a great idea.
+* opencord.org 
  
 > The proposed work picks a specific solver rather than figuring out
 > which mathematical model they want to use. Mathematical models,
 > however, generally drive the choice of the solver. Boon Tau Loos work
 > appears relevant here but is not mentioned.
+
+* DPW
+* we are aware of Boon's excellent work
+* considered in past work
+* getting rid of recursion
+* stable paths 
+* but we model the solution space; basically don't need declarative datalog
  
 > The proposal is overly ambitious in attempting to solve the problem of
 > verifying the Butane compiler. While this is desirable, the essential
 > verification problem is to demonstrate that each generated
 > configuration is consistent with the specified configuration. This is
 > a much more tractable problem.
+
+* we did not mean to imply we will build a fully verified 
+* we are sanity checking our algortihms in a 
  
 > Broader Impact: 
  
 > Weaknesses: If proposers are not using NSF Cloud or GENI for
 > experiments then proposers need to explain why not.
+
+DPW
+
+* https://cloudlab.us/
+* be positive
+* platforms for building new things whereas we are looking at interoperation
+with existing networks
+* we will use them to look for 
+* cloudlab: aditya akella; ask Ratul
+* geni: ask larry
  
 > Reviewer 1:
  
@@ -47,9 +82,16 @@
 >   systems end up reducing to Datalog; this may not be the case here,
 >   but no discussion in the proposal).
 
+* DPW
+* refer to above.
+
 > - There has also been some work on formal contract specification,
 >   e.g. Gao/Singh "Extracting Normative Relationships from Business
 >   Contracts"
+
+* Ryan
+* look up this
+* say thanks for the reference
  
 > Data management plan does not explicitly discuss if the code will be
 > made available to the research community.
@@ -65,12 +107,20 @@ We will make our code freely available to the research community, as we have don
 > that the generality and applicability of contributions outside the
 > adoption of Butane.
 
+See answer above.
+
 > The notion of topological abstractions needs more thought. While this
 > idea does reduce work that operators have to do, it is unclear how
 > applicable it will be in more generalized settings. For example, what
 > if (in theory) there are hundreds of categories of devices? What if
 > devices of the same role need different policies based on different
 > use cases?
+
+* we support both concrete and abstract networks -- if the network
+does not have roles, operators can still use concrete networks.
+
+* in practice, we have found that the data center and backbone networks
+have a small number of roles (eg, less than 10).
 
 While it is a potential concern that there could be too many roles to scalably handle, in our preliminary work to date we have seen that in practice even large networks have a relatively small number of roles, and further that nodes in the same role are intended to have similar policies.  These constraints are driven by the need for network engineers and operators to be able to more easily manage the network and understand its behavior.
 
@@ -79,14 +129,26 @@ While it is a potential concern that there could be too many roles to scalably h
 > similar protocols are commonly used? For transit between tier-1 ISPs
 > the notion of costs and contracts may not apply.
 
+See above.
+
 > The proposal does not make it clear if the capabilities made available
 > are applicable to certain types of devices (e.g., routers) or if they
 > can be used more broadly to other middleboxes (e.g., firewalls, NAT,
 > etc). These middleboxes also speak BGP/OSPF but also have other
 > policies associated with them.
 
+* two frontiers in verification research: control plane and stateful 
+networks. -- the 
+* this is an important and exciting area of research
+
+
 > The proposal does not make it clear if the techniques used for
 > verification can be used more broadly outside of Butane.
+
+* Todd
+* proposal include research on invariants, interfaces for legacy networks
+that are broadly useful
+* yes we believe 
  
 > BI:
  
@@ -95,13 +157,19 @@ While it is a potential concern that there could be too many roles to scalably h
 > - The proposal would benefit if the authors can validate their system
 >   with a broader set of networks (ISPs, IXPs, etc).
 
+See above
+
 > - The proposal should aim to identify techniques that can be used not
 >   just in Butane but also other tools, especially for aspects such as
 >   policy validation and for gradual deployment since these are generic
 >   problems.
 
+interfaces, invariants
+
 > - The plans for inclusion or educating the next generation of users
 >   seems generic.
+
+* Cornell-Princeton -- East Coast, not generic
  
 > Reviewer 3
  
@@ -110,6 +178,8 @@ While it is a potential concern that there could be too many roles to scalably h
 >   strong use cases. the proposal would be stronger if a network from
 >   another usage class were explored, even in simulation (I appreciate
 >   that strong industrial contacts are hard to find).
+
+See above.
 
 > - It's troubling that translating a specification to a logical
 >   representation is identified as a key research area. The fact that
@@ -120,11 +190,18 @@ While it is a potential concern that there could be too many roles to scalably h
 >   this property, and so it's hoped that the difficulty referred to is
 >   in modeling legacy networks
 
+* DPW
+* *efficiently*
+* specifics
+* doing it efficiently
+
 > - It's more important to find a mathematical model of the
 >   configuration than to identify a specific solver. The proposers
 >   should identify the precise mathematical model of the output of
 >   Propane (Logic network, communicating FSMs, etc) before identifying
 >   a specific solver.
+
+* see above (logic network)
 
 > - It is said that tools like Propane "have never been proven correct"
 >   (page 10). This is true; however, correspondence between an abstract
@@ -137,6 +214,9 @@ While it is a potential concern that there could be too many roles to scalably h
 >   Butane is so important. It is also important to note that optimality
 >   with respect to some cost criteria is likely a more difficult
 >   problem.
+
+* perhaps the reviewer did not understand what we mean by "prove correct"?
+... use some soft language ... see panel summary above
  
 > The lack of formal models is a hazard both for compiling to multiple
 > back ends and for verification. It's always worth remembering the
@@ -144,6 +224,11 @@ While it is a potential concern that there could be too many roles to scalably h
 > the language or the execution environment is ill-defined or the
 > language is ill-matched to the execution environment, and at the end
 > of the day Butane is a compiler.
+
+* Todd
+* totally wrong?
+* ? refer to earlier comments about mathematical models?
+
  
 > BI:
  
@@ -151,6 +236,8 @@ While it is a potential concern that there could be too many roles to scalably h
 > experimentation they would leave a much richer collection of data and
 > artifacts for other researchers in this area.
  
+See above.
+
 > Reviewer 4:
  
 > These challenges are substantial -- I have seen many prior projects
@@ -158,9 +245,9 @@ While it is a potential concern that there could be too many roles to scalably h
 > looking for signs that the current project would succeed on the
 > various challenges -- recognizing that success in some but not all
 > would represent substantial progress.
-
+>
 > Looking at the specific strengths and weaknesses:
-
+>
 > topological abstractions -- I could clearly see both the need for
 > additional abstractions and paths by which the challenges of adding
 > these abstractions could be surmounted. My major concern here is that
@@ -173,6 +260,11 @@ While it is a potential concern that there could be too many roles to scalably h
 > is straightforward to handle with a slight extension of the proposed
 > abstractions -- so I'm simply noting surprise it was not raised.
 
+* thank you for your observation
+* the proposal's abstractions are a starting point for our research
+* there is lots more research to do on the set of abstractions to provide;
+this is a major focus
+
 > Including cost and contract constraints. Trying to reduce contracts or
 > legal rules to formal abstractions has been a repeated failure in the
 > past (cf. efforts to encode FCC spectrum rules). Here I did not see
@@ -181,7 +273,13 @@ While it is a potential concern that there could be too many roles to scalably h
 > represented by a common abstraction and applied to optimize
 > policies. I think that's correct, if slightly unexciting.
 
+* Todd
+* hope for 90%
+* research on how to allow custom
 
 > On abstracting low level configurations to BUTANE (intended to help
 > incremental migration) failed to convince me that there was any
 > insight about how to build up from a low level spec into BUTANE.
+
+* Todd
+* common IR?
