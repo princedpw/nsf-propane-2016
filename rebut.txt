@@ -1,4 +1,4 @@
-> NeTS is considering awarding your NeTS Medium project.  Before making 
+﻿> NeTS is considering awarding your NeTS Medium project.  Before making 
 > final decisions we would like you to address by return email the following 
 > panel concerns. (Please answer “in line” and do not group concerns together 
 > as grouping makes it hard to tell if the concerns are actually addressed.)
@@ -11,26 +11,19 @@
 > for folks other than cloud operators. Will this work for ISPs? Will
 > this apply to firewalls and NATs in addition to routers?
 
-* makes sense to start with one kind of network and understand it deeply. 
-* we have the great  contacts there and data centers have a lot of
-symmetry and it makes sense for us.
+It makes sense to start with one kind of network and understand it deeply before we branch out to other types like ISPs.  Data centers today have a lot of symmetry and yet are hard to configure.  Thus we see an area of great potential impact, so it makes sense to start applying our approach there where we have partners who are interested in applying our ideas.
 
-* George
-* min-cut abstraction for backbone
+That said, we agree that our ideas can and should be applied to other networks such as ISPs. In very recent work, we have been looking at abstractions for corporate backbones and finding other kinds of abstractions (such as a min cut abstraction).  Also, our lead student Ryan Beckett won a prize from ATT for his work on Propane and so we have some potential openings at ATT as well. In summary, we will continue exploring other types of networks to expand our repertoire of abstractions, while focusing on data centers as our most likely avenue of real impact.
 
-* we have recently been looking 
- * eg: min-cut abstraction, backbone networks 
- * we are seeing new abstractions
- 
+
 > One further application environment the proposers might consider is
 > the CORD project, which is targeted at telco Central Offices. If this
 > proves valuable in the CORD project then the likelihood of adoption by
 > ISPs and telcos is significantly enhanced. The proposed work may not
 > expand to other business spaces such as that occupied by Time Warner.
 
-* George
-* this is a great idea.
-* opencord.org 
+This is a great idea.  We assume by CORD you mean the project listed at opencord.org which has open source software for building various kinds of networks (home, enterprise) from only commodity servers.   While CORD is a great platform for building new networks cheaply, our project is about discovering abstractions and verifying real configurations but we will look at the CORD repositories to look for existing configurations to see if we can identify new abstractions (for say mobile networks)
+
  
 > The proposed work picks a specific solver rather than figuring out
 > which mathematical model they want to use. Mathematical models,
