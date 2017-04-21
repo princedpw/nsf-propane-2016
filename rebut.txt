@@ -130,19 +130,14 @@ See above.
 > etc). These middleboxes also speak BGP/OSPF but also have other
 > policies associated with them.
 
-* two frontiers in verification research: control plane and stateful 
-networks. -- the 
-* this is an important and exciting area of research
+Two current frontiers in network verification research are verification of rich control-plane policies and verification of stateful networks that contain middleboxes.  Our proposal focuses on the former problem space.  However, handling middleboxes is also an important and exciting area of research.  The techniques we develop will apply immediately to some middleboxes, for example firewalls configured with access-control lists, and we hope to consider the impact of other middleboxes on control-plane verification in the latter part of the grant period.
 
 
 > The proposal does not make it clear if the techniques used for
 > verification can be used more broadly outside of Butane.
 
-* Todd
-* proposal include research on invariants, interfaces for legacy networks
-that are broadly useful
-* yes we believe 
- 
+Our proposed work on verifying legacy networks is independent of Butane and will be broadly applicable.  This includes techniques to convert low-level configurations to a structured intermediate representation and to validate such configurations against a high-level interface specification.  We further hope that basing Butane's design on general and well understood formalisms, such as regular expressions over paths and logical predicates, will allow our research results on Butane verification to transfer to other network programming languages.
+
 > BI:
  
 > Weakness: 
@@ -150,14 +145,14 @@ that are broadly useful
 > - The proposal would benefit if the authors can validate their system
 >   with a broader set of networks (ISPs, IXPs, etc).
 
-See above
+See above.
 
 > - The proposal should aim to identify techniques that can be used not
 >   just in Butane but also other tools, especially for aspects such as
 >   policy validation and for gradual deployment since these are generic
 >   problems.
 
-interfaces, invariants
+See above.
 
 > - The plans for inclusion or educating the next generation of users
 >   seems generic.
@@ -218,11 +213,8 @@ See above.
 > language is ill-matched to the execution environment, and at the end
 > of the day Butane is a compiler.
 
-* Todd
-* totally wrong?
-* ? refer to earlier comments about mathematical models?
+Please see the above discussion of the mathematical models on which we plan to base the Butane compiler and verification technology.  Note also that in our setting even writing a bad but correct compiler is non-trivial, as it involves converting the network policy from a single global specification to a set of per-router configurations.
 
- 
 > BI:
  
 > If the PIs used NSF Cloud, GENI or the Massachusetts Open Cloud for
@@ -266,13 +258,10 @@ this is a major focus
 > represented by a common abstraction and applied to optimize
 > policies. I think that's correct, if slightly unexciting.
 
-* Todd
-* hope for 90%
-* research on how to allow custom
+As the reviewer suggests, we hope that a relatively small set of abstractions will enable Butane to express the vast majority of contracts that exist in practice.  In the latter part of the grant period, we will also explore techniques for a Butane policy to interoperate with cost and contract constraints written as traditional code, in order to support additional expressiveness.
 
 > On abstracting low level configurations to BUTANE (intended to help
 > incremental migration) failed to convince me that there was any
 > insight about how to build up from a low level spec into BUTANE.
 
-* Todd
-* common IR?
+The key insight that we will leverage is that it is possible to translate both low-level configurations and high-level Butane policies into a common intermediate format.  This insight comes in part from our experience with the earlier Propane language, which employs a structured intermediate format on which various analyses are performed.  A common intermediate format will allow us to directly compare low-level configurations to Butane policies and will provide a natural platform on which to explore approaches for policy sketching and inference.
