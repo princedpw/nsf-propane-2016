@@ -21,12 +21,12 @@ in applying our ideas.
 That said, we agree that our ideas can and should be applied to other
 networks such as ISPs. In very recent work, we have been looking at
 abstractions for corporate backbones and finding other kinds of
-abstractions (such as a min cut abstraction).  Also, our lead student
+abstractions (such as a min-cut abstraction).  Also, our lead student
 Ryan Beckett won a prize from ATT for his work on Propane and so we
 have some potential openings at ATT as well. In summary, we will
 continue exploring other types of networks to expand our repertoire of
 abstractions, while focusing on data centers as our most likely avenue
-of real impact.
+of initial impact.
 
 
 > One further application environment the proposers might consider is
@@ -35,14 +35,13 @@ of real impact.
 > ISPs and telcos is significantly enhanced. The proposed work may not
 > expand to other business spaces such as that occupied by Time Warner.
 
-This is a great idea.  We assume by CORD you mean the project listed
-at opencord.org which has open source software for building various
-kinds of networks (home, enterprise) from only commodity servers.
-While CORD is a great platform for building new networks cheaply, our
-project is about discovering abstractions and verifying real
-configurations but we will look at the CORD repositories to look for
-existing configurations to see if we can identify new abstractions
-(for say mobile networks).
+This is a great idea.  We assume by CORD you mean opencord.org, which 
+has open-source software for building various kinds of networks (home, 
+enterprise) from only commodity servers. While CORD is a great platform 
+for building new networks cheaply, our project is about discovering 
+abstractions and verifying real configurations.  We will look at the 
+existing configurations in the CORD repositories to see if we can 
+identify new abstractions (for say mobile networks).
  
 > The proposed work picks a specific solver rather than figuring out
 > which mathematical model they want to use. Mathematical models,
@@ -73,20 +72,19 @@ that communicate via message passing (and thereby specify both old
 and new control plane protocols).  Boon's declarative networking
 project allows much more general distributed computations to be 
 expressed, but due to the generality, there is no obvious way to
-compile his datalog-like specifications to existing legacy routing
+compile his Datalog-like specifications to existing legacy routing
 software --- Boon's approach would require a clean-slate approach to
 network configuration and completely new hardware/software in routing
 platforms.  Our work, on the other hand, does not depend on a 
-clean-slate approach .  It seeks to provide
-a transition path that allows legacy networks to managed more effectively. 
+clean-slate approach.  Rather it seeks to provide a transition path 
+that allows legacy networks to managed more effectively. 
 
 Boon's desire to create a general framework for distributed
-computation leads to the inclusion of recursion and the use of datalog
-and datalog-like variants.  Because we wish to configure existing
+computation leads to the inclusion of recursion and the use of Datalog
+and Datalog-like variants.  Because we wish to configure existing
 routers rather than to implement general distributed computation, our
-language can be and must be less general.  We use, for example,
-regular expressions as opposed to general recursive datalog
-expressions, as discussed above.
+language can be less general.  We use, for example, regular expressions 
+as opposed to general recursive Datalog expressions, as discussed above.
 
 > The proposal is overly ambitious in attempting to solve the problem of
 > verifying the Butane compiler. While this is desirable, the essential
@@ -97,11 +95,11 @@ expressions, as discussed above.
 We agree that the central verification problem involves checking
 generated (and legacy) configurations using automated tools.  We also
 believe it is tractable.  When it comes to the Butane compiler, we do
-not plan to "verify" it's implementation (using program verification
+not plan to "verify" its implementation (using program verification
 tools such as Coq, for instance).  Rather, we plan to study our
 algorithms and prove (on paper) that they do what we expect them to do
---- in other words, we plan to develop algorithms in the normal way
-(design an algorithm; prove it works as intended; implement and
+--- in other words, we plan to develop algorithms in the traditional 
+way (design an algorithm; prove it works as intended; implement and
 evaluate it).
 
 > Broader Impact: 
@@ -126,10 +124,10 @@ configurations, we do not need to emulate the configurations on
 production traffic.  We can test them using tools such as C-BGP, Co-PI
 Millstein's Batfish tool, and our own verification tools.  Again, NSF
 Cloud and GENI are not helpful here.  On the other hand, we will need
-to emulation to test the performance of dynamic policies, such as
+emulation to test the performance of dynamic policies, such as
 those that attempt to optimize performance in the face of costs (eg,
-section 3.2).  For these experiments, NSF Cloud or GENI may be very
-effective and we intend to investigate using then.
+section 3.2).  For these experiments, NSF Cloud or GENI could be very
+effective and we intend to investigate using them.
  
 > Reviewer 1:
  
@@ -157,15 +155,18 @@ our research is noticing this fact and then exploiting it to design
 efficient verification techniques (ie: techniques that do not require
 infrastructure capable of solving recursive equations --- a more
 challenging task than finding satisfying assignments of simpler
-formula).
+formulae).
 
 > - There has also been some work on formal contract specification,
 >   e.g. Gao/Singh "Extracting Normative Relationships from Business
 >   Contracts"
 
-* Ryan
-* look up this
-* say thanks for the reference
+Thank you for this reference.  That work is tackling the problem of 
+automatically extracting formal contract specifications from 
+unstructured contract text.  Our work is complementary: we will
+identify abstractions for formally expressing contract and cost 
+constraints in our setting and develop techniques to leverage these
+constraints to optimize network performance.
  
 > Data management plan does not explicitly discuss if the code will be
 > made available to the research community.
@@ -207,7 +208,7 @@ can include "border router" and "core router."
 If there are hundreds of categories of devices and thousands of actual
 devices then our system will have reduced the complexity of
 programming the network system in a helpful way (thousands of
-configurations reduced to hunderds of configurations).  However, we
+configurations reduced to hundreds of configurations).  However, we
 have not yet seen a network with so many different roles --- such
 networks may not exist.  What we have seen instead is that in large
 data center networks, roles are common and there are not very many of
@@ -223,11 +224,11 @@ that if a network is "role-less", our system will still be useful
 because we intend to support both abstract and concrete (role-less)
 networks simulataneously.
 
-The reviewer may be asking about whether the performance of
-our synthesis system will scale to hundreds of different roles.  This
-is a good research question.  We will have to implement the system,
-measure its scalability, and if it fails to scale to large networks,
-invent optimizations or approximations to cope.
+The reviewer may be asking about whether the performance of our synthesis 
+system will scale to hundreds of different roles.  This is a good research 
+question.  We will have to implement the system, measure its scalability, 
+and if it fails to scale to large networks, invent optimizations or 
+approximations to cope.
 
 > What if devices of the same role need different policies based on different
 > use cases?
@@ -252,7 +253,7 @@ pursue.
 > the notion of costs and contracts may not apply.
 
 (Please see comments earlier in this document.)  Briefly, to
-reiterate: we have looked at backbone networks and found some similar
+reiterate: we have looked at backbone networks and found that similar
 abstractions apply and also that we need to define some new ones.
 Hence, we plan study data center networks in depth first but then to
 branch out to investigate other kinds of networks later in the grant
@@ -312,11 +313,11 @@ industrial outreach, curriculum development and one-on-one mentoring.
 Some of the activities, such as curriculum development and one-on-one
 mentoring of underrepresented minorities may not be surprising, but
 they are effective and necessary ways of disseminating knowledge and
-training to our next generation of students.  (And the PIs track
+training to our next generation of students.  (And the PIs' track
 record is exceptional here as indicated by the fact that the PIs'
 underrepresented minorities have won the CRA outstanding undergraduate
 research award twice, for instance.) Other activities take advantage
-of the PIs unique academic position.  For instance, while Silicon
+of the PIs' unique academic position.  For instance, while Silicon
 Valley universities such as Stanford and Berkeley have close ties to
 the networking industry, East Coast universities have not had as close
 ties to industry.  The PIs intend to help grow connections to industry
@@ -345,8 +346,8 @@ See above.
 >   in modeling legacy networks
 
 We are aware of the excellent work on SDN data plane analysis and its
-representation in logic.  (For instance, Co-Pi Varghese helped design
-network-optimized datalog for representing and reasoning about data plane
+representation in logic.  (For instance, Co-PI Varghese helped design
+network-optimized Datalog for representing and reasoning about data plane
 properties.)
 
 The representation of control plane protocols in logic is quite
@@ -390,9 +391,9 @@ wrong, this would be a problem, even if a tool were to catch the wrong
 configuration. No one would want to use a compiler that regularly
 fails.  This is why proving the correctness of the algorithms one
 designs is a useful scientific activity --- such proofs, even if done
-in a light-weight fashion using pencil and paper, provide evidence
+in a lightweight fashion using pencil and paper, provide evidence
 that the algorithms designed will not fail in unexpected corner cases
-that test suites may not cover.  We intend to do such light-weight,
+that test suites may not cover.  We intend to do such lightweight,
 pencil-and-paper proofs to support our algorithm design, but this is
 not a major focus of our research.
 
@@ -453,12 +454,11 @@ See above.
 > is straightforward to handle with a slight extension of the proposed
 > abstractions -- so I'm simply noting surprise it was not raised.
 
-Please see earlier discussions.  Briefly: thank you for this
-observations.  The proposal's abstractions are a starting point for
-our research; we hope to discover more abstractions as we pursue the
-research.  Since the proposal was written, we have already discovered
-new abstractions such as a min-cut abstraction that may be suitable
-for backbone networks. 
+Thank you for this observation.  The proposal's abstractions are a 
+starting point for our research; we hope to discover more abstractions 
+as we pursue the research.  Since the proposal was written, we have 
+already discovered new abstractions such as a min-cut abstraction that 
+may be suitable for backbone networks. 
 
 > Including cost and contract constraints. Trying to reduce contracts or
 > legal rules to formal abstractions has been a repeated failure in the
