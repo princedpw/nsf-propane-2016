@@ -56,15 +56,19 @@ device through the control plane.  This is important because the
 constraints that define the stable paths can be represented using
 simple propositional formulae that do not include recursion.  By
 avoiding recursion, we can use more efficient solvers to find
-solutions to the verification problem.
+solutions to the verification problem.  Hence, our new, simpler logical
+model will enable us to use a more efficient solver.
 
 When it comes to synthesis, we have some recursion, in the form of
-regular expressions.  However, it is not a general form of recursion.
-Regular expressions can be translated to automata and interpreted
-relative to the network topology (as we have done in our previous
-work on Propane).
+regular expressions.  However, it is not a general form of recursion,
+and hence can be implemented using the primitives available in
+conventional routers: Regular expressions can be translated to
+automata and interpreted relative to the network topology (as we have
+done in our previous work on Propane).  If we were to use a more
+general formalism, such as Datalog, it does not appear it could be
+implemented using standard router primitives.
 
-> Boon Tau Loos work appears relevant here but is not mentioned.
+> Boon Tau Loo's work appears relevant here but is not mentioned.
 
 Boon Tau Loo has done excellent work on declarative networking (among
 other topics), which allows users to specify distributed programs
@@ -181,11 +185,20 @@ evaluation data, and meta-data."
 > Weaknesses:
 
 > The main weaknesses (or concerns) with the proposal are that (a) the
-> scenarios considered seem rather specific to cloud settings and (b)
-> that the generality and applicability of contributions outside the
+> scenarios considered seem rather specific to cloud settings and 
+
+Please see our earlier discussions in this response --- we will begin
+by deeply understanding data center networks and then later
+considering other kinds of networks.
+
+> (b) that the generality and applicability of contributions outside the
 > adoption of Butane.
 
-See answer above.
+Please see our earlier discussions in this response --- our
+verification techniques and interface abstractions for legacy networks
+are broadly useful.  Our language design ideas, topology abstractions,
+compilation techniques and analyses may be used in the context of
+other network programming languages, such as those in the SDN space.
 
 > The notion of topological abstractions needs more thought. While this
 > idea does reduce work that operators have to do, it is unclear how
@@ -275,7 +288,6 @@ configured with access-control lists, and we hope to consider the
 impact of other middleboxes on control-plane verification in the
 latter part of the grant period.
 
-
 > The proposal does not make it clear if the techniques used for
 > verification can be used more broadly outside of Butane.
 
@@ -296,14 +308,20 @@ programming languages.
 > - The proposal would benefit if the authors can validate their system
 >   with a broader set of networks (ISPs, IXPs, etc).
 
-See our earlier comments on this topic.
+Please see our earlier discussions in this response --- we will begin
+by deeply understanding data center networks and then later
+considering other kinds of networks.
 
 > - The proposal should aim to identify techniques that can be used not
 >   just in Butane but also other tools, especially for aspects such as
 >   policy validation and for gradual deployment since these are generic
 >   problems.
 
-See above.
+Please see our earlier discussions in this response --- our
+verification techniques and interface abstractions for legacy networks
+are broadly useful.  Our language design ideas, topology abstractions,
+compilation techniques and analyses may be used in the context of
+other network programming languages, such as those in the SDN space.
 
 > - The plans for inclusion or educating the next generation of users
 >   seems generic.
@@ -317,7 +335,7 @@ training to our next generation of students.  (And the PIs' track
 record is exceptional here as indicated by the fact that the PIs'
 underrepresented minorities have won the CRA outstanding undergraduate
 research award twice, for instance.) Other activities take advantage
-of the PIs' unique academic position.  For instance, while Silicon
+of the PIs' unique academic positions.  For instance, while Silicon
 Valley universities such as Stanford and Berkeley have close ties to
 the networking industry, East Coast universities have not had as close
 ties to industry.  The PIs intend to help grow connections to industry
@@ -334,7 +352,9 @@ such as Microsoft and Google, where they have deep ties.
 >   another usage class were explored, even in simulation (I appreciate
 >   that strong industrial contacts are hard to find).
 
-See above.
+Please see our earlier discussions in this response --- we will begin
+by deeply understanding data center networks and then later
+considering other kinds of networks.
 
 > - It's troubling that translating a specification to a logical
 >   representation is identified as a key research area. The fact that
