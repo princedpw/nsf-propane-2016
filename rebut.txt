@@ -11,9 +11,22 @@
 > for folks other than cloud operators. Will this work for ISPs? Will
 > this apply to firewalls and NATs in addition to routers?
 
-It makes sense to start with one kind of network and understand it deeply before we branch out to other types like ISPs.  Data centers today have a lot of symmetry and yet are hard to configure.  Thus we see an area of great potential impact, so it makes sense to start applying our approach there where we have partners who are interested in applying our ideas.
+It makes sense to start with one kind of network and understand it
+deeply before we branch out to other types like ISPs.  Data centers
+today have a lot of symmetry and yet are hard to configure.  Thus we
+see an area of great potential impact, so it makes sense to start
+applying our approach there where we have partners who are interested
+in applying our ideas.
 
-That said, we agree that our ideas can and should be applied to other networks such as ISPs. In very recent work, we have been looking at abstractions for corporate backbones and finding other kinds of abstractions (such as a min cut abstraction).  Also, our lead student Ryan Beckett won a prize from ATT for his work on Propane and so we have some potential openings at ATT as well. In summary, we will continue exploring other types of networks to expand our repertoire of abstractions, while focusing on data centers as our most likely avenue of real impact.
+That said, we agree that our ideas can and should be applied to other
+networks such as ISPs. In very recent work, we have been looking at
+abstractions for corporate backbones and finding other kinds of
+abstractions (such as a min cut abstraction).  Also, our lead student
+Ryan Beckett won a prize from ATT for his work on Propane and so we
+have some potential openings at ATT as well. In summary, we will
+continue exploring other types of networks to expand our repertoire of
+abstractions, while focusing on data centers as our most likely avenue
+of real impact.
 
 
 > One further application environment the proposers might consider is
@@ -22,44 +35,101 @@ That said, we agree that our ideas can and should be applied to other networks s
 > ISPs and telcos is significantly enhanced. The proposed work may not
 > expand to other business spaces such as that occupied by Time Warner.
 
-This is a great idea.  We assume by CORD you mean the project listed at opencord.org which has open source software for building various kinds of networks (home, enterprise) from only commodity servers.   While CORD is a great platform for building new networks cheaply, our project is about discovering abstractions and verifying real configurations but we will look at the CORD repositories to look for existing configurations to see if we can identify new abstractions (for say mobile networks)
-
+This is a great idea.  We assume by CORD you mean the project listed
+at opencord.org which has open source software for building various
+kinds of networks (home, enterprise) from only commodity servers.
+While CORD is a great platform for building new networks cheaply, our
+project is about discovering abstractions and verifying real
+configurations but we will look at the CORD repositories to look for
+existing configurations to see if we can identify new abstractions
+(for say mobile networks).
  
 > The proposed work picks a specific solver rather than figuring out
 > which mathematical model they want to use. Mathematical models,
-> however, generally drive the choice of the solver. Boon Tau Loos work
-> appears relevant here but is not mentioned.
+> however, generally drive the choice of the solver. 
 
-* DPW
-* we are aware of Boon's excellent work
-* considered in past work
-* getting rid of recursion
-* stable paths 
-* but we model the solution space; basically don't need declarative datalog
- 
+We agree that the required mathematical model drives the needs of the
+solver.  One important insight we have had is that we can create an
+effective verification tool that analyzes the stable paths (as defined by
+Griffin, Shepherd and Wilfong, 2002) produced by routing protocols as
+opposed to simulating the set of messages that are sent from device to
+device through the control plane.  This is important because the
+constraints that define the stable paths can be represented using
+simple propositional formulae that do not include recursion.  By
+avoiding recursion, we can use more efficient solvers to find
+solutions to the verification problem.
+
+When it comes to synthesis, we have some recursion, in the form of
+regular expressions.  However, it is not a general form of recursion.
+Regular expressions can be translated to automata and interpreted
+relative to the network topology (as we have done in our previous
+work on Propane).
+
+> Boon Tau Loos work appears relevant here but is not mentioned.
+
+Boon Tau Loo has done excellent work on declarative networking (among
+other topics), which allows users to specify distributed programs
+that communicate via message passing (and thereby specify both old
+and new control plane protocols).  Boon's declarative networking
+project allows much more general distributed computations to be 
+expressed, but due to the generality, there is no obvious way to
+compile his datalog-like specifications to existing legacy routing
+software --- Boon's approach would require a clean-slate approach to
+network configuration and completely new hardware/software in routing
+platforms.  Our work, on the other hand, does not depend on a 
+clean-slate approach .  It seeks to provide
+a transition path that allows legacy networks to managed more effectively. 
+
+Boon's desire to create a general framework for distributed
+computation leads to the inclusion of recursion and the use of datalog
+and datalog-like variants.  Because we wish to configure existing
+routers rather than to implement general distributed computation, our
+language can be and must be less general.  We use, for example,
+regular expressions as opposed to general recursive datalog
+expressions, as discussed above.
+
 > The proposal is overly ambitious in attempting to solve the problem of
 > verifying the Butane compiler. While this is desirable, the essential
 > verification problem is to demonstrate that each generated
 > configuration is consistent with the specified configuration. This is
 > a much more tractable problem.
 
-* we did not mean to imply we will build a fully verified 
-* we are sanity checking our algortihms in a 
- 
+We agree that the central verification problem involves checking
+generated (and legacy) configurations using automated tools.  We also
+believe it is tractable.  When it comes to the Butane compiler, we do
+not plan to "verify" it's implementation (using program verification
+tools such as Coq, for instance).  Rather, we plan to study our
+algorithms and prove (on paper) that they do what we expect them to do
+--- in other words, we plan to develop algorithms in the normal way
+(design an algorithm; prove it works as intended; implement and
+evaluate it).
+
 > Broader Impact: 
- 
+> 
 > Weaknesses: If proposers are not using NSF Cloud or GENI for
 > experiments then proposers need to explain why not.
 
-DPW
+NSF Cloud and GENI are useful for evaluating some elements of our work
+but not others.  Where NSF Cloud and GENI are useful, we will certainly
+consider using them.
 
-* https://cloudlab.us/
-* be positive
-* platforms for building new things whereas we are looking at interoperation
-with existing networks
-* we will use them to look for 
-* cloudlab: aditya akella; ask Ratul
-* geni: ask larry
+More specifically, much of our work is not evaluated effectively using
+network enumation.  For example, we need configurations from real
+networks to test the scalability of our verification technology and to
+evaluate the effectiveness of our technology in finding real bugs.
+However, we do not need to run those legacy networks in an emulator
+(the idea is that someone else is using those networks and we are
+trying to determine whether they contain security vulnerabilities or
+can tolerate faults).  Hence, NSF Cloud and GENI are not systems that
+we need here.  Likewise, to test (or verify) correctness of generated
+configurations, we do not need to emulate the configurations on
+production traffic.  We can test them using tools such as C-BGP, Co-PI
+Millstein's Batfish tool, and our own verification tools.  Again, NSF
+Cloud and GENI are not helpful here.  On the other hand, we will need
+to emulation to test the performance of dynamic policies, such as
+those that attempt to optimize performance in the face of costs (eg,
+section 3.2).  For these experiments, NSF Cloud or GENI may be very
+effective and we intend to investigate using then.
  
 > Reviewer 1:
  
@@ -75,8 +145,19 @@ with existing networks
 >   systems end up reducing to Datalog; this may not be the case here,
 >   but no discussion in the proposal).
 
-* DPW
-* refer to above.
+As mentioned above, Boon Tau Loo has done excellent work on
+declarative networking, which allows users to specify distributed
+programs that communicate via message passing.  Boon's declarative
+networking project allows much more general distributed computations
+to be expressed --- such generality does not appear to be necessary to
+model the *outcomes* of standard control plane protocols (ie: the
+stable paths they generate) such as BGP and OSPF.  More specifically,
+recursion does not appear to be necessary.  One of the key insights in
+our research is noticing this fact and then exploiting it to design
+efficient verification techniques (ie: techniques that do not require
+infrastructure capable of solving recursive equations --- a more
+challenging task than finding satisfying assignments of simpler
+formula).
 
 > - There has also been some work on formal contract specification,
 >   e.g. Gao/Singh "Extracting Normative Relationships from Business
@@ -89,7 +170,10 @@ with existing networks
 > Data management plan does not explicitly discuss if the code will be
 > made available to the research community.
  
-We will make our code freely available to the research community, as we have done in the past.  The Data Management Plan states that we will maintain a project web page on Github that "will provide code, evaluation data, and meta-data."
+We will make our code freely available to the research community, as
+we have done in the past.  The Data Management Plan states that we
+will maintain a project web page on Github that "will provide code,
+evaluation data, and meta-data."
 
 > Reviewer 2
  
@@ -104,25 +188,75 @@ See answer above.
 
 > The notion of topological abstractions needs more thought. While this
 > idea does reduce work that operators have to do, it is unclear how
-> applicable it will be in more generalized settings. For example, what
-> if (in theory) there are hundreds of categories of devices? What if
-> devices of the same role need different policies based on different
+> applicable it will be in more generalized settings.
+
+As mentioned above, we will begin our research by focusing on data centers
+where our discussions with network operators indicate there are a just a 
+few roles, and operators already think in terms of "roles" but
+do not have good tools to support role-based specification of policy.
+Providing tools that can help operators manage data centers more effectively
+will already be an important contribution to the nation's infrastructure and
+economy.
+
+We have also begun to look at backbone networks and discovered some new
+abstractions that will be helpful there.  Roles in backbone networks
+can include "border router" and "core router."
+
+> For example, what if (in theory) there are hundreds of categories of devices?
+
+If there are hundreds of categories of devices and thousands of actual
+devices then our system will have reduced the complexity of
+programming the network system in a helpful way (thousands of
+configurations reduced to hunderds of configurations).  However, we
+have not yet seen a network with so many different roles --- such
+networks may not exist.  What we have seen instead is that in large
+data center networks, roles are common and there are not very many of
+them.  These constraints are driven by the need for network engineers
+and operators to be able to more easily manage the network and
+understand its behavior.
+
+If there is just one device for each role, then the role abstraction
+will not be useful for that particular network.  However, all of the networks
+that we have studied so far do naturally have roles and hence developing
+these abstrations would appear to be broadly useful.  Also, notice
+that if a network is "role-less", our system will still be useful
+because we intend to support both abstract and concrete (role-less)
+networks simulataneously.
+
+The reviewer may be asking about whether the performance of
+our synthesis system will scale to hundreds of different roles.  This
+is a good research question.  We will have to implement the system,
+measure its scalability, and if it fails to scale to large networks,
+invent optimizations or approximations to cope.
+
+> What if devices of the same role need different policies based on different
 > use cases?
 
-* we support both concrete and abstract networks -- if the network
-does not have roles, operators can still use concrete networks.
-
-* in practice, we have found that the data center and backbone networks
-have a small number of roles (eg, less than 10).
-
-While it is a potential concern that there could be too many roles to scalably handle, in our preliminary work to date we have seen that in practice even large networks have a relatively small number of roles, and further that nodes in the same role are intended to have similar policies.  These constraints are driven by the need for network engineers and operators to be able to more easily manage the network and understand its behavior.
+We have not yet seen this situation in practice.  Rather, network
+operators define roles for devices precisely because every device in
+the same role should have (roughly, modulo some parameters) the same
+policy.  If we do come across networks with devices "in the same role"
+and yet differing policies, an operator might decide the devices
+should not really be in the same role.  (A similar situation occurs
+when software engineers initially place two bits of code in the same
+module and later decide the module should be split.)  Alternatively,
+we might decide the two devices really should have the same role, but
+that we need a new linguistic mechanism for parameterizing the policy
+according to the specific device.  If we discover such situations, it
+will make for interesting language design research that we will
+pursue.
 
 > While the arguments presented in the proposal make sense for clouds,
 > how applicable are they for ISPs or other networks where BGP and OSPF
 > similar protocols are commonly used? For transit between tier-1 ISPs
 > the notion of costs and contracts may not apply.
 
-See above.
+(Please see comments earlier in this document.)  Briefly, to
+reiterate: we have looked at backbone networks and found some similar
+abstractions apply and also that we need to define some new ones.
+Hence, we plan study data center networks in depth first but then to
+branch out to investigate other kinds of networks later in the grant
+period.
 
 > The proposal does not make it clear if the capabilities made available
 > are applicable to certain types of devices (e.g., routers) or if they
@@ -130,13 +264,29 @@ See above.
 > etc). These middleboxes also speak BGP/OSPF but also have other
 > policies associated with them.
 
-Two current frontiers in network verification research are verification of rich control-plane policies and verification of stateful networks that contain middleboxes.  Our proposal focuses on the former problem space.  However, handling middleboxes is also an important and exciting area of research.  The techniques we develop will apply immediately to some middleboxes, for example firewalls configured with access-control lists, and we hope to consider the impact of other middleboxes on control-plane verification in the latter part of the grant period.
+Two current frontiers in network verification research are
+verification of rich control-plane policies and verification of
+stateful networks that contain middleboxes.  Our proposal focuses on
+the former problem space.  However, handling middleboxes is also an
+important and exciting area of research.  The techniques we develop
+will apply immediately to some middleboxes, for example firewalls
+configured with access-control lists, and we hope to consider the
+impact of other middleboxes on control-plane verification in the
+latter part of the grant period.
 
 
 > The proposal does not make it clear if the techniques used for
 > verification can be used more broadly outside of Butane.
 
-Our proposed work on verifying legacy networks is independent of Butane and will be broadly applicable.  This includes techniques to convert low-level configurations to a structured intermediate representation and to validate such configurations against a high-level interface specification.  We further hope that basing Butane's design on general and well understood formalisms, such as regular expressions over paths and logical predicates, will allow our research results on Butane verification to transfer to other network programming languages.
+Our proposed work on verifying legacy networks is independent of
+Butane and will be broadly applicable.  This includes techniques to
+convert low-level configurations to a structured intermediate
+representation and to validate such configurations against a
+high-level interface specification.  We further hope that basing
+Butane's design on general and well understood formalisms, such as
+regular expressions over paths and logical predicates, will allow our
+research results on Butane verification to transfer to other network
+programming languages.
 
 > BI:
  
@@ -145,7 +295,7 @@ Our proposed work on verifying legacy networks is independent of Butane and will
 > - The proposal would benefit if the authors can validate their system
 >   with a broader set of networks (ISPs, IXPs, etc).
 
-See above.
+See our earlier comments on this topic.
 
 > - The proposal should aim to identify techniques that can be used not
 >   just in Butane but also other tools, especially for aspects such as
@@ -157,8 +307,24 @@ See above.
 > - The plans for inclusion or educating the next generation of users
 >   seems generic.
 
-* Cornell-Princeton -- East Coast, not generic
- 
+Our plans for education include collaboration with cloud providers,
+industrial outreach, curriculum development and one-on-one mentoring.
+Some of the activities, such as curriculum development and one-on-one
+mentoring of underrepresented minorities may not be surprising, but
+they are effective and necessary ways of disseminating knowledge and
+training to our next generation of students.  (And the PIs track
+record is exceptional here as indicated by the fact that the PIs'
+underrepresented minorities have won the CRA outstanding undergraduate
+research award twice, for instance.) Other activities take advantage
+of the PIs unique academic position.  For instance, while Silicon
+Valley universities such as Stanford and Berkeley have close ties to
+the networking industry, East Coast universities have not had as close
+ties to industry.  The PIs intend to help grow connections to industry
+on the East Coast via the recently-created Cornell-Princeton Network
+Programming Center.  The PIs will also help foster university-industry
+collaboration in networking by working with leading cloud providers
+such as Microsoft and Google, where they have deep ties.
+
 > Reviewer 3
  
 > - The proposers' industrial contacts and use cases are very heavily
@@ -178,10 +344,23 @@ See above.
 >   this property, and so it's hoped that the difficulty referred to is
 >   in modeling legacy networks
 
-* DPW
-* *efficiently*
-* specifics
-* doing it efficiently
+We are aware of the excellent work on SDN data plane analysis and its
+representation in logic.  (For instance, Co-Pi Varghese helped design
+network-optimized datalog for representing and reasoning about data plane
+properties.)
+
+The representation of control plane protocols in logic is quite
+different from data plane (i.e., SDN) configurations.  However, the
+real research challenge comes in generating *efficient* logical
+representations of the control plane that scale to the point that they
+can be used in verifying large networks.  The choices that one makes
+in exactly how to represent and optimize logical representations can
+make orders of magnitude of difference in solver times.  These logical
+representations can be further refined based on the network properties
+of interest (reachability, isolation, equivalence, load, etc).  We
+plan to study the choices that lead to the most efficient logical
+representations for control planes in this context, which has not been
+done before.
 
 > - It's more important to find a mathematical model of the
 >   configuration than to identify a specific solver. The proposers
@@ -189,7 +368,9 @@ See above.
 >   Propane (Logic network, communicating FSMs, etc) before identifying
 >   a specific solver.
 
-* see above (logic network)
+We agree that one must identify the mathematical model first and then
+choose a solver.  Please see our earlier discussion of mathematical
+models, recursion, etc.
 
 > - It is said that tools like Propane "have never been proven correct"
 >   (page 10). This is true; however, correspondence between an abstract
@@ -199,12 +380,30 @@ See above.
 >   execution CAN be checked rigorously on a case-by-case basis,
 >   typically as a last step before the generated configuration is
 >   loaded into the network. This is why the abstract model underlying
->   Butane is so important. It is also important to note that optimality
+>   Butane is so important. 
+
+We agree that the generated network may be checked for correctness.
+Developing tools to do so is a central research problem for us.
+
+Of course, if Propane regularly generated configurations that were
+wrong, this would be a problem, even if a tool were to catch the wrong
+configuration. No one would want to use a compiler that regularly
+fails.  This is why proving the correctness of the algorithms one
+designs is a useful scientific activity --- such proofs, even if done
+in a light-weight fashion using pencil and paper, provide evidence
+that the algorithms designed will not fail in unexpected corner cases
+that test suites may not cover.  We intend to do such light-weight,
+pencil-and-paper proofs to support our algorithm design, but this is
+not a major focus of our research.
+
+>   It is also important to note that optimality
 >   with respect to some cost criteria is likely a more difficult
 >   problem.
 
-* perhaps the reviewer did not understand what we mean by "prove correct"?
-... use some soft language ... see panel summary above
+We agree that generating optimal configurations (optimal, for instance,
+in the amount of rule space they use or in the way they balance
+traffic) is an interesting research challenge and one that we
+intend to pursue.
  
 > The lack of formal models is a hazard both for compiling to multiple
 > back ends and for verification. It's always worth remembering the
@@ -213,7 +412,16 @@ See above.
 > language is ill-matched to the execution environment, and at the end
 > of the day Butane is a compiler.
 
-Please see the above discussion of the mathematical models on which we plan to base the Butane compiler and verification technology.  Note also that in our setting even writing a bad but correct compiler is non-trivial, as it involves converting the network policy from a single global specification to a set of per-router configurations.
+Please see the above discussion of the mathematical models on which we
+plan to base the Butane compiler and verification technology.  Note
+also that in our setting even writing a bad but correct compiler is
+non-trivial, as it involves converting the network policy from a
+single global specification to a set of per-router configurations.
+In other words, the compiler does a lot of work for the network operator.
+And this is a good thing!  It means network operators do not have to do
+that tedious work themselves.  That's exactly why our technology can
+help make network operators more productive than they have ever been
+before.
 
 > BI:
  
@@ -245,10 +453,12 @@ See above.
 > is straightforward to handle with a slight extension of the proposed
 > abstractions -- so I'm simply noting surprise it was not raised.
 
-* thank you for your observation
-* the proposal's abstractions are a starting point for our research
-* there is lots more research to do on the set of abstractions to provide;
-this is a major focus
+Please see earlier discussions.  Briefly: thank you for this
+observations.  The proposal's abstractions are a starting point for
+our research; we hope to discover more abstractions as we pursue the
+research.  Since the proposal was written, we have already discovered
+new abstractions such as a min-cut abstraction that may be suitable
+for backbone networks. 
 
 > Including cost and contract constraints. Trying to reduce contracts or
 > legal rules to formal abstractions has been a repeated failure in the
@@ -258,10 +468,23 @@ this is a major focus
 > represented by a common abstraction and applied to optimize
 > policies. I think that's correct, if slightly unexciting.
 
-As the reviewer suggests, we hope that a relatively small set of abstractions will enable Butane to express the vast majority of contracts that exist in practice.  In the latter part of the grant period, we will also explore techniques for a Butane policy to interoperate with cost and contract constraints written as traditional code, in order to support additional expressiveness.
+As the reviewer suggests, we hope that a relatively small set of
+abstractions will enable Butane to express the vast majority of
+contracts that exist in practice.  In the latter part of the grant
+period, we will also explore techniques for a Butane policy to
+interoperate with cost and contract constraints written as traditional
+code, in order to support additional expressiveness.
 
 > On abstracting low level configurations to BUTANE (intended to help
 > incremental migration) failed to convince me that there was any
 > insight about how to build up from a low level spec into BUTANE.
 
-The key insight that we will leverage is that it is possible to translate both low-level configurations and high-level Butane policies into a common intermediate format.  This insight comes in part from our experience with the earlier Propane language, which employs a structured intermediate format on which various analyses are performed.  A common intermediate format will allow us to directly compare low-level configurations to Butane policies and will provide a natural platform on which to explore approaches for policy sketching and inference.
+The key insight that we will leverage is that it is possible to
+translate both low-level configurations and high-level Butane policies
+into a common intermediate format.  This insight comes in part from
+our experience with the earlier Propane language, which employs a
+structured intermediate format on which various analyses are
+performed.  A common intermediate format will allow us to directly
+compare low-level configurations to Butane policies and will provide a
+natural platform on which to explore approaches for policy sketching
+and inference.
