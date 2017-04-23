@@ -165,12 +165,13 @@ formulae).
 >   e.g. Gao/Singh "Extracting Normative Relationships from Business
 >   Contracts"
 
-Thank you for this reference.  That work is tackling the problem of 
-automatically extracting formal contract specifications from 
+Thank you for this reference.  That work is tackling the problem of
+automatically extracting formal contract specifications from
 unstructured contract text.  Our work is complementary: we will
-identify abstractions for formally expressing contract and cost 
-constraints in our setting and develop techniques to leverage these
-constraints to optimize network performance.
+identify abstractions for formally expressing contract and cost
+constraints in the domain-specific setting of network configuration
+and develop techniques to leverage these constraints to optimize
+network performance.
  
 > Data management plan does not explicitly discuss if the code will be
 > made available to the research community.
